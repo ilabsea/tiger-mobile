@@ -54,6 +54,9 @@
 		1C3567A68A76458D804BC734 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = D27593F0CBD54A2E994B614B /* libz.tbd */; };
 		0162547D7921486FA83EC3D3 /* libRNI18n.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E65157CDFE3E498CAD7D5F81 /* libRNI18n.a */; };
 		34ED33BE6EB44BB3AC9186A4 /* libRNI18n-tvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 19A9263645244366BDBF060F /* libRNI18n-tvOS.a */; };
+		4B16F327C5694A1985637926 /* Kantumruy.ttf in Resources */ = {isa = PBXBuildFile; fileRef = AD2F80C2624B4E8481C857B3 /* Kantumruy.ttf */; };
+		659B82B3E863473F9CB79466 /* KantumruyBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 98F8FB8AADC34CFCAD4CF958 /* KantumruyBold.ttf */; };
+		4D7A2FF9211548FF9A78B815 /* KhmerOureang.ttf in Resources */ = {isa = PBXBuildFile; fileRef = E213786B1C9F480E869B3A5F /* KhmerOureang.ttf */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -379,6 +382,9 @@
 		84EC1C54CED84D8CB3BC67CA /* RNI18n.xcodeproj */ = {isa = PBXFileReference; name = "RNI18n.xcodeproj"; path = "../node_modules/react-native-i18n/ios/RNI18n.xcodeproj"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.pb-project; explicitFileType = undefined; includeInIndex = 0; };
 		E65157CDFE3E498CAD7D5F81 /* libRNI18n.a */ = {isa = PBXFileReference; name = "libRNI18n.a"; path = "libRNI18n.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
 		19A9263645244366BDBF060F /* libRNI18n-tvOS.a */ = {isa = PBXFileReference; name = "libRNI18n-tvOS.a"; path = "libRNI18n-tvOS.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
+		AD2F80C2624B4E8481C857B3 /* Kantumruy.ttf */ = {isa = PBXFileReference; name = "Kantumruy.ttf"; path = "../app/assets/fonts/Kantumruy.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		98F8FB8AADC34CFCAD4CF958 /* KantumruyBold.ttf */ = {isa = PBXFileReference; name = "KantumruyBold.ttf"; path = "../app/assets/fonts/KantumruyBold.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		E213786B1C9F480E869B3A5F /* KhmerOureang.ttf */ = {isa = PBXFileReference; name = "KhmerOureang.ttf"; path = "../app/assets/fonts/KhmerOureang.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -666,6 +672,9 @@
 				2F19418FDA3E4D239D435F5A /* Octicons.ttf */,
 				E2C74018AEEA41528D9B5EC3 /* SimpleLineIcons.ttf */,
 				8A11F32E628B479E94378093 /* Zocial.ttf */,
+				AD2F80C2624B4E8481C857B3 /* Kantumruy.ttf */,
+				98F8FB8AADC34CFCAD4CF958 /* KantumruyBold.ttf */,
+				E213786B1C9F480E869B3A5F /* KhmerOureang.ttf */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -1128,6 +1137,9 @@
 				1BA24FCF11714B00A162B02E /* Octicons.ttf in Resources */,
 				85609796F7EA4DF3B2D00F00 /* SimpleLineIcons.ttf in Resources */,
 				47312A5B2C0A42B7AE00B439 /* Zocial.ttf in Resources */,
+				4B16F327C5694A1985637926 /* Kantumruy.ttf in Resources */,
+				659B82B3E863473F9CB79466 /* KantumruyBold.ttf in Resources */,
+				4D7A2FF9211548FF9A78B815 /* KhmerOureang.ttf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

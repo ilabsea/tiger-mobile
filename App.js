@@ -7,12 +7,25 @@ import {
 
 import {
   ThemeProvider,
+  COLOR,
   BottomNavigation
 } from 'react-native-material-ui';
 
+import I18n from './app/i18n/i18n';
 import Home from './app/screens/home';
 
 type Props = {};
+
+const uiTheme = {
+    palette: {
+        primaryColor: COLOR.tealA700,
+    },
+    toolbar: {
+        container: {
+            // height: 50,
+        },
+    },
+};
 
 export default class App extends Component<Props> {
   constructor(props) {
@@ -22,7 +35,7 @@ export default class App extends Component<Props> {
 
   render() {
     return (
-      <ThemeProvider uiTheme={{}}>
+      <ThemeProvider uiTheme={uiTheme}>
         <View style={{flex:1}}>
           <View style={styles.container}>
             { this.state.active == 'home' && <Home></Home> }
@@ -35,25 +48,25 @@ export default class App extends Component<Props> {
               <BottomNavigation.Action
                   key="home"
                   icon="home"
-                  label="Home"
+                  label={I18n.t('home')}
                   onPress={() => this.setState({ active: 'home' })}
               />
               <BottomNavigation.Action
                   key="category"
                   icon="apps"
-                  label="Category"
+                  label={I18n.t('category')}
                   onPress={() => this.setState({ active: 'category' })}
               />
               <BottomNavigation.Action
                   key="library"
                   icon="library-books"
-                  label="Libray"
+                  label={I18n.t('my_library')}
                   onPress={() => this.setState({ active: 'library' })}
               />
               <BottomNavigation.Action
                   key="about"
                   icon="settings"
-                  label="About"
+                  label={I18n.t('about_app')}
                   onPress={() => this.setState({ active: 'about' })}
               />
           </BottomNavigation>
