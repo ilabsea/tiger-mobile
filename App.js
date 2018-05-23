@@ -2,13 +2,14 @@ import React, { Component } from 'react';
 import {
   StyleSheet,
   Text,
-  View
+  View,
+  StatusBar
 } from 'react-native';
 
 import {
   ThemeProvider,
   COLOR,
-  BottomNavigation
+  BottomNavigation,
 } from 'react-native-material-ui';
 
 import I18n from './app/i18n/i18n';
@@ -18,12 +19,12 @@ type Props = {};
 
 const uiTheme = {
     palette: {
-        primaryColor: COLOR.tealA700,
+      primaryColor: COLOR.tealA700,
     },
     toolbar: {
-        container: {
-            // height: 50,
-        },
+      container: {
+
+      },
     },
 };
 
@@ -37,6 +38,9 @@ export default class App extends Component<Props> {
     return (
       <ThemeProvider uiTheme={uiTheme}>
         <View style={{flex:1}}>
+          <StatusBar backgroundColor="rgba(0, 0, 0, 0.2)" translucent />
+          <View style={{ backgroundColor: COLOR.tealA700, height: 24 }} />
+
           <View style={styles.container}>
             { this.state.active == 'home' && <Home></Home> }
             { this.state.active == 'category' && <Text>Category</Text> }

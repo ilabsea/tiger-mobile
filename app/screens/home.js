@@ -6,6 +6,7 @@ import {
   ScrollView,
   StyleSheet,
   TouchableOpacity,
+  Dimensions,
 } from 'react-native';
 
 import {
@@ -25,7 +26,7 @@ export default class Home extends Component {
     };
   }
 
-  componentWillMount() {
+  componentDidMount() {
 
   }
 
@@ -39,28 +40,31 @@ export default class Home extends Component {
     </View>
   );
 
+  onScroll = (e) => {
+    var windowHeight = Dimensions.get('window').height,
+              height = e.nativeEvent.contentSize.height,
+              offset = e.nativeEvent.contentOffset.y;
+    if( windowHeight + offset >= height ){
+        alert('End Scroll')
+    }
+  }
+
   render() {
     return (
-      <View style={styles.container}>
-        <View style={{flex: 1, flexDirection: 'column'}}>
-          <Toolbar
-            centerElement={<Text style={headerStyle.title}>{I18n.t('home')}</Text>}
-            searchable={{
-              autoFocus: true,
-              placeholder: I18n.t('search_story'),
-            }}
-          />
+      <View style={styles.flex}>
+        <Toolbar
+          centerElement={<Text style={headerStyle.title}>{I18n.t('home')}</Text>}
+        />
 
-          <ScrollView style={styles.scrollWrapper}>
-            <View style={[styles.scrollContainer]}>
-              <GridLayout
-                items={this.state.items}
-                itemsPerRow={2}
-                renderItem={this.renderGridItem}
-              />
-            </View>
-          </ScrollView>
-        </View>
+        <ScrollView style={styles.container} onScroll={this.onScroll}>
+          <View style={[styles.scrollContainer]}>
+            <GridLayout
+              items={this.state.items}
+              itemsPerRow={2}
+              renderItem={this.renderGridItem}
+            />
+          </View>
+        </ScrollView>
       </View>
     )
   }
@@ -68,9 +72,6 @@ export default class Home extends Component {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-  },
-  scrollWrapper: {
     backgroundColor: COLOR.cyan900,
   },
   scrollContainer: {
