@@ -18,14 +18,13 @@ import Home from './app/screens/home';
 type Props = {};
 
 const uiTheme = {
-    palette: {
-      primaryColor: COLOR.tealA700,
-    },
-    toolbar: {
-      container: {
-
-      },
-    },
+  palette: {
+    primaryColor: COLOR.tealA700,
+  },
+  toolbar: {
+    container: {
+    }
+  }
 };
 
 export default class App extends Component<Props> {
@@ -49,30 +48,30 @@ export default class App extends Component<Props> {
           </View>
 
           <BottomNavigation active={this.state.active} hidden={false} >
-              <BottomNavigation.Action
-                  key="home"
-                  icon="home"
-                  label={I18n.t('home')}
-                  onPress={() => this.setState({ active: 'home' })}
-              />
-              <BottomNavigation.Action
-                  key="category"
-                  icon="apps"
-                  label={I18n.t('category')}
-                  onPress={() => this.setState({ active: 'category' })}
-              />
-              <BottomNavigation.Action
-                  key="library"
-                  icon="library-books"
-                  label={I18n.t('my_library')}
-                  onPress={() => this.setState({ active: 'library' })}
-              />
-              <BottomNavigation.Action
-                  key="about"
-                  icon="settings"
-                  label={I18n.t('about_app')}
-                  onPress={() => this.setState({ active: 'about' })}
-              />
+            <BottomNavigation.Action
+                key="home"
+                icon="home"
+                label={I18n.t('home')}
+                onPress={() => this.setState({ active: 'home' })}
+            />
+            <BottomNavigation.Action
+                key="category"
+                icon="apps"
+                label={I18n.t('category')}
+                onPress={() => this.setState({ active: 'category' })}
+            />
+            <BottomNavigation.Action
+                key="library"
+                icon="library-books"
+                label={I18n.t('my_library')}
+                onPress={() => this.setState({ active: 'library' })}
+            />
+            <BottomNavigation.Action
+                key="about"
+                icon="settings"
+                label={I18n.t('about_app')}
+                onPress={() => this.setState({ active: 'about' })}
+            />
           </BottomNavigation>
         </View>
       </ThemeProvider>
