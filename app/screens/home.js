@@ -8,6 +8,7 @@ import {
   Dimensions,
   FlatList,
   ActivityIndicator,
+  Image,
 } from 'react-native';
 
 import {
@@ -67,19 +68,42 @@ export default class Home extends Component {
     })
   }
 
-  _onLayout = () => {
+  _onLayout = (event) => {
     const {width} = Dimensions.get('window');
+    // const {width} = event.nativeEvent.layout;
     const itemWidth = width/2;
     const numColumns = Math.floor(width/itemWidth)
     this.setState({ numColumns: numColumns, itemWidth: itemWidth })
   }
 
   _renderItem = ({item}) => (
-    <View style={[styles.itemWrapper, {width: this.state.itemWidth}]}>
+    <TouchableOpacity
+      style={[styles.itemWrapper, {width: this.state.itemWidth}]}
+      onPress={()=> alert(item.title)}
+    >
       <View style={styles.item}>
-        <Text style={{color: '#fff'}}>{item.title}</Text>
+        <View style={{height: 200, borderColor: '#eee', borderWidth: 0.5, borderRadius: 3, alignItems: 'center'}}>
+          <Image
+            style={{width: 200, height: 200}}
+            source={{uri: "http://192.168.1.107:3000" + item.image}}
+          />
+        </View>
+
+        <Text
+          style={{color: '#fff', fontSize: 20}}
+          ellipsizeMode='tail'
+          numberOfLines={1}
+        >
+          {item.title}
+        </Text>
+
+        <Text style={{color: '#fff', fontSize: 18}}>Author: {item.user.email.split('@')[0]}</Text>
+
+        <View style={{flexDirection:'row', flexWrap:'wrap', marginTop: 8}}>
+          <Text style={{backgroundColor: '#eee', borderRadius: 3, paddingHorizontal: 4}}>{!!item.tags[0] && item.tags[0].title}</Text>
+        </View>
       </View>
-    </View>
+    </TouchableOpacity>
   )
 
   _renderContentWithFlatList() {
@@ -140,14 +164,11 @@ const styles = StyleSheet.create({
   itemWrapper: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#fff',
     backgroundColor: 'transparent',
     padding: 8,
   },
   item: {
     flex: 1,
-    height: 315,
-    borderColor: '#fff',
-    borderWidth: 1,
+    height: 300,
   }
 });
