@@ -2,15 +2,12 @@ import React, {Component} from 'react';
 import {
   Text,
   View,
-  Button,
   StyleSheet,
   TouchableOpacity,
   Dimensions,
   FlatList,
   ActivityIndicator,
   Image,
-  Modal,
-  ScrollView,
 } from 'react-native';
 
 import {
@@ -22,6 +19,7 @@ import {
 import I18n from '../i18n/i18n';
 import headerStyle from '../assets/style_sheets/header';
 import storyService from '../services/story.service';
+import StoryModal from './story_modal';
 
 let currentPage = 1;
 let perPage = 4;
@@ -136,78 +134,13 @@ export default class Home extends Component {
     )
   }
 
-  _renderModel() {
+  _renderModal() {
     return (
-      <Modal
-        animationType="slide"
-        transparent={false}
-        visible={this.state.modalVisible}
-        onRequestClose={() => {
-          alert('Modal has been closed.');
-        }}>
-        {this._renderModelContent()}
-      </Modal>
-
-    )
-  }
-
-  _getFullDate(createdAt) {
-    let days = ['អាទិត្យ', 'ច័ន្ទ', 'អង្គារ', 'ពុធ', 'ព្រហស្បតិ៍', 'សុក្រ', 'សៅរ៍'];
-    let months = ['មករា', 'កុម្ភៈ', 'មិនា', 'មេសា', 'ឧសភា', 'មិថុនា', 'កក្តដា', 'សីហា', 'កញ្ញា', 'តុលា', 'វិច្ឆិកា', 'ធ្នូ'];
-    let time = new Date(createdAt);
-    return "ថ្ងៃ" + days[time.getDay()] + ' ទី' + time.getDate() + ' ខែ' + months[time.getMonth()] + ' ឆ្នាំ' + time.getFullYear();
-  }
-
-  _renderModelContent = () => {
-    let tags = this.state.story.tags.map((tag, index) => {
-      return (
-        <Text key={index} style={{marginRight: 5, backgroundColor: '#eee', borderRadius: 3, paddingHorizontal: 4}}>{tag.title}</Text>
-      )
-    })
-
-    return (
-      <View>
-        <Toolbar
-          leftElement="arrow-back"
-          centerElement={<Text style={headerStyle.title}>{this.state.story.title}</Text>}
-          onLeftElementPress={()=> this.setState({modalVisible: false})}
-        />
-
-        <ScrollView>
-          <View style={{flexDirection: 'row', padding: 24}}>
-            <View style={{height: 200, borderColor: '#eee', borderWidth: 0.5, borderRadius: 3, alignItems: 'center'}}>
-              <Image
-                style={{width: 200, height: 200}}
-                source={{uri: "http://192.168.1.107:3000" + this.state.story.image}}
-              />
-            </View>
-
-            <View style={{flex: 1}}>
-              <Text>{I18n.t('published_at')} { this._getFullDate(this.state.story.published_at)}</Text>
-              <Text style={{fontFamily: 'KhmerOureang'}}>{I18n.t('story_title')} {this.state.story.title}</Text>
-              <Text>{I18n.t('author')}: {!!this.state.story.user && this.state.story.user.email.split('@')[0]}</Text>
-              <Text style={{flexDirection:'row', flexWrap:'wrap', marginTop: 8}}> { tags } </Text>
-
-              <TouchableOpacity
-                onPress={()=> {}}
-                style={{marginTop: 24, paddingVertical: 10, borderRadius: 10, backgroundColor: '#E4145C', flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}
-              >
-                <Icon name="cloud-download" color='#fff' size={24} />
-                <Text style={{color: '#fff', marginLeft: 10}}>{I18n.t('add_to_library')}</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-
-          <View style={{padding: 24}}>
-            <Text style={{color: 'green', textDecorationLine: 'underline'}}>{I18n.t('introduction')}</Text>
-
-            <Text style={{marginTop: 24}}>
-              {this.state.story.description}
-            </Text>
-          </View>
-
-        </ScrollView>
-      </View>
+      <StoryModal
+        modalVisible={this.state.modalVisible}
+        story={this.state.story}
+        onRequestClose={() => this.setState({modalVisible: false})}
+      ></StoryModal>
     )
   }
 
@@ -227,7 +160,7 @@ export default class Home extends Component {
         />
 
         { this._renderContentWithFlatList() }
-        { this._renderModel() }
+        { this._renderModal() }
       </View>
     )
   }
