@@ -7,6 +7,6 @@ export default {
   add_to_library: 'ដាក់ចូលបណ្ណាល័យខ្ញុំ',
   author: 'អ្នកនិពន្ធ',
   story_title: 'ចំណងជើងរឿង',
-  published_at: 'បោះពម្ព',
+  published_at: 'ចេញផ្សាយ',
   introduction: 'សេចក្តីណែនាំ'
 };

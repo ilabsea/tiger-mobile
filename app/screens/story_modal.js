@@ -12,6 +12,8 @@ import {
 import { Toolbar, Icon } from 'react-native-material-ui';
 import I18n from '../i18n/i18n';
 import headerStyle from '../assets/style_sheets/header';
+import realm from '../schema';
+import sceneService from '../services/scene.service';
 
 export default class StoryModal extends Component {
   _getFullDate(createdAt) {
@@ -21,14 +23,92 @@ export default class StoryModal extends Component {
     return "ថ្ងៃ" + days[time.getDay()] + ' ទី' + time.getDate() + ' ខែ' + months[time.getMonth()] + ' ឆ្នាំ' + time.getFullYear();
   }
 
+  _buildStory = (story) => {
+    return {
+      id: story.id,
+      title: story.title,
+      description: story.description,
+      image: '',
+      author: story.user.email.split('@')[0],
+      publishedAt: story.published_at,
+      tags: story.tags.map(tag => tag.title)
+    };
+  }
+
+  _writeResponse(story, scenes) {
+    realm.write(() => {
+      let objStory = realm.create('Story', this._buildStory(story), true);
+      let sceneList = objStory.scenes;
+
+      realm.delete(sceneList);
+
+      scenes.map((scene) => {
+        sceneList.push(
+          {
+            id: scene.id,
+            name: scene.name,
+            image: '',
+            visibleName: scene.visible_name,
+            description: scene.description,
+            imageAsBackground: scene.image_as_background,
+            storyId: scene.story_id,
+          }
+        )
+      })
+
+      // console.log('================test', objStory);
+      let allActions = realm.objects('SceneAction');
+      realm.delete(allActions);
+
+      scenes.map((scene) => {
+        let objScene = realm.objects('Scene').filtered(`id=${scene.id}`)[0];
+        let actionList = objScene.sceneActions;
+
+        scene.scene_actions.map((action) => {
+          if (!!action.link_scene.id) {
+            let linkScene = realm.objects('Scene').filtered(`id=${action.link_scene.id}`)[0];
+
+            actionList.push(
+              {
+                id: action.id,
+                name: action.name,
+                displayOrder: action.display_order,
+                sceneId: scene.id,
+                linkScene: linkScene
+              }
+            )
+          }
+
+        })
+      });
+
+      let allScenes = realm.objects('SceneAction');
+
+      console.log('================test', objStory);
+
+    });
+  }
+
+  _downloadStory(story) {
+    // let objStory = realm.objects('Story').filtered(`id=${story.id}`)[0];
+    // alert(JSON.stringify(objStory));
+
+    sceneService.getAll(story.id)
+      .then((responseJson) => {
+        this._writeResponse(story, responseJson.data.scenes);
+
+        // alert(JSON.stringify(responseJson.data.scenes.length));
+      })
+  }
+
   _renderBtnDownload(story) {
     return (
       <TouchableOpacity
-        onPress={()=> {}}
+        onPress={()=> this._downloadStory(story)}
         style={styles.btnDownload}
       >
         <Icon name="cloud-download" color='#fff' size={24} />
-        <Text style={{color: '#fff', marginLeft: 10}}>{I18n.t('add_to_library')}</Text>
+        <Text style={styles.btnDownloadText}>{I18n.t('add_to_library')}</Text>
       </TouchableOpacity>
     )
   }
@@ -47,7 +127,7 @@ export default class StoryModal extends Component {
         <Text>{I18n.t('author')}: {!!story.user && story.user.email.split('@')[0]}</Text>
         <Text style={styles.tagsWrapper}> { tags } </Text>
 
-        { this._renderBtnDownload() }
+        { this._renderBtnDownload(story) }
       </View>
     )
   }
@@ -139,6 +219,10 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  btnDownloadText: {
+    color: '#fff',
+    marginLeft: 10,
   },
   shortInfo: {
     flexDirection: 'row',
