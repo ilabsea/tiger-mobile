@@ -4,6 +4,7 @@ import {
   View,
   StyleSheet,
   TouchableOpacity,
+  TouchableHighlight,
   Image,
   Modal,
   ScrollView,
@@ -14,8 +15,23 @@ import I18n from '../i18n/i18n';
 import headerStyle from '../assets/style_sheets/header';
 import realm from '../schema';
 import sceneService from '../services/scene.service';
+import RNFS from 'react-native-fs';
+
+let jobId = -1;
+let images = [];
 
 export default class StoryModal extends Component {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      output: 'Doc folder: ' + RNFS.DocumentDirectoryPath,
+      imagePath: {
+        uri: ''
+      }
+    }
+  }
+
   _getFullDate(createdAt) {
     let days = ['អាទិត្យ', 'ច័ន្ទ', 'អង្គារ', 'ពុធ', 'ព្រហស្បតិ៍', 'សុក្រ', 'សៅរ៍'];
     let months = ['មករា', 'កុម្ភៈ', 'មិនា', 'មេសា', 'ឧសភា', 'មិថុនា', 'កក្តដា', 'សីហា', 'កញ្ញា', 'តុលា', 'វិច្ឆិកា', 'ធ្នូ'];
@@ -35,70 +51,155 @@ export default class StoryModal extends Component {
     };
   }
 
-  _writeResponse(story, scenes) {
-    realm.write(() => {
-      let objStory = realm.create('Story', this._buildStory(story), true);
-      let sceneList = objStory.scenes;
+  _importStory(story) {
+    realm.create('Story', this._buildStory(story), true);
+    images.push(story.image);
+  }
 
-      realm.delete(sceneList);
+  _importScenes(story, scenes) {
+    let objStory = realm.objects('Story').filtered(`id=${story.id}`)[0];
+    let sceneList = objStory.scenes;
 
-      scenes.map((scene) => {
-        sceneList.push(
-          {
-            id: scene.id,
-            name: scene.name,
-            image: '',
-            visibleName: scene.visible_name,
-            description: scene.description,
-            imageAsBackground: scene.image_as_background,
-            storyId: scene.story_id,
-          }
-        )
+    realm.delete(sceneList);
+
+    scenes.map((scene) => {
+      sceneList.push(
+        {
+          id: scene.id,
+          name: scene.name,
+          image: '',
+          visibleName: scene.visible_name,
+          description: scene.description,
+          imageAsBackground: scene.image_as_background,
+          storyId: scene.story_id,
+        }
+      );
+    })
+  }
+
+  _downloadFiles(story, scenes) {
+    let scenesList = scenes.filter(s => !!s.image);
+    images = [{type: 'Story', id: story.id, url: story.image}];
+
+    scenesList.map((s)=>{
+      images.push({type: 'Scene', id: s.id, url: s.image})
+    })
+
+    this._downloadFile(0);
+  }
+
+  _downloadFile(index) {
+    // console.log('===============images', images);
+    let image = images[index];
+    let progress = data => {};
+    let begin = res => {};
+    let progressDivider = 1;
+    let background = false;
+
+    let fileName = image.url.split('/').slice(-1)[0];
+    let downloadDest = `${RNFS.DocumentDirectoryPath}/${fileName}`;
+    let ret = RNFS.downloadFile({ fromUrl: `http://192.168.1.107:3000${image.url}`, toFile: downloadDest, begin, progress, background, progressDivider });
+    jobId = ret.jobId;
+
+    ret.promise.then(res => {
+      realm.write(() => {
+        let obj = realm.objects(image.type).filtered(`id=${image.id}`)[0];
+        obj.image = downloadDest;
+
+        console.log('================obj with image', obj);
       })
 
-      // console.log('================test', objStory);
-      let allActions = realm.objects('SceneAction');
-      realm.delete(allActions);
+      jobId = -1;
 
-      scenes.map((scene) => {
-        let objScene = realm.objects('Scene').filtered(`id=${scene.id}`)[0];
-        let actionList = objScene.sceneActions;
+      if (index + 1 < images.length) {
+        this._downloadFile(index + 1);
+      }
+    }).catch(err => {
+      jobId = -1;
 
-        scene.scene_actions.map((action) => {
-          if (!!action.link_scene.id) {
-            let linkScene = realm.objects('Scene').filtered(`id=${action.link_scene.id}`)[0];
+      if (index + 1 < images.length) {
+        this._downloadFile(index + 1);
+      }
+    });
+  }
 
-            actionList.push(
-              {
-                id: action.id,
-                name: action.name,
-                displayOrder: action.display_order,
-                sceneId: scene.id,
-                linkScene: linkScene
-              }
-            )
-          }
 
-        })
-      });
+  _importSceneActions(scenes) {
+    let allActions = realm.objects('SceneAction');
+    realm.delete(allActions);
 
-      let allScenes = realm.objects('SceneAction');
+    scenes.map((scene) => {
+      let objScene = realm.objects('Scene').filtered(`id=${scene.id}`)[0];
+      let actionList = objScene.sceneActions;
 
-      console.log('================test', objStory);
+      scene.scene_actions.map((action) => {
+        if (!!action.link_scene.id) {
+          let linkScene = realm.objects('Scene').filtered(`id=${action.link_scene.id}`)[0];
 
+          actionList.push(
+            {
+              id: action.id,
+              name: action.name,
+              displayOrder: action.display_order,
+              sceneId: scene.id,
+              linkScene: linkScene
+            }
+          )
+        }
+      })
     });
   }
 
   _downloadStory(story) {
-    // let objStory = realm.objects('Story').filtered(`id=${story.id}`)[0];
-    // alert(JSON.stringify(objStory));
-
     sceneService.getAll(story.id)
       .then((responseJson) => {
-        this._writeResponse(story, responseJson.data.scenes);
+        realm.write(() => {
+          this._importStory(story);
+          this._importScenes(story, responseJson.data.scenes);
+          this._importSceneActions(responseJson.data.scenes);
+          this._downloadFiles(story, responseJson.data.scenes);
 
-        // alert(JSON.stringify(responseJson.data.scenes.length));
+          // let objStory = realm.objects('Story').filtered(`id=${story.id}`);
+          // console.log('================test', objStory);
+        });
       })
+  }
+
+  downloadFileTest(background, url) {
+    if (jobId !== -1) {
+      this.setState({ output: 'A download is already in progress' });
+    }
+
+    const progress = data => {
+      const percentage = ((100 * data.bytesWritten) / data.contentLength) | 0;
+      const text = `Progress ${percentage}%`;
+      this.setState({ output: text });
+    };
+
+    const begin = res => {
+      this.setState({ output: 'Download has begun' });
+    };
+
+    const progressDivider = 1;
+
+    this.setState({ imagePath: { uri: '' } });
+
+    const downloadDest = `${RNFS.DocumentDirectoryPath}/${((Math.random() * 1000) | 0)}.jpg`;
+
+    const ret = RNFS.downloadFile({ fromUrl: url, toFile: downloadDest, begin, progress, background, progressDivider });
+
+    jobId = ret.jobId;
+
+    ret.promise.then(res => {
+      this.setState({ output: JSON.stringify(res) });
+      this.setState({ imagePath: { uri: 'file://' + downloadDest } });
+
+      jobId = -1;
+    }).catch(err => {
+      this.showError(err)
+
+      jobId = -1;
+    });
   }
 
   _renderBtnDownload(story) {
@@ -157,21 +258,53 @@ export default class StoryModal extends Component {
 
   _renderModelContent = (story) => {
     return (
-      <View>
+      <View style={{flex: 1}}>
         <Toolbar
           leftElement="arrow-back"
           centerElement={<Text style={headerStyle.title}>{story.title}</Text>}
           onLeftElementPress={this.props.onRequestClose}
         />
 
-        <ScrollView>
+        <ScrollView style={{flex: 1}}>
           <View style={styles.shortInfo}>
             { this._renderImage(story) }
             { this._renderShortInfo(story) }
           </View>
 
           { this._renderDescription(story) }
+
+          { false && this.renderDownloadImageForTest() }
         </ScrollView>
+      </View>
+    )
+  }
+
+  renderDownloadImageForTest() {
+    const downloadUrl = "http://192.168.1.107:3000/uploads/story/image/16/30741642_226130137942625_5053281481921658880_o.jpg";
+
+    return(
+      <View>
+        <View style={styles.panes}>
+          <View style={styles.leftPane}>
+            <TouchableHighlight onPress={() => {this.downloadFileTest(true, downloadUrl)} }>
+              <View style={styles.button}>
+                <Text style={styles.text}>Download File</Text>
+              </View>
+            </TouchableHighlight>
+          </View>
+        </View>
+
+        <View>
+          <Text style={styles.text}>{this.state.output}</Text>
+
+          { !!this.state.imagePath.uri &&
+            <View>
+              <Image style={styles.image} source={this.state.imagePath}></Image>
+              <Text>{this.state.imagePath.uri}</Text>
+            </View>
+          }
+
+        </View>
       </View>
     )
   }
