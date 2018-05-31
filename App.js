@@ -14,6 +14,7 @@ import {
 
 import I18n from './app/i18n/i18n';
 import Home from './app/screens/home';
+import Library from './app/screens/library';
 
 type Props = {};
 
@@ -30,7 +31,7 @@ const uiTheme = {
 export default class App extends Component<Props> {
   constructor(props) {
     super(props);
-    this.state = { active: 'home' };
+    this.state = { active: 'library' };
   }
 
   onSetActive(tab) {
@@ -47,7 +48,7 @@ export default class App extends Component<Props> {
           <View style={styles.container}>
             { this.state.active == 'home' && <Home onSetActive={(tab)=> this.onSetActive(tab)}></Home> }
             { this.state.active == 'category' && <Text>Category</Text> }
-            { this.state.active == 'library' && <Text>Library</Text> }
+            { this.state.active == 'library' && <Library></Library> }
             { this.state.active == 'about' && <Text>About</Text> }
           </View>
 
