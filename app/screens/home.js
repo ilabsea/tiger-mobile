@@ -16,6 +16,7 @@ import {
   COLOR,
 } from 'react-native-material-ui';
 
+import realm from '../schema';
 import I18n from '../i18n/i18n';
 import headerStyle from '../assets/style_sheets/header';
 import storyService from '../services/story.service';
@@ -44,7 +45,8 @@ export default class Home extends Component {
   }
 
   showModel(story) {
-    this.setState({modalVisible: true, story: story});
+    let objStory = realm.objects('Story').filtered(`id=${story.id}`)[0];
+    this.setState({modalVisible: true, story: story, storyDownloaded: !!objStory});
   }
 
   _getStories = () => {
@@ -140,8 +142,15 @@ export default class Home extends Component {
         modalVisible={this.state.modalVisible}
         story={this.state.story}
         onRequestClose={() => this.setState({modalVisible: false})}
+        storyDownloaded={this.state.storyDownloaded}
+        readNow={() => this.readNow()}
       ></StoryModal>
     )
+  }
+
+  readNow() {
+    this.setState({modalVisible: false});
+    this.props.onSetActive('library');
   }
 
   render() {

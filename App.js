@@ -33,6 +33,10 @@ export default class App extends Component<Props> {
     this.state = { active: 'home' };
   }
 
+  onSetActive(tab) {
+    this.setState({active: tab});
+  }
+
   render() {
     return (
       <ThemeProvider uiTheme={uiTheme}>
@@ -41,7 +45,7 @@ export default class App extends Component<Props> {
           <View style={{ backgroundColor: COLOR.tealA700, height: 24 }} />
 
           <View style={styles.container}>
-            { this.state.active == 'home' && <Home></Home> }
+            { this.state.active == 'home' && <Home onSetActive={(tab)=> this.onSetActive(tab)}></Home> }
             { this.state.active == 'category' && <Text>Category</Text> }
             { this.state.active == 'library' && <Text>Library</Text> }
             { this.state.active == 'about' && <Text>About</Text> }

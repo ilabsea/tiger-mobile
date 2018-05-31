@@ -11,11 +11,12 @@ import {
 } from 'react-native';
 
 import { Toolbar, Icon } from 'react-native-material-ui';
+import RNFS from 'react-native-fs';
+import * as Progress from 'react-native-progress';
 import I18n from '../i18n/i18n';
 import headerStyle from '../assets/style_sheets/header';
 import realm from '../schema';
 import sceneService from '../services/scene.service';
-import RNFS from 'react-native-fs';
 
 let jobId = -1;
 let images = [];
@@ -25,10 +26,8 @@ export default class StoryModal extends Component {
     super(props);
 
     this.state = {
-      output: 'Doc folder: ' + RNFS.DocumentDirectoryPath,
-      imagePath: {
-        uri: ''
-      }
+      showReadNow: false,
+      showProgress: false,
     }
   }
 
@@ -77,60 +76,16 @@ export default class StoryModal extends Component {
     })
   }
 
-  _downloadFiles(story, scenes) {
-    let scenesList = scenes.filter(s => !!s.image);
-    images = [{type: 'Story', id: story.id, url: story.image}];
-
-    scenesList.map((s)=>{
-      images.push({type: 'Scene', id: s.id, url: s.image})
-    })
-
-    this._downloadFile(0);
-  }
-
-  _downloadFile(index) {
-    // console.log('===============images', images);
-    let image = images[index];
-    let progress = data => {};
-    let begin = res => {};
-    let progressDivider = 1;
-    let background = false;
-
-    let fileName = image.url.split('/').slice(-1)[0];
-    let downloadDest = `${RNFS.DocumentDirectoryPath}/${fileName}`;
-    let ret = RNFS.downloadFile({ fromUrl: `http://192.168.1.107:3000${image.url}`, toFile: downloadDest, begin, progress, background, progressDivider });
-    jobId = ret.jobId;
-
-    ret.promise.then(res => {
-      realm.write(() => {
-        let obj = realm.objects(image.type).filtered(`id=${image.id}`)[0];
-        obj.image = downloadDest;
-
-        console.log('================obj with image', obj);
-      })
-
-      jobId = -1;
-
-      if (index + 1 < images.length) {
-        this._downloadFile(index + 1);
-      }
-    }).catch(err => {
-      jobId = -1;
-
-      if (index + 1 < images.length) {
-        this._downloadFile(index + 1);
-      }
-    });
-  }
-
-
   _importSceneActions(scenes) {
-    let allActions = realm.objects('SceneAction');
-    realm.delete(allActions);
+
+    let list = realm.objects('SceneAction');
+    realm.delete(list);
 
     scenes.map((scene) => {
       let objScene = realm.objects('Scene').filtered(`id=${scene.id}`)[0];
       let actionList = objScene.sceneActions;
+
+      actionList = objScene.sceneActions;
 
       scene.scene_actions.map((action) => {
         if (!!action.link_scene.id) {
@@ -150,6 +105,55 @@ export default class StoryModal extends Component {
     });
   }
 
+  _downloadFiles(story, scenes) {
+    let scenesList = scenes.filter(s => !!s.image);
+    images = [{type: 'Story', id: story.id, url: story.image}];
+    scenesList.map((s)=>{ images.push({type: 'Scene', id: s.id, url: s.image}) });
+    this.setState({showProgress: true, progress: 0});
+    this._downloadFile(0);
+  }
+
+  // https://github.com/cjdell/react-native-fs-test/blob/master/index.common.js
+  _downloadFile(index) {
+    let image = images[index];
+    let progress = data => {};
+    let begin = res => {};
+    let progressDivider = 1;
+    let background = false;
+    let url = `http://192.168.1.107:3000${image.url}`;
+    let fileName = image.url.split('/').slice(-1)[0];
+    let downloadDest = `${RNFS.DocumentDirectoryPath}/${fileName}`;
+
+    let ret = RNFS.downloadFile({ fromUrl: url, toFile: downloadDest, begin, progress, background, progressDivider });
+    jobId = ret.jobId;
+
+    ret.promise.then(res => {
+      realm.write(() => {
+        let obj = realm.objects(image.type).filtered(`id=${image.id}`)[0];
+        obj.image = downloadDest;
+        this.setState({progress: index+1/images.length});
+
+        console.log('================obj with image', obj);
+      })
+
+      jobId = -1;
+
+      if (index + 1 < images.length) {
+        this._downloadFile(index + 1);
+      } else {
+        this.setState({showProgress: false, showReadNow: true});
+      }
+    }).catch(err => {
+      jobId = -1;
+
+      if (index + 1 < images.length) {
+        this._downloadFile(index + 1);
+      } else {
+        this.setState({showProgress: false, showReadNow: true});
+      }
+    });
+  }
+
   _downloadStory(story) {
     sceneService.getAll(story.id)
       .then((responseJson) => {
@@ -158,59 +162,27 @@ export default class StoryModal extends Component {
           this._importScenes(story, responseJson.data.scenes);
           this._importSceneActions(responseJson.data.scenes);
           this._downloadFiles(story, responseJson.data.scenes);
-
-          // let objStory = realm.objects('Story').filtered(`id=${story.id}`);
-          // console.log('================test', objStory);
         });
       })
   }
 
-  downloadFileTest(background, url) {
-    if (jobId !== -1) {
-      this.setState({ output: 'A download is already in progress' });
-    }
-
-    const progress = data => {
-      const percentage = ((100 * data.bytesWritten) / data.contentLength) | 0;
-      const text = `Progress ${percentage}%`;
-      this.setState({ output: text });
-    };
-
-    const begin = res => {
-      this.setState({ output: 'Download has begun' });
-    };
-
-    const progressDivider = 1;
-
-    this.setState({ imagePath: { uri: '' } });
-
-    const downloadDest = `${RNFS.DocumentDirectoryPath}/${((Math.random() * 1000) | 0)}.jpg`;
-
-    const ret = RNFS.downloadFile({ fromUrl: url, toFile: downloadDest, begin, progress, background, progressDivider });
-
-    jobId = ret.jobId;
-
-    ret.promise.then(res => {
-      this.setState({ output: JSON.stringify(res) });
-      this.setState({ imagePath: { uri: 'file://' + downloadDest } });
-
-      jobId = -1;
-    }).catch(err => {
-      this.showError(err)
-
-      jobId = -1;
-    });
-  }
-
   _renderBtnDownload(story) {
     return (
-      <TouchableOpacity
-        onPress={()=> this._downloadStory(story)}
-        style={styles.btnDownload}
-      >
-        <Icon name="cloud-download" color='#fff' size={24} />
-        <Text style={styles.btnDownloadText}>{I18n.t('add_to_library')}</Text>
-      </TouchableOpacity>
+      <View style={{marginTop: 24}}>
+        { ( true || !this.props.storyDownloaded && !this.state.showReadNow ) &&
+          <TouchableOpacity
+            onPress={()=> this._downloadStory(story)}
+            style={styles.btnDownload}
+          >
+            <Icon name="cloud-download" color='#fff' size={24} />
+            <Text style={styles.btnLabel}>{I18n.t('add_to_library')}</Text>
+          </TouchableOpacity>
+        }
+
+        { this.state.showProgress &&
+          <Progress.Pie progress={this.state.progress} color='#E4145C'/>
+        }
+      </View>
     )
   }
 
@@ -256,13 +228,25 @@ export default class StoryModal extends Component {
     )
   }
 
+  _renderBtnReadNow() {
+    return (
+      <TouchableOpacity
+        onPress={()=> {this.props.readNow()}}
+        style={[styles.btnDownload, styles.btnReadNow]}
+      >
+        <Icon name="book" color='#fff' size={24} />
+        <Text style={styles.btnLabel}>{I18n.t('read_now')}</Text>
+      </TouchableOpacity>
+    )
+  }
+
   _renderModelContent = (story) => {
     return (
       <View style={{flex: 1}}>
         <Toolbar
           leftElement="arrow-back"
           centerElement={<Text style={headerStyle.title}>{story.title}</Text>}
-          onLeftElementPress={this.props.onRequestClose}
+          onLeftElementPress={() => this._closeModal()}
         />
 
         <ScrollView style={{flex: 1}}>
@@ -272,45 +256,23 @@ export default class StoryModal extends Component {
           </View>
 
           { this._renderDescription(story) }
-
-          { false && this.renderDownloadImageForTest() }
+          { (this.props.storyDownloaded || this.state.showReadNow) && this._renderBtnReadNow() }
         </ScrollView>
       </View>
     )
   }
 
-  renderDownloadImageForTest() {
-    const downloadUrl = "http://192.168.1.107:3000/uploads/story/image/16/30741642_226130137942625_5053281481921658880_o.jpg";
-
-    return(
-      <View>
-        <View style={styles.panes}>
-          <View style={styles.leftPane}>
-            <TouchableHighlight onPress={() => {this.downloadFileTest(true, downloadUrl)} }>
-              <View style={styles.button}>
-                <Text style={styles.text}>Download File</Text>
-              </View>
-            </TouchableHighlight>
-          </View>
-        </View>
-
-        <View>
-          <Text style={styles.text}>{this.state.output}</Text>
-
-          { !!this.state.imagePath.uri &&
-            <View>
-              <Image style={styles.image} source={this.state.imagePath}></Image>
-              <Text>{this.state.imagePath.uri}</Text>
-            </View>
-          }
-
-        </View>
-      </View>
-    )
+  _closeModal() {
+    this.props.onRequestClose();
+    this.setState({
+      showReadNow: false,
+      showProgress: false,
+    })
   }
 
   render() {
     const { story, modalVisible, onRequestClose, ...props } = this.props;
+    console.log('----------------this.props.storyDownloaded', this.props.storyDownloaded);
 
     return (
       <Modal
@@ -318,13 +280,12 @@ export default class StoryModal extends Component {
         animationType="slide"
         transparent={false}
         visible={modalVisible}
-        onRequestClose={onRequestClose}>
+        onRequestClose={() => this._closeModal()}>
 
         { this._renderModelContent(story) }
       </Modal>
     )
   }
-
 }
 
 const styles = StyleSheet.create({
@@ -345,7 +306,6 @@ const styles = StyleSheet.create({
     textDecorationLine: 'underline',
   },
   btnDownload: {
-    marginTop: 24,
     paddingVertical: 10,
     borderRadius: 10,
     backgroundColor: '#E4145C',
@@ -353,7 +313,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  btnDownloadText: {
+  btnReadNow: {
+    backgroundColor: 'green',
+    marginHorizontal: 24,
+  },
+  btnLabel: {
     color: '#fff',
     marginLeft: 10,
   },
