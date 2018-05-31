@@ -59,25 +59,33 @@ export default class Labrary extends Component {
   _getStories = () => {
     this._currentPage++;
 
-    storyService.getAll(this._currentPage)
-      .then((responseJson) => {
-        this._data = this._data.concat(responseJson.data.stories);
-        this._totalPage = responseJson.data.meta.pagination.total_pages;
-        this.setState({
-          isLoading: false,
-          dataSource: this.state.dataSource.cloneWithRows(this._data)
-        });
-      })
+    let allStories = realm.objects('Story');
+    let start = (this._currentPage - 1) * storyService.perPage;
+    let end = this._currentPage * storyService.perPage;
+    let stories = allStories.slice(start, end);
+
+    this._data = this._data.concat(stories);
+    this._totalPage = Math.round(allStories.length / storyService.perPage);
+    this.setState({
+      isLoading: false,
+      dataSource: this.state.dataSource.cloneWithRows(this._data)
+    });
   }
 
   _renderItem(item) {
+    let tags = item.tags.map((tag, index) => {
+      return (
+        <Text key={index} style={{marginRight: 5, backgroundColor: '#eee', borderRadius: 3, paddingHorizontal: 4}}>{tag}</Text>
+      )
+    })
+
     return (
       <Card style={{}} onPress={()=> {alert('click card')}}>
         <View style={styles.item}>
           <View style={{height: 200, borderColor: '#eee', borderWidth: 0.5, borderRadius: 3, alignItems: 'center'}}>
             <Image
               style={{width: 150, height: 200, marginRight: 16}}
-              source={{uri: "http://192.168.1.107:3000" + item.image}}
+              source={{uri: `file://${item.image}`}}
             />
           </View>
 
@@ -90,11 +98,10 @@ export default class Labrary extends Component {
               {item.title}
             </Text>
 
-            <Text style={{color: '#ccc', fontSize: 18}}>Author: {item.user.email.split('@')[0]}</Text>
+            <Text style={{color: '#ccc', fontSize: 18}}>Author: {item.author}</Text>
 
             <View style={{flexDirection:'row', flexWrap:'wrap', marginTop: 8}}>
-              <Text style={{backgroundColor: '#eee', borderRadius: 3, paddingHorizontal: 4, marginRight: 4}}>{!!item.tags[0] && item.tags[0].title}</Text>
-              <Text style={{backgroundColor: '#eee', borderRadius: 3, paddingHorizontal: 4, marginRight: 4}}>{!!item.tags[1] && item.tags[1].title}</Text>
+              {tags}
             </View>
           </View>
 
@@ -111,6 +118,7 @@ export default class Labrary extends Component {
       <ListView
         dataSource={this.state.dataSource}
         renderRow={(rowData) => this._renderItem(rowData)}
+        enableEmptySections={ true }
         style={{flex: 1, paddingBottom: 16}}
         refreshControl={
           <RefreshControl
