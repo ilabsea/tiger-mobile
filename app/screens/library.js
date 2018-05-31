@@ -20,7 +20,7 @@ import realm from '../schema';
 import I18n from '../i18n/i18n';
 import headerStyle from '../assets/style_sheets/header';
 import storyService from '../services/story.service';
-import StoryModal from './story_modal';
+import StoryPreviewModal from './story_preview_modal';
 
 export default class Labrary extends Component {
   _data = [];
@@ -72,6 +72,10 @@ export default class Labrary extends Component {
     });
   }
 
+  _showModal(item) {
+    this.setState({modalVisible: true, story: item});
+  }
+
   _renderItem(item) {
     let tags = item.tags.map((tag, index) => {
       return (
@@ -80,7 +84,7 @@ export default class Labrary extends Component {
     })
 
     return (
-      <Card style={{}} onPress={()=> {alert('click card')}}>
+      <Card style={{}} onPress={()=> this._showModal(item)}>
         <View style={styles.item}>
           <View style={{height: 200, borderColor: '#eee', borderWidth: 0.5, borderRadius: 3, alignItems: 'center'}}>
             <Image
@@ -131,6 +135,16 @@ export default class Labrary extends Component {
     )
   }
 
+  _renderModal() {
+    return (
+      <StoryPreviewModal
+        modalVisible={this.state.modalVisible}
+        story={this.state.story}
+        onRequestClose={() => this.setState({modalVisible: false})}
+      ></StoryPreviewModal>
+    )
+  }
+
   render() {
     if(this.state.isLoading){
       return(
@@ -147,6 +161,7 @@ export default class Labrary extends Component {
         />
 
         { this._renderList() }
+        { this._renderModal() }
       </View>
     )
   }
