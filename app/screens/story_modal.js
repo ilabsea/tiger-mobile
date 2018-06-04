@@ -46,7 +46,8 @@ export default class StoryModal extends Component {
       image: '',
       author: story.user.email.split('@')[0],
       publishedAt: story.published_at,
-      tags: story.tags.map(tag => tag.title)
+      tags: story.tags.map(tag => tag.title),
+      createdAt: new Date()
     };
   }
 

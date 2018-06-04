@@ -17,6 +17,7 @@ Story.schema = {
     tags: 'string[]',
     scenes: { type: 'list', objectType: 'Scene' },
     questions: { type: 'list', objectType: 'Question' },
-    isRead: { type: 'bool', default: false }
+    isRead: { type: 'bool', default: false },
+    createdAt: 'date'
   }
 }

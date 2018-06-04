@@ -59,7 +59,7 @@ export default class Labrary extends Component {
   _getStories = () => {
     this._currentPage++;
 
-    let allStories = realm.objects('Story');
+    let allStories = realm.objects('Story').sorted('createdAt', true);
     let start = (this._currentPage - 1) * storyService.perPage;
     let end = this._currentPage * storyService.perPage;
     let stories = allStories.slice(start, end);
