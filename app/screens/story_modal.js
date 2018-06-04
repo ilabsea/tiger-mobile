@@ -17,6 +17,7 @@ import I18n from '../i18n/i18n';
 import headerStyle from '../assets/style_sheets/header';
 import realm from '../schema';
 import sceneService from '../services/scene.service';
+import questionService from '../services/question.service';
 
 let jobId = -1;
 let images = [];
@@ -78,7 +79,6 @@ export default class StoryModal extends Component {
   }
 
   _importSceneActions(scenes) {
-
     let list = realm.objects('SceneAction');
     realm.delete(list);
 
@@ -134,7 +134,7 @@ export default class StoryModal extends Component {
         obj.image = downloadDest;
         this.setState({progress: index+1/images.length});
 
-        console.log('================obj with image', obj);
+        // console.log('================obj with image', obj);
       })
 
       jobId = -1;
@@ -163,6 +163,47 @@ export default class StoryModal extends Component {
           this._importScenes(story, responseJson.data.scenes);
           this._importSceneActions(responseJson.data.scenes);
           this._downloadFiles(story, responseJson.data.scenes);
+        });
+
+        this._getQuizzes(story);
+      })
+  }
+
+  _importQuestions(story, questions) {
+    let objStory = realm.objects('Story').filtered(`id=${story.id}`)[0];
+    let questionList = objStory.questions;
+
+    realm.delete(questionList);
+
+    questions.map((question) => {
+      let questionDb = realm.create('Question', {
+        id: question.id,
+        label: question.label,
+        displayOrder: question.display_order,
+        storyId: question.story_id,
+      }, true)
+
+      question.choices.map((choice) => {
+        let choiceDb = realm.create('Choice', {
+          id: choice.id,
+          label: choice.label,
+          answered: !!choice.answered,
+          questionId: question.id
+        }, true)
+
+        questionDb.choices.push(choiceDb);
+      })
+
+      questionList.push(questionDb);
+    })
+  }
+
+  _getQuizzes(story) {
+    questionService.getAll(story.id)
+      .then((responseJson) => {
+        realm.write(() => {
+          console.log('===========responseJson.data.questions', responseJson.data.questions);
+          this._importQuestions(story, responseJson.data.questions);
         });
       })
   }
@@ -273,7 +314,7 @@ export default class StoryModal extends Component {
 
   render() {
     const { story, modalVisible, onRequestClose, ...props } = this.props;
-    console.log('----------------this.props.storyDownloaded', this.props.storyDownloaded);
+    // console.log('----------------this.props.storyDownloaded', this.props.storyDownloaded);
 
     return (
       <Modal

@@ -7,6 +7,6 @@ const api = create({
 
 export default {
   getAll(storyId) {
-    return api.get(`/stories/${storyId}/scenes`);
+    return api.get(`/stories/${storyId}/questions`);
   }
 }

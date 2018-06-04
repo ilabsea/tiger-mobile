@@ -10,4 +10,7 @@ export default {
   published_at: 'ចេញផ្សាយ',
   introduction: 'សេចក្តីណែនាំ',
   read_now: 'ចូលអាន',
+  go_to_quiz: 'ចូលទៅសំណួរ',
+  quiz: 'តេស្ត',
+  question: 'សំណួរ'
 };

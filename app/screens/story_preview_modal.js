@@ -19,31 +19,39 @@ import realm from '../schema';
 const win = Dimensions.get('window');
 
 export default class StoryPreviewModal extends Component {
-  constructor(props) {
-    super(props);
-  }
+  dataSource = [];
+  questions = [];
+  totalSlides = 0;
 
   _slideTo(linkScene) {
     if (!linkScene) {
-      // carousel.slideTo(this.dataSource.length);
-      return;
+      return this.refs.mySlider.setPage(this.dataSource.length);
     }
 
-    let dataSource = this.props.story.scenes || [];
-    let index = dataSource.findIndex(scene => scene.id == linkScene.id);
-
+    let index = this.dataSource.findIndex(scene => scene.id == linkScene.id);
     this.refs.mySlider.setPage(index);
   }
 
   _renderActionButtons(scene) {
+    if (!scene.sceneActions.length) {
+      return (
+        <Button
+          raised
+          accent
+          style={{container: styles.button}}
+          onPress={()=> this._slideTo()}
+          text={I18n.t('go_to_quiz')} />
+      )
+    }
+
     return (
-      (scene.sceneActions || []).map((action, i) => {
-        console.log('==============action', action)
+      (scene.sceneActions).map((action, i) => {
         return (
           <Button
             key={i}
             raised
             accent
+            style={{container: styles.button}}
             onPress={()=> this._slideTo(action.linkScene)}
             text={action.name} />
         )
@@ -69,29 +77,76 @@ export default class StoryPreviewModal extends Component {
     )
   }
 
-  _renderSlides() {
-    // let story = realm.objects('Story').filtered(`id=${this.props.story.id}`)[0];
-    let scenes = this.props.story.scenes || [];
-    let slides = scenes.map((scene, index) => {
+  _renderScenes() {
+    return(
+      (this.dataSource).map((scene, index) => {
+        return (
+          <View key={index}>
+            { scene.visibleName && <Text style={[styles.title]}>{scene.name}</Text> }
 
-      return (
-        <View key={index}>
-          { scene.visibleName && <Text style={[styles.title]}>{scene.name}</Text> }
+            { this._renderImage(scene) }
 
-          { this._renderImage(scene) }
+            <View style={[scene.imageAsBackground ? styles.popLayer : {}]}>
+              <Text style={[styles.textShadow, {padding: 16}]}>{scene.description}</Text>
 
-          <View style={[scene.imageAsBackground ? styles.popLayer : {}]}>
-            <Text style={[styles.textShadow, {padding: 16}]}>{scene.description}</Text>
+              <View style={{padding: 16}}>
+                { this._renderActionButtons(scene) }
+              </View>
+            </View>
+
+          </View>
+        )
+      })
+    )
+  }
+
+  _slideQuizTo(index, choice) {
+    let next = this.dataSource.length + index;
+
+    // this._setAnswer(index-1, choice);
+
+    if ( next == this.totalSlides) {
+      return alert('done');
+    }
+
+    this.refs.mySlider.setPage(next);
+  }
+
+  _renderChoices(question, index) {
+    return(
+      (question.choices || []).map((choice, i) => (
+        <Button
+          key={i}
+          raised
+          accent
+          style={{container: styles.button}}
+          onPress={()=> this._slideQuizTo(index+1, choice)}
+          text={choice.label} />
+      ))
+    )
+  }
+
+  _renderQuizzes() {
+    return(
+      this.questions.map((question, index) => {
+        return (
+          <View key={index}>
+            <Text style={[styles.title]}>{ I18n.t('quiz')}: {I18n.t('question')} {index + 1}/{this.questions.length }</Text>
+
+            <View style={{flex: 1, alignItems: 'center', justifyContent: 'center', padding: 16}}>
+              <Text>{ question.label }</Text>
+            </View>
 
             <View style={{padding: 16}}>
-              { this._renderActionButtons(scene) }
+              { this._renderChoices(question, index) }
             </View>
           </View>
+        )
+      })
+    )
+  }
 
-        </View>
-      )
-    });
-
+  _renderSlides() {
     return (
       <View style={{flex: 1}}>
         <IndicatorViewPager
@@ -99,7 +154,8 @@ export default class StoryPreviewModal extends Component {
           ref="mySlider"
           horizontalScroll={false}
         >
-        { slides }
+          { this._renderScenes() }
+          { this._renderQuizzes() }
         </IndicatorViewPager>
       </View>
     )
@@ -115,7 +171,6 @@ export default class StoryPreviewModal extends Component {
         />
 
         { this._renderSlides() }
-
       </View>
     )
   }
@@ -126,6 +181,10 @@ export default class StoryPreviewModal extends Component {
 
   render() {
     const { story, modalVisible, onRequestClose, ...props } = this.props;
+
+    this.dataSource = story.scenes || [];
+    this.questions = story.questions || [];
+    this.totalSlides = this.dataSource.length + this.questions.length;
 
     return (
       <Modal
@@ -162,5 +221,8 @@ const styles = StyleSheet.create({
     fontSize: 20,
     lineHeight: 24,
     padding: 16
+  },
+  button: {
+    marginTop: 6,
   }
 });
