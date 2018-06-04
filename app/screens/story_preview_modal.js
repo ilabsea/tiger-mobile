@@ -6,15 +6,15 @@ import {
   TouchableOpacity,
   Image,
   Modal,
-  ScrollView,
   Dimensions,
 } from 'react-native';
 
-import {PagerTabIndicator, IndicatorViewPager, PagerTitleIndicator, PagerDotIndicator} from 'rn-viewpager';
-import { Toolbar, Icon, Button} from 'react-native-material-ui';
+import { IndicatorViewPager } from 'rn-viewpager';
+import { Toolbar, Icon } from 'react-native-material-ui';
 import I18n from '../i18n/i18n';
 import headerStyle from '../assets/style_sheets/header';
 import realm from '../schema';
+import Button from '../components/button';
 
 const win = Dimensions.get('window');
 
@@ -23,56 +23,35 @@ export default class StoryPreviewModal extends Component {
   questions = [];
   totalSlides = 0;
 
-  _slideTo(linkScene) {
-    if (!linkScene) {
-      return this.refs.mySlider.setPage(this.dataSource.length);
-    }
-
-    let index = this.dataSource.findIndex(scene => scene.id == linkScene.id);
-    this.refs.mySlider.setPage(index);
-  }
-
   _renderActionButtons(scene) {
-    if (!scene.sceneActions.length) {
+    if (!scene.sceneActions.length && !!this.questions.length) {
       return (
         <Button
-          raised
-          accent
-          style={{container: styles.button}}
           onPress={()=> this._slideTo()}
-          text={I18n.t('go_to_quiz')} />
+          title={ I18n.t('go_to_quiz') }
+        ></Button>
       )
     }
 
     return (
       (scene.sceneActions).map((action, i) => {
-        return (
+        return(
           <Button
             key={i}
-            raised
-            accent
-            style={{container: styles.button}}
             onPress={()=> this._slideTo(action.linkScene)}
-            text={action.name} />
+            title={action.name}
+          ></Button>
         )
       })
     )
   }
 
   _renderImage(scene) {
-    let image = require('../assets/images/scenes/default.jpg');
-
-    if (!!scene.image) {
-      image = {uri: `file://${scene.image}`};
-    }
+    let image = !!scene.image ? { uri: `file://${scene.image}` } : require('../assets/images/scenes/default.jpg');
 
     return (
-      <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
-        <Image
-          style={styles.image}
-          resizeMode={'contain'}
-          source={image}
-        />
+      <View style={styles.centerChildWrapper}>
+        <Image style={styles.image} resizeMode={'contain'} source={image} />
       </View>
     )
   }
@@ -100,6 +79,15 @@ export default class StoryPreviewModal extends Component {
     )
   }
 
+  _slideTo(linkScene) {
+    if (!linkScene) {
+      return this.refs.mySlider.setPage(this.dataSource.length);
+    }
+
+    let index = this.dataSource.findIndex(scene => scene.id == linkScene.id);
+    this.refs.mySlider.setPage(index);
+  }
+
   _slideQuizTo(index, choice) {
     let next = this.dataSource.length + index;
 
@@ -117,11 +105,9 @@ export default class StoryPreviewModal extends Component {
       (question.choices || []).map((choice, i) => (
         <Button
           key={i}
-          raised
-          accent
-          style={{container: styles.button}}
           onPress={()=> this._slideQuizTo(index+1, choice)}
-          text={choice.label} />
+          title={choice.label}
+        ></Button>
       ))
     )
   }
@@ -133,7 +119,7 @@ export default class StoryPreviewModal extends Component {
           <View key={index}>
             <Text style={[styles.title]}>{ I18n.t('quiz')}: {I18n.t('question')} {index + 1}/{this.questions.length }</Text>
 
-            <View style={{flex: 1, alignItems: 'center', justifyContent: 'center', padding: 16}}>
+            <View style={[styles.centerChildWrapper, {padding: 16}]}>
               <Text>{ question.label }</Text>
             </View>
 
@@ -222,7 +208,9 @@ const styles = StyleSheet.create({
     lineHeight: 24,
     padding: 16
   },
-  button: {
-    marginTop: 6,
+  centerChildWrapper: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center'
   }
 });
