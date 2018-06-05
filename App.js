@@ -16,6 +16,7 @@ import { MenuProvider } from 'react-native-popup-menu';
 import I18n from './app/i18n/i18n';
 import Home from './app/screens/home';
 import Library from './app/screens/library';
+import About from './app/screens/about';
 
 type Props = {};
 
@@ -65,7 +66,7 @@ export default class App extends Component<Props> {
                 onSetStory={(story) => this.onSetStory(story)}
               ></Library>
             }
-            { this.state.active == 'about' && <Text>About</Text> }
+            { this.state.active == 'about' && <About></About> }
           </View>
 
           <BottomNavigation active={this.state.active} hidden={false} >
