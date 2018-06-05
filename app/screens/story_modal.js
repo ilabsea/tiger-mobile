@@ -93,7 +93,8 @@ export default class StoryModal extends Component {
             name: action.name,
             displayOrder: action.display_order,
             sceneId: scene.id,
-            linkScene: linkScene
+            linkScene: linkScene,
+            storyId: scene.story_id,
           }, true)
 
           actionList.push(objAction);

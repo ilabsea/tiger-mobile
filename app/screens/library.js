@@ -138,7 +138,15 @@ export default class Labrary extends Component {
   }
 
   _deleteStory(story) {
-    console.log('-------------delete', story)
+    realm.write(() => {
+      let actions = realm.objects('SceneAction').filtered(`storyId=${story.id}`);
+      let scenes = realm.objects('Scene').filtered(`storyId=${story.id}`);
+
+      realm.delete(actions);
+      realm.delete(scenes);
+      realm.delete(story);
+      this._onRefresh();
+    });
   }
 
   _renderList() {
