@@ -183,7 +183,8 @@ export default class StoryModal extends Component {
           id: choice.id,
           label: choice.label,
           answered: !!choice.answered,
-          questionId: question.id
+          questionId: question.id,
+          storyId: question.story_id,
         }, true)
 
         questionDb.choices.push(choiceDb);

@@ -11,6 +11,7 @@ Choice.schema = {
     id: 'int',
     label: 'string',
     answered: { type: 'bool', default: false },
-    questionId: 'int'
+    questionId: 'int',
+    storyId: 'int',
   }
 }
