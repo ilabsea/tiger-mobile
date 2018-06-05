@@ -12,5 +12,7 @@ export default {
   read_now: 'ចូលអាន',
   go_to_quiz: 'ចូលទៅសំណួរ',
   quiz: 'តេស្ត',
-  question: 'សំណួរ'
+  question: 'សំណួរ',
+  result: 'លទ្ធផល',
+  done: 'រួចរាល់'
 };

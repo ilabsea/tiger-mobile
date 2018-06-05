@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import {
   Text,
   View,
+  ScrollView,
   StyleSheet,
   TouchableOpacity,
   Image,
@@ -21,7 +22,46 @@ const win = Dimensions.get('window');
 export default class StoryPreviewModal extends Component {
   dataSource = [];
   questions = [];
+  answers = [];
   totalSlides = 0;
+  state = { questions: [] };
+
+  _slideTo(linkScene) {
+    if (!linkScene) {
+      return this.refs.mySlider.setPage(this.dataSource.length);
+    }
+
+    let index = this.dataSource.findIndex(scene => scene.id == linkScene.id);
+    this.refs.mySlider.setPage(index);
+  }
+
+  _setAnswer(index, choice) {
+    this.questions[index]['user_choice'] = choice;
+    this.answers[index] = this.questions[index];
+
+    this.setState({questions: this.answers});
+  }
+
+  _slideQuizTo(index, choice) {
+    let next = this.dataSource.length + index;
+
+    this._setAnswer(index-1, choice);
+    this.refs.mySlider.setPage(next);
+  }
+
+  _isCorrect(id, choices) {
+    let arr = this._answers(choices).filter(obj => obj.id == id);
+    return !!arr.length;
+  }
+
+  _getAnswers(choices) {
+    let arr = this._answers(choices).map(choice => choice.label);
+    return arr.join(' / ');
+  }
+
+  _answers(choices) {
+    return choices.filter(obj => !!obj.answered);
+  }
 
   _renderActionButtons(scene) {
     if (!scene.sceneActions.length && !!this.questions.length) {
@@ -79,27 +119,6 @@ export default class StoryPreviewModal extends Component {
     )
   }
 
-  _slideTo(linkScene) {
-    if (!linkScene) {
-      return this.refs.mySlider.setPage(this.dataSource.length);
-    }
-
-    let index = this.dataSource.findIndex(scene => scene.id == linkScene.id);
-    this.refs.mySlider.setPage(index);
-  }
-
-  _slideQuizTo(index, choice) {
-    let next = this.dataSource.length + index;
-
-    // this._setAnswer(index-1, choice);
-
-    if ( next == this.totalSlides) {
-      return alert('done');
-    }
-
-    this.refs.mySlider.setPage(next);
-  }
-
   _renderChoices(question, index) {
     return(
       (question.choices || []).map((choice, i) => (
@@ -132,17 +151,38 @@ export default class StoryPreviewModal extends Component {
     )
   }
 
-  _renderSlides() {
+  _renderQuizzResult() {
+    let doms = this.state.questions.map((question, index) => {
+      return (
+        <View key={index} style={{marginBottom: 10}}>
+          <Text>{index+1}) {question.label}</Text>
+          <Text>
+            <Text style={{fontWeight: '500'}}>Answer: </Text>
+
+            { !this._isCorrect(question.user_choice.id, question.choices) &&
+              <Text style={{color: 'red'}}>{question.user_choice.label} / </Text>
+            }
+
+            <Text style={{color: 'green'}}>[{this._getAnswers(question.choices)}]</Text>
+          </Text>
+        </View>
+      )
+    })
+
     return (
-      <View style={{flex: 1}}>
-        <IndicatorViewPager
-          style={{flex: 1}}
-          ref="mySlider"
-          horizontalScroll={false}
-        >
-          { this._renderScenes() }
-          { this._renderQuizzes() }
-        </IndicatorViewPager>
+      <View>
+        <Text style={[styles.title]}>{ I18n.t('result')}</Text>
+
+        <ScrollView style={{flex: 1, padding: 16, backgroundColor: 'pink'}}>
+          {doms}
+        </ScrollView>
+
+        <View style={{padding: 16}}>
+          <Button
+            title={I18n.t('done')}
+            onPress={() => this._closeModal()}
+          ></Button>
+        </View>
       </View>
     )
   }
@@ -156,7 +196,17 @@ export default class StoryPreviewModal extends Component {
           onLeftElementPress={() => this._closeModal()}
         />
 
-        { this._renderSlides() }
+        <View style={{flex: 1}}>
+          <IndicatorViewPager
+            style={{flex: 1}}
+            ref="mySlider"
+            horizontalScroll={false}
+          >
+            { this._renderScenes() }
+            { this._renderQuizzes() }
+            { this._renderQuizzResult() }
+          </IndicatorViewPager>
+        </View>
       </View>
     )
   }
@@ -169,7 +219,8 @@ export default class StoryPreviewModal extends Component {
     const { story, modalVisible, onRequestClose, ...props } = this.props;
 
     this.dataSource = story.scenes || [];
-    this.questions = story.questions || [];
+    // this.dataSource = [];
+    this.questions = (story.questions || []).slice();
     this.totalSlides = this.dataSource.length + this.questions.length;
 
     return (
