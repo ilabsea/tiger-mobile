@@ -18,6 +18,7 @@ import headerStyle from '../assets/style_sheets/header';
 import realm from '../schema';
 import sceneService from '../services/scene.service';
 import questionService from '../services/question.service';
+import statisticService from '../services/statistic.service';
 
 let jobId = -1;
 let images = [];
@@ -161,7 +162,12 @@ export default class StoryModal extends Component {
         });
 
         this._getQuizzes(story);
+        this._postStatistic(story);
       })
+  }
+
+  _postStatistic(story) {
+    statisticService.increaseStoryDownload({story_id: story.id, device_type: 'mobile'});
   }
 
   _importQuestions(story, questions) {
