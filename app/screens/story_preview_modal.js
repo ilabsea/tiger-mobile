@@ -99,13 +99,15 @@ export default class StoryPreviewModal extends Component {
   _renderScenes() {
     return(
       (this.dataSource).map((scene, index) => {
+        let style = (!scene.image || scene.imageAsBackground) ? styles.popLayer : {}
+
         return (
           <View key={index}>
             { scene.visibleName && <Text style={[styles.title]}>{scene.name}</Text> }
 
             { this._renderImage(scene) }
 
-            <View style={[scene.imageAsBackground ? styles.popLayer : {}]}>
+            <View style={style}>
               <Text style={[styles.textShadow, {padding: 16}]}>{scene.description}</Text>
 
               <View style={{padding: 16}}>
