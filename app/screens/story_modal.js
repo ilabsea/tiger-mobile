@@ -206,7 +206,7 @@ export default class StoryModal extends Component {
   _renderBtnDownload(story) {
     return (
       <View style={{marginTop: 24}}>
-        { ( true || !this.props.storyDownloaded && !this.state.showReadNow ) &&
+        { ( !this.props.storyDownloaded && !this.state.showReadNow ) &&
           <TouchableOpacity
             onPress={()=> this._downloadStory(story)}
             style={styles.btnDownload}
@@ -217,7 +217,7 @@ export default class StoryModal extends Component {
         }
 
         { this.state.showProgress &&
-          <Progress.Pie progress={this.state.progress} color='#E4145C'/>
+          <Progress.Pie progress={this.state.progress} color='#E4145C' style={{marginTop: 10}}/>
         }
       </View>
     )
@@ -265,10 +265,10 @@ export default class StoryModal extends Component {
     )
   }
 
-  _renderBtnReadNow() {
+  _renderBtnReadNow(story) {
     return (
       <TouchableOpacity
-        onPress={()=> {this.props.readNow()}}
+        onPress={()=> {this.props.readNow(story)}}
         style={[styles.btnDownload, styles.btnReadNow]}
       >
         <Icon name="book" color='#fff' size={24} />
@@ -293,7 +293,7 @@ export default class StoryModal extends Component {
           </View>
 
           { this._renderDescription(story) }
-          { (this.props.storyDownloaded || this.state.showReadNow) && this._renderBtnReadNow() }
+          { (this.props.storyDownloaded || this.state.showReadNow) && this._renderBtnReadNow(story) }
         </ScrollView>
       </View>
     )

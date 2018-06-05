@@ -38,7 +38,15 @@ export default class Labrary extends Component {
 
   componentDidMount() {
     this._onRefresh();
+    this._handleClickReadNowFromHome();
     YellowBox.ignoreWarnings(['Warning: isMounted(...) is deprecated', 'Module RCTImageLoader']);
+  }
+
+  _handleClickReadNowFromHome() {
+    if(!!this.props.story) {
+      let item = realm.objects('Story').filtered(`id=${this.props.story.id}`)[0];
+      this._showModal(item);
+    }
   }
 
   _onRefresh() {
@@ -176,9 +184,14 @@ export default class Labrary extends Component {
       <StoryPreviewModal
         modalVisible={this.state.modalVisible}
         story={this.state.story}
-        onRequestClose={() => this.setState({modalVisible: false})}
+        onRequestClose={() => this._closeModal()}
       ></StoryPreviewModal>
     )
+  }
+
+  _closeModal() {
+    this.setState({modalVisible: false, story: null});
+    this.props.onSetStory(null);
   }
 
   render() {

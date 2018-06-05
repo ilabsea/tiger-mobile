@@ -153,7 +153,7 @@ export default class StoryPreviewModal extends Component {
     )
   }
 
-  _renderQuizzResult() {
+  _renderQuizResult() {
     let doms = this.state.questions.map((question, index) => {
       return (
         <View key={index} style={{marginBottom: 10}}>
@@ -162,7 +162,7 @@ export default class StoryPreviewModal extends Component {
             <Text style={{fontWeight: '500'}}>Answer: </Text>
 
             { !this._isCorrect(question.user_choice.id, question.choices) &&
-              <Text style={{color: 'red'}}>{question.user_choice.label} / </Text>
+              <Text style={{color: 'red', textDecorationLine: 'line-through'}}>{question.user_choice.label} / </Text>
             }
 
             <Text style={{color: 'green'}}>[{this._getAnswers(question.choices)}]</Text>
@@ -206,7 +206,7 @@ export default class StoryPreviewModal extends Component {
           >
             { this._renderScenes() }
             { this._renderQuizzes() }
-            { this._renderQuizzResult() }
+            { this._renderQuizResult() }
           </IndicatorViewPager>
         </View>
       </View>
@@ -218,8 +218,9 @@ export default class StoryPreviewModal extends Component {
   }
 
   render() {
-    const { story, modalVisible, onRequestClose, ...props } = this.props;
+    const { modalVisible, onRequestClose, ...props } = this.props;
 
+    let story = Object.assign({}, this.props.story);
     this.dataSource = story.scenes || [];
     // this.dataSource = [];
     this.questions = (story.questions || []).slice();

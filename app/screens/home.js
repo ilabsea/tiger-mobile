@@ -143,14 +143,15 @@ export default class Home extends Component {
         story={this.state.story}
         onRequestClose={() => this.setState({modalVisible: false})}
         storyDownloaded={this.state.storyDownloaded}
-        readNow={() => this.readNow()}
+        readNow={(story) => this.readNow(story)}
       ></StoryModal>
     )
   }
 
-  readNow() {
+  readNow(story) {
     this.setState({modalVisible: false});
     this.props.onSetActive('library');
+    this.props.onSetStory(story);
   }
 
   render() {

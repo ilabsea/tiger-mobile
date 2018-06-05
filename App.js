@@ -39,6 +39,10 @@ export default class App extends Component<Props> {
     this.setState({active: tab});
   }
 
+  onSetStory(story) {
+    this.setState({story: story})
+  }
+
   render() {
     return (
       <ThemeProvider uiTheme={uiTheme}>
@@ -46,10 +50,21 @@ export default class App extends Component<Props> {
           <StatusBar backgroundColor="rgba(0, 0, 0, 0.2)" translucent />
           <View style={{ backgroundColor: COLOR.tealA700, height: 24 }} />
 
-          <View style={styles.container}>
-            { this.state.active == 'home' && <Home onSetActive={(tab)=> this.onSetActive(tab)}></Home> }
+          <View style={{flex: 1}}>
+            { this.state.active == 'home' &&
+              <Home
+                onSetActive={(tab) => this.onSetActive(tab)}
+                onSetStory={(story) => this.onSetStory(story)}
+              ></Home>
+            }
+
             { this.state.active == 'category' && <Text>Category</Text> }
-            { this.state.active == 'library' && <Library></Library> }
+            { this.state.active == 'library' &&
+              <Library
+                story={this.state.story}
+                onSetStory={(story) => this.onSetStory(story)}
+              ></Library>
+            }
             { this.state.active == 'about' && <Text>About</Text> }
           </View>
 
@@ -84,9 +99,3 @@ export default class App extends Component<Props> {
     );
   }
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  }
-});
