@@ -79,28 +79,24 @@ export default class StoryModal extends Component {
   }
 
   _importSceneActions(scenes) {
-    let list = realm.objects('SceneAction');
-    realm.delete(list);
-
     scenes.map((scene) => {
       let objScene = realm.objects('Scene').filtered(`id=${scene.id}`)[0];
       let actionList = objScene.sceneActions;
 
-      actionList = objScene.sceneActions;
+      realm.delete(actionList);
 
       scene.scene_actions.map((action) => {
         if (!!action.link_scene.id) {
           let linkScene = realm.objects('Scene').filtered(`id=${action.link_scene.id}`)[0];
+          let objAction = realm.create('SceneAction', {
+            id: action.id,
+            name: action.name,
+            displayOrder: action.display_order,
+            sceneId: scene.id,
+            linkScene: linkScene
+          }, true)
 
-          actionList.push(
-            {
-              id: action.id,
-              name: action.name,
-              displayOrder: action.display_order,
-              sceneId: scene.id,
-              linkScene: linkScene
-            }
-          )
+          actionList.push(objAction);
         }
       })
     });
@@ -133,8 +129,6 @@ export default class StoryModal extends Component {
         let obj = realm.objects(image.type).filtered(`id=${image.id}`)[0];
         obj.image = downloadDest;
         this.setState({progress: index+1/images.length});
-
-        // console.log('================obj with image', obj);
       })
 
       jobId = -1;
@@ -202,7 +196,6 @@ export default class StoryModal extends Component {
     questionService.getAll(story.id)
       .then((responseJson) => {
         realm.write(() => {
-          console.log('===========responseJson.data.questions', responseJson.data.questions);
           this._importQuestions(story, responseJson.data.questions);
         });
       })
@@ -314,7 +307,6 @@ export default class StoryModal extends Component {
 
   render() {
     const { story, modalVisible, onRequestClose, ...props } = this.props;
-    // console.log('----------------this.props.storyDownloaded', this.props.storyDownloaded);
 
     return (
       <Modal

@@ -173,7 +173,7 @@ export default class StoryPreviewModal extends Component {
       <View>
         <Text style={[styles.title]}>{ I18n.t('result')}</Text>
 
-        <ScrollView style={{flex: 1, padding: 16, backgroundColor: 'pink'}}>
+        <ScrollView style={{flex: 1, padding: 16}}>
           {doms}
         </ScrollView>
 
