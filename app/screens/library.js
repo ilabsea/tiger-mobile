@@ -8,14 +8,12 @@ import {
   Image,
   ListView,
   RefreshControl,
+  Alert,
 } from 'react-native';
 
-import {
-  Toolbar,
-  Icon,
-  Card
-} from 'react-native-material-ui';
-
+import { Toolbar, Icon, Card } from 'react-native-material-ui';
+import { Menu, MenuOptions, MenuOption, MenuTrigger } from 'react-native-popup-menu';
+import { YellowBox } from 'react-native';
 import realm from '../schema';
 import I18n from '../i18n/i18n';
 import headerStyle from '../assets/style_sheets/header';
@@ -40,6 +38,7 @@ export default class Labrary extends Component {
 
   componentDidMount() {
     this._onRefresh();
+    YellowBox.ignoreWarnings(['Warning: isMounted(...) is deprecated', 'Module RCTImageLoader']);
   }
 
   _onRefresh() {
@@ -79,12 +78,12 @@ export default class Labrary extends Component {
   _renderItem(item) {
     let tags = item.tags.map((tag, index) => {
       return (
-        <Text key={index} style={{marginRight: 5, backgroundColor: '#eee', borderRadius: 3, paddingHorizontal: 4}}>{tag}</Text>
+        <Text key={index} style={styles.tag}>{tag}</Text>
       )
     })
 
     return (
-      <Card style={{}} onPress={()=> this._showModal(item)}>
+      <Card>
         <View style={styles.item}>
           <View style={{height: 200, borderColor: '#eee', borderWidth: 0.5, borderRadius: 3, alignItems: 'center'}}>
             <Image
@@ -102,19 +101,44 @@ export default class Labrary extends Component {
               {item.title}
             </Text>
 
-            <Text style={{color: '#ccc', fontSize: 18}}>Author: {item.author}</Text>
-
-            <View style={{flexDirection:'row', flexWrap:'wrap', marginTop: 8}}>
-              {tags}
-            </View>
+            <Text style={styles.author}>Author: {item.author}</Text>
+            <View style={styles.tagWrapper}>{tags}</View>
           </View>
 
-          <TouchableOpacity onPress={() => alert('more-vert')}>
-            <Icon name="more-vert" size={24} />
-          </TouchableOpacity>
+          <Menu>
+            <MenuTrigger>
+              <Icon name="more-vert" size={24} />
+            </MenuTrigger>
+
+            <MenuOptions>
+              <MenuOption onSelect={()=> this._showModal(item)}>
+                <Text style={styles.menuOption}>{I18n.t('read_now')}</Text>
+              </MenuOption>
+
+              <MenuOption onSelect={() => this._confirmDelete(item)} >
+                <Text style={[styles.menuOption, {color: 'red'}]}>{I18n.t('delete')}</Text>
+              </MenuOption>
+            </MenuOptions>
+          </Menu>
         </View>
       </Card>
     )
+  }
+
+  _confirmDelete(story) {
+    Alert.alert(
+      I18n.t('delete_story'),
+      I18n.t('are_you_sure_delete_story'),
+      [
+        { text: I18n.t('yes'), onPress: () => this._deleteStory(story) },
+        { text: I18n.t('cancel'), style: 'cancel' },
+      ],
+      { cancelable: true }
+    )
+  }
+
+  _deleteStory(story) {
+    console.log('-------------delete', story)
   }
 
   _renderList() {
@@ -176,5 +200,23 @@ const styles = StyleSheet.create({
     minHeight: 232,
     padding: 16,
     flexDirection: 'row',
+  },
+  menuOption: {
+    padding: 10
+  },
+  tagWrapper: {
+    flexDirection:'row',
+    flexWrap:'wrap',
+    marginTop: 8,
+  },
+  author: {
+    color: '#ccc',
+    fontSize: 18
+  },
+  tag: {
+    marginRight: 5,
+    backgroundColor: '#eee',
+    borderRadius: 3,
+    paddingHorizontal: 4,
   }
 });

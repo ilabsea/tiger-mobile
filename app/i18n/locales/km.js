@@ -14,5 +14,10 @@ export default {
   quiz: 'តេស្ត',
   question: 'សំណួរ',
   result: 'លទ្ធផល',
-  done: 'រួចរាល់'
+  done: 'រួចរាល់',
+  delete: 'លុបចោល',
+  delete_story: 'អះអាងលុបរឿង',
+  are_you_sure_delete_story: 'តើអ្នកប្រាកដថាលុបរឿងនេះទេ?',
+  yes: 'បាទ/ចាស',
+  cancel: 'បោះបង់'
 };

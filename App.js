@@ -11,6 +11,7 @@ import {
   COLOR,
   BottomNavigation,
 } from 'react-native-material-ui';
+import { MenuProvider } from 'react-native-popup-menu';
 
 import I18n from './app/i18n/i18n';
 import Home from './app/screens/home';
@@ -41,7 +42,7 @@ export default class App extends Component<Props> {
   render() {
     return (
       <ThemeProvider uiTheme={uiTheme}>
-        <View style={{flex:1}}>
+        <MenuProvider style={{flex:1}}>
           <StatusBar backgroundColor="rgba(0, 0, 0, 0.2)" translucent />
           <View style={{ backgroundColor: COLOR.tealA700, height: 24 }} />
 
@@ -78,7 +79,7 @@ export default class App extends Component<Props> {
                 onPress={() => this.setState({ active: 'about' })}
             />
           </BottomNavigation>
-        </View>
+        </MenuProvider>
       </ThemeProvider>
     );
   }

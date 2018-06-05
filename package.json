@@ -19,6 +19,7 @@
     "react-native-i18n": "^2.0.12",
     "react-native-layout-grid": "0.0.2",
     "react-native-material-ui": "^1.22.3",
+    "react-native-popup-menu": "^0.13.1",
     "react-native-progress": "^3.4.0",
     "react-native-vector-icons": "^4.6.0",
     "realm": "^2.6.0",
