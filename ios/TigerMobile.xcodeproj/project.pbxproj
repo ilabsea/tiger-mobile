@@ -58,6 +58,7 @@
 		659B82B3E863473F9CB79466 /* KantumruyBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 98F8FB8AADC34CFCAD4CF958 /* KantumruyBold.ttf */; };
 		4D7A2FF9211548FF9A78B815 /* KhmerOureang.ttf in Resources */ = {isa = PBXBuildFile; fileRef = E213786B1C9F480E869B3A5F /* KhmerOureang.ttf */; };
 		49D5AF97A3C846A5BF15E637 /* libRNFS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 20173376C1B0440898F5B187 /* libRNFS.a */; };
+		419FA37A921A48C88311D8C4 /* KhmerOS.ttf in Resources */ = {isa = PBXBuildFile; fileRef = A92F076BE527413C8CBA3DC1 /* KhmerOS.ttf */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -388,6 +389,7 @@
 		E213786B1C9F480E869B3A5F /* KhmerOureang.ttf */ = {isa = PBXFileReference; name = "KhmerOureang.ttf"; path = "../app/assets/fonts/KhmerOureang.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
 		E5B5E9560F92465E96AB088B /* RNFS.xcodeproj */ = {isa = PBXFileReference; name = "RNFS.xcodeproj"; path = "../node_modules/react-native-fs/RNFS.xcodeproj"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.pb-project; explicitFileType = undefined; includeInIndex = 0; };
 		20173376C1B0440898F5B187 /* libRNFS.a */ = {isa = PBXFileReference; name = "libRNFS.a"; path = "libRNFS.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
+		A92F076BE527413C8CBA3DC1 /* KhmerOS.ttf */ = {isa = PBXFileReference; name = "KhmerOS.ttf"; path = "../app/assets/fonts/KhmerOS.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -680,6 +682,7 @@
 				AD2F80C2624B4E8481C857B3 /* Kantumruy.ttf */,
 				98F8FB8AADC34CFCAD4CF958 /* KantumruyBold.ttf */,
 				E213786B1C9F480E869B3A5F /* KhmerOureang.ttf */,
+				A92F076BE527413C8CBA3DC1 /* KhmerOS.ttf */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -1145,6 +1148,7 @@
 				4B16F327C5694A1985637926 /* Kantumruy.ttf in Resources */,
 				659B82B3E863473F9CB79466 /* KantumruyBold.ttf in Resources */,
 				4D7A2FF9211548FF9A78B815 /* KhmerOureang.ttf in Resources */,
+				419FA37A921A48C88311D8C4 /* KhmerOS.ttf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

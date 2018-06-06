@@ -105,7 +105,7 @@ export default class Home extends Component {
           {item.title}
         </Text>
 
-        <Text style={{color: '#fff', fontSize: 18}}>Author: {item.user.email.split('@')[0]}</Text>
+        <Text style={{color: '#fff', fontSize: 18}}>{I18n.t('author')}: {item.user.email.split('@')[0]}</Text>
 
         <View style={{flexDirection:'row', flexWrap:'wrap', marginTop: 8}}>
           <Text style={{backgroundColor: '#eee', borderRadius: 3, paddingHorizontal: 4}}>{!!item.tags[0] && item.tags[0].title}</Text>

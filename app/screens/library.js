@@ -102,14 +102,14 @@ export default class Labrary extends Component {
 
           <View style={styles.flex}>
             <Text
-              style={{fontSize: 20}}
+              style={{fontSize: 20, fontFamily: 'KhmerOS'}}
               ellipsizeMode='tail'
               numberOfLines={1}
             >
               {item.title}
             </Text>
 
-            <Text style={styles.author}>Author: {item.author}</Text>
+            <Text style={styles.author}>{I18n.t('author')}: {item.author}</Text>
             <View style={styles.tagWrapper}>{tags}</View>
           </View>
 
@@ -235,7 +235,7 @@ const styles = StyleSheet.create({
     marginTop: 8,
   },
   author: {
-    color: '#ccc',
+    color: '#bbb',
     fontSize: 18
   },
   tag: {

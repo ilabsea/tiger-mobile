@@ -12,13 +12,10 @@ import {
   BottomNavigation,
 } from 'react-native-material-ui';
 import { MenuProvider } from 'react-native-popup-menu';
-
 import I18n from './app/i18n/i18n';
 import Home from './app/screens/home';
 import Library from './app/screens/library';
 import About from './app/screens/about';
-
-type Props = {};
 
 const uiTheme = {
   palette: {
@@ -30,7 +27,7 @@ const uiTheme = {
   }
 };
 
-export default class App extends Component<Props> {
+export default class App extends Component {
   constructor(props) {
     super(props);
     this.state = { active: 'library' };

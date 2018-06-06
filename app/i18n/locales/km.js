@@ -10,7 +10,7 @@ export default {
   published_at: 'ចេញផ្សាយ',
   introduction: 'សេចក្តីណែនាំ',
   read_now: 'ចូលអាន',
-  go_to_quiz: 'ចូលទៅសំណួរ',
+  go_to_quiz: 'ចូលទៅកាន់សំណួរ',
   quiz: 'តេស្ត',
   question: 'សំណួរ',
   result: 'លទ្ធផល',
@@ -19,5 +19,6 @@ export default {
   delete_story: 'អះអាងលុបរឿង',
   are_you_sure_delete_story: 'តើអ្នកប្រាកដថាលុបរឿងនេះទេ?',
   yes: 'បាទ/ចាស',
-  cancel: 'បោះបង់'
+  cancel: 'បោះបង់',
+  answer: 'ចម្លើយ'
 };

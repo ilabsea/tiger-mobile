@@ -16,6 +16,7 @@ import I18n from '../i18n/i18n';
 import headerStyle from '../assets/style_sheets/header';
 import realm from '../schema';
 import Button from '../components/button';
+import MyText from '../components/text';
 
 const win = Dimensions.get('window');
 
@@ -138,10 +139,10 @@ export default class StoryPreviewModal extends Component {
       this.questions.map((question, index) => {
         return (
           <View key={index}>
-            <Text style={[styles.title]}>{ I18n.t('quiz')}: {I18n.t('question')} {index + 1}/{this.questions.length }</Text>
+            <Text style={styles.title}>{ I18n.t('quiz')}: {I18n.t('question')} {index + 1}/{this.questions.length }</Text>
 
             <View style={[styles.centerChildWrapper, {padding: 16}]}>
-              <Text>{ question.label }</Text>
+              <MyText style={styles.textShadow}>{ question.label }</MyText>
             </View>
 
             <View style={{padding: 16}}>
@@ -157,9 +158,9 @@ export default class StoryPreviewModal extends Component {
     let doms = this.state.questions.map((question, index) => {
       return (
         <View key={index} style={{marginBottom: 10}}>
-          <Text>{index+1}) {question.label}</Text>
+          <MyText>{index+1}) {question.label}</MyText>
           <Text>
-            <Text style={{fontWeight: '500'}}>Answer: </Text>
+            <Text style={{fontWeight: '500'}}>{I18n.t('answer')}: </Text>
 
             { !this._isCorrect(question.user_choice.id, question.choices) &&
               <Text style={{color: 'red', textDecorationLine: 'line-through'}}>{question.user_choice.label} / </Text>
@@ -222,7 +223,6 @@ export default class StoryPreviewModal extends Component {
 
     let story = Object.assign({}, this.props.story);
     this.dataSource = story.scenes || [];
-    // this.dataSource = [];
     this.questions = (story.questions || []).slice();
     this.totalSlides = this.dataSource.length + this.questions.length;
 
@@ -254,7 +254,10 @@ const styles = StyleSheet.create({
   textShadow: {
     textShadowColor: '#fff',
     textShadowOffset: {width: -1, height: 1},
-    textShadowRadius: 10
+    textShadowRadius: 1,
+    color: '#000',
+    shadowOpacity: 1,
+    fontFamily: 'KhmerOS'
   },
   title: {
     textAlign: 'center',
