@@ -4,7 +4,6 @@ import {
   View,
   ScrollView,
   StyleSheet,
-  TouchableOpacity,
   Image,
   Modal,
   Dimensions,
@@ -13,6 +12,7 @@ import {
 import { IndicatorViewPager } from 'rn-viewpager';
 import { Toolbar, Icon } from 'react-native-material-ui';
 import I18n from '../i18n/i18n';
+import uuidv4 from '../utils/uuidv4';
 import headerStyle from '../assets/style_sheets/header';
 import realm from '../schema';
 import Button from '../components/button';
@@ -64,7 +64,47 @@ export default class StoryPreviewModal extends Component {
     return choices.filter(obj => !!obj.answered);
   }
 
-  _renderActionButtons(scene) {
+  _saveStoryResponse(action, slideIndex) {
+    this.storyRead = this.storyRead || realm.objects('StoryRead').filtered(`storyId=${action.storyId} AND finishedAt=NULL`).sorted('createdAt', true)[0];
+
+    realm.write(()=> {
+      realm.create('StoryResponse', {
+        uuid: uuidv4(),
+        sceneId: action.sceneId,
+        sceneActionId: action.id,
+        storyId: action.storyId,
+        storyReadUuid: this.storyRead.uuid,
+      })
+
+      if (slideIndex == this.dataSource.length - 2) {
+        this.storyRead.finishedAt = new Date;
+
+        // console.log('=============this.storyRead', this.storyRead);
+        // console.log('=============sceneResponse', realm.objects('StoryResponse').filtered(`storyReadUuid='${this.storyRead.uuid}'`));
+      }
+    })
+  }
+
+  _saveQuizResponse(choice, slideIndex) {
+    realm.write(()=> {
+      realm.create('QuizResponse', {
+        uuid: uuidv4(),
+        questionId: choice.questionId,
+        choiceId: choice.id,
+        storyId: choice.storyId,
+        storyReadUuid: this.storyRead.uuid,
+      })
+
+      if (slideIndex == this.questions.length - 1) {
+        this.storyRead.isQuizFinished = true;
+
+        // console.log('=============obj _saveQuizResponse', this.storyRead);
+        // console.log('=============quizResponse', realm.objects('QuizResponse').filtered(`storyReadUuid='${this.storyRead.uuid}'`));
+      }
+    })
+  }
+
+  _renderActionButtons(scene, slideIndex) {
     if (!scene.sceneActions.length && !!this.questions.length) {
       return (
         <Button
@@ -79,7 +119,10 @@ export default class StoryPreviewModal extends Component {
         return(
           <Button
             key={i}
-            onPress={()=> this._slideTo(action.linkScene)}
+            onPress={()=> {
+              this._slideTo(action.linkScene);
+              this._saveStoryResponse(action, slideIndex);
+            }}
             title={action.name}
           ></Button>
         )
@@ -112,7 +155,7 @@ export default class StoryPreviewModal extends Component {
               <Text style={[styles.textShadow, {padding: 16}]}>{scene.description}</Text>
 
               <View style={{padding: 16}}>
-                { this._renderActionButtons(scene) }
+                { this._renderActionButtons(scene, index) }
               </View>
             </View>
 
@@ -122,12 +165,15 @@ export default class StoryPreviewModal extends Component {
     )
   }
 
-  _renderChoices(question, index) {
+  _renderChoices(question, slideIndex) {
     return(
       (question.choices || []).map((choice, i) => (
         <Button
           key={i}
-          onPress={()=> this._slideQuizTo(index+1, choice)}
+          onPress={()=> {
+            this._slideQuizTo(slideIndex+1, choice);
+            this._saveQuizResponse(choice, slideIndex);
+          }}
           title={choice.label}
         ></Button>
       ))

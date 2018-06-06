@@ -108,7 +108,7 @@ export default class Home extends Component {
         <Text style={{color: '#fff', fontSize: 18}}>{I18n.t('author')}: {item.user.email.split('@')[0]}</Text>
 
         <View style={{flexDirection:'row', flexWrap:'wrap', marginTop: 8}}>
-          <Text style={{backgroundColor: '#eee', borderRadius: 3, paddingHorizontal: 4}}>{!!item.tags[0] && item.tags[0].title}</Text>
+          <Text style={styles.tag}>{!!item.tags[0] && item.tags[0].title}</Text>
         </View>
       </View>
     </TouchableOpacity>
@@ -197,5 +197,11 @@ const styles = StyleSheet.create({
   item: {
     flex: 1,
     height: 300,
+  },
+  tag: {
+    backgroundColor: '#eee',
+    borderRadius: 3,
+    paddingHorizontal: 4,
+    color: '#111'
   }
 });

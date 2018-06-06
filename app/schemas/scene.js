@@ -14,7 +14,6 @@ Scene.schema = {
     image: 'string?',
     visibleName: {type: 'bool', default: true},
     imageAsBackground: {type: 'bool', default: false},
-    // story: {type: 'linkingObjects', objectType: 'Story', property: 'scenes'},
     storyId: 'int',
     sceneActions: 'SceneAction[]',
   }

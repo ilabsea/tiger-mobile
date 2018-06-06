@@ -9,7 +9,9 @@ import Scene from './schemas/scene';
 import SceneAction from './schemas/scene_action';
 import Question from './schemas/question';
 import Choice from './schemas/choice';
-import UserAnswer from './schemas/user_answer';
+import StoryRead from './schemas/story_read';
+import StoryResponse from './schemas/story_response';
+import QuizResponse from './schemas/quiz_response';
 
 export default new Realm({schema: [
   Story,
@@ -17,5 +19,7 @@ export default new Realm({schema: [
   SceneAction,
   Question,
   Choice,
-  UserAnswer
+  StoryRead,
+  StoryResponse,
+  QuizResponse,
 ]});

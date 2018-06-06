@@ -17,7 +17,7 @@ export default {
   done: 'រួចរាល់',
   delete: 'លុបចោល',
   delete_story: 'អះអាងលុបរឿង',
-  are_you_sure_delete_story: 'តើអ្នកប្រាកដថាលុបរឿងនេះទេ?',
+  do_you_want_to_delete_this_story: 'តើអ្នកចង់លុបរឿងនេះទេ?',
   yes: 'បាទ/ចាស',
   cancel: 'បោះបង់',
   answer: 'ចម្លើយ'

@@ -3,7 +3,6 @@ import {
   Text,
   View,
   StyleSheet,
-  TouchableOpacity,
   ActivityIndicator,
   Image,
   ListView,
@@ -16,6 +15,7 @@ import { Menu, MenuOptions, MenuOption, MenuTrigger } from 'react-native-popup-m
 import { YellowBox } from 'react-native';
 import realm from '../schema';
 import I18n from '../i18n/i18n';
+import uuidv4 from '../utils/uuidv4';
 import headerStyle from '../assets/style_sheets/header';
 import storyService from '../services/story.service';
 import StoryPreviewModal from './story_preview_modal';
@@ -81,6 +81,27 @@ export default class Labrary extends Component {
 
   _showModal(item) {
     this.setState({modalVisible: true, story: item});
+    this._handleStoryRead(item);
+  }
+
+  _handleStoryRead(story) {
+    let storyRead = realm.objects('StoryRead').filtered(`storyId=${story.id} AND finishedAt=NULL`).sorted('createdAt', true)[0];
+
+    realm.write(() => {
+      if (!!storyRead) {
+        let storyResponses = realm.objects('StoryResponse').filtered(`storyReadUuid='${storyRead.uuid}'`);
+        let quizResponses = realm.objects('QuizResponse').filtered(`storyReadUuid='${storyRead.uuid}'`);
+
+        realm.delete(storyResponses);
+        realm.delete(quizResponses);
+        realm.delete(storyRead);
+      }
+
+      realm.create('StoryRead', { uuid: uuidv4(), storyId: story.id, createdAt: new Date() });
+
+      let obj = realm.objects('StoryRead').filtered(`storyId=${story.id}`);
+      console.log('==========StoryRead', obj);
+    })
   }
 
   _renderItem(item) {
@@ -135,11 +156,11 @@ export default class Labrary extends Component {
 
   _confirmDelete(story) {
     Alert.alert(
-      I18n.t('delete_story'),
-      I18n.t('are_you_sure_delete_story'),
+      story.title,
+      I18n.t('do_you_want_to_delete_this_story'),
       [
-        { text: I18n.t('yes'), onPress: () => this._deleteStory(story) },
         { text: I18n.t('cancel'), style: 'cancel' },
+        { text: I18n.t('yes'), onPress: () => this._deleteStory(story) },
       ],
       { cancelable: true }
     )
@@ -243,5 +264,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#eee',
     borderRadius: 3,
     paddingHorizontal: 4,
+    color: '#111'
   }
 });
