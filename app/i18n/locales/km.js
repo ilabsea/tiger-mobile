@@ -20,5 +20,6 @@ export default {
   do_you_want_to_delete_this_story: 'តើអ្នកចង់លុបរឿងនេះទេ?',
   yes: 'បាទ/ចាស',
   cancel: 'បោះបង់',
-  answer: 'ចម្លើយ'
+  answer: 'ចម្លើយ',
+  download: 'ទាញយក',
 };

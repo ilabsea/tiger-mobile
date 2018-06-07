@@ -220,7 +220,7 @@ export default class StoryModal extends Component {
             style={styles.btnDownload}
           >
             <Icon name="cloud-download" color='#fff' size={24} />
-            <Text style={styles.btnLabel}>{I18n.t('add_to_library')}</Text>
+            <Text style={styles.btnLabel}>{I18n.t('download')}</Text>
           </TouchableOpacity>
         }
 
@@ -275,13 +275,14 @@ export default class StoryModal extends Component {
 
   _renderBtnReadNow(story) {
     return (
-      <TouchableOpacity
-        onPress={()=> {this.props.readNow(story)}}
-        style={[styles.btnDownload, styles.btnReadNow]}
-      >
-        <Icon name="book" color='#fff' size={24} />
-        <Text style={styles.btnLabel}>{I18n.t('read_now')}</Text>
-      </TouchableOpacity>
+      <View style={{alignItems: 'center'}}>
+        <TouchableOpacity
+          onPress={()=> {this.props.readNow(story)}}
+          style={[styles.btnDownload, styles.btnReadNow]}>
+          <Icon name="book" color='#fff' size={24} />
+          <Text style={styles.btnLabel}>{I18n.t('read_now')}</Text>
+        </TouchableOpacity>
+      </View>
     )
   }
 
@@ -356,10 +357,12 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
+    width: 150,
   },
   btnReadNow: {
     backgroundColor: 'green',
     marginHorizontal: 24,
+    width: 200,
   },
   btnLabel: {
     color: '#fff',

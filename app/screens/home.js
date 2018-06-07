@@ -35,6 +35,7 @@ export default class Home extends Component {
   }
 
   componentDidMount() {
+    this._setDownloadedStories();
     this._onRefresh();
   }
 
@@ -42,6 +43,10 @@ export default class Home extends Component {
     this.setState({modalVisible: false});
     this.props.onSetActive('library');
     this.props.onSetStory(story);
+  }
+
+  _setDownloadedStories() {
+    this.setState({downloadedStories: realm.objects('Story').map(story => story.id)})
   }
 
   _onRefresh() {
@@ -89,6 +94,8 @@ export default class Home extends Component {
         onPress={()=> this._showModel(item)}>
 
         <View style={styles.item}>
+          { !this.state.downloadedStories.includes(item.id) && <Text style={styles.downloadLabel}>{I18n.t('download')}</Text> }
+
           <View style={{height: 200, borderColor: '#eee', borderWidth: 0.5, borderRadius: 3, alignItems: 'center'}}>
             <Image
               style={{width: 200, height: 200}}
@@ -137,7 +144,10 @@ export default class Home extends Component {
       <StoryModal
         modalVisible={this.state.modalVisible}
         story={this.state.story}
-        onRequestClose={() => this.setState({modalVisible: false})}
+        onRequestClose={() => {
+          this.setState({modalVisible: false});
+          this._setDownloadedStories();
+        }}
         storyDownloaded={this.state.storyDownloaded}
         readNow={(story) => this.readNow(story)}
       ></StoryModal>
@@ -187,11 +197,23 @@ const styles = StyleSheet.create({
   item: {
     flex: 1,
     height: 300,
+    position: 'relative',
   },
   tag: {
     backgroundColor: '#eee',
     borderRadius: 3,
     paddingHorizontal: 4,
     color: '#111'
+  },
+  downloadLabel: {
+    position: 'absolute',
+    top: 0,
+    right: 0,
+    backgroundColor: 'red',
+    zIndex: 1,
+    color: '#fff',
+    paddingHorizontal: 5,
+    paddingBottom: 5,
+    borderBottomLeftRadius: 5,
   }
 });
