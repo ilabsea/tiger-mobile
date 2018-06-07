@@ -16,5 +16,6 @@ Scene.schema = {
     imageAsBackground: {type: 'bool', default: false},
     storyId: 'int',
     sceneActions: 'SceneAction[]',
+    isEnd: {type: 'bool', default: false},
   }
 }

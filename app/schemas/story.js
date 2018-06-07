@@ -13,6 +13,7 @@ Story.schema = {
     description: 'string',
     image: 'string',
     author: 'string',
+    sourceLink: 'string?',
     publishedAt: 'string',
     tags: 'string[]',
     scenes: { type: 'list', objectType: 'Scene' },

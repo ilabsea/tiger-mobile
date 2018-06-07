@@ -1,7 +1,7 @@
 export default {
   home: 'ទំព័រដើម',
   search_story: 'ស្វែងរករឿង',
-  category: 'ក្រុម',
+  category: 'ប្រភេទ',
   my_library: 'បណ្ណាល័យខ្ញុំ',
   about_app: 'អំពីកម្មវិធី',
   add_to_library: 'ដាក់ចូលបណ្ណាល័យខ្ញុំ',

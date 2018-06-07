@@ -16,6 +16,7 @@ import I18n from './app/i18n/i18n';
 import Home from './app/screens/home';
 import Library from './app/screens/library';
 import About from './app/screens/about';
+import Category from './app/screens/category';
 
 const uiTheme = {
   palette: {
@@ -56,7 +57,7 @@ export default class App extends Component {
               ></Home>
             }
 
-            { this.state.active == 'category' && <Text>Category</Text> }
+            { this.state.active == 'category' && <Category></Category> }
             { this.state.active == 'library' &&
               <Library
                 story={this.state.story}

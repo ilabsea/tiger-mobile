@@ -46,7 +46,8 @@ export default class StoryModal extends Component {
       title: story.title,
       description: story.description,
       image: '',
-      author: story.user.email.split('@')[0],
+      author: story.author,
+      sourceLink: story.source_link,
       publishedAt: story.published_at,
       tags: story.tags.map(tag => tag.title),
       createdAt: new Date()
@@ -74,6 +75,7 @@ export default class StoryModal extends Component {
           description: scene.description,
           imageAsBackground: scene.image_as_background,
           storyId: scene.story_id,
+          isEnd: !!scene.is_end,
         }
       );
     })
