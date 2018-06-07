@@ -10,24 +10,18 @@ import {
   Image,
 } from 'react-native';
 
-import {
-  Toolbar,
-  Icon,
-  COLOR,
-} from 'react-native-material-ui';
-
+import { Toolbar, COLOR } from 'react-native-material-ui';
 import realm from '../schema';
 import I18n from '../i18n/i18n';
 import headerStyle from '../assets/style_sheets/header';
 import storyService from '../services/story.service';
 import StoryModal from './story_modal';
 
-let currentPage = 1;
-let perPage = 4;
-let totalPage = 0;
-let loading = false;
-
 export default class Home extends Component {
+  _data = [];
+  _currentPage = 0;
+  _totalPage = 0;
+
   constructor(props) {
     super(props);
 
@@ -41,85 +35,87 @@ export default class Home extends Component {
   }
 
   componentDidMount() {
+    this._onRefresh();
+  }
+
+  readNow(story) {
+    this.setState({modalVisible: false});
+    this.props.onSetActive('library');
+    this.props.onSetStory(story);
+  }
+
+  _onRefresh() {
+    this._currentPage = 0;
+    this._data = [];
     this._getStories();
   }
 
-  showModel(story) {
+  _getStories() {
+    this._currentPage++;
+
+    storyService.getAll(this._currentPage)
+      .then((responseJson) => {
+        this._data = this._data.concat(responseJson.data.stories);
+        this._totalPage = responseJson.data.meta.pagination.total_pages;
+        this.setState({ isLoading: false, dataSource: this._data });
+      })
+  }
+
+  _showModel(story) {
     let objStory = realm.objects('Story').filtered(`id=${story.id}`)[0];
     this.setState({modalVisible: true, story: story, storyDownloaded: !!objStory});
   }
 
-  _getStories = () => {
-    currentPage = 1;
+  _onEndReached() {
+    if (this._currentPage == this._totalPage) {
+      return;
+    }
 
-    storyService.getAll()
-      .then((responseJson) => {
-        this.setState({
-          isLoading: false,
-          dataSource: responseJson.data.stories
-        });
-
-        totalPage = responseJson.data.meta.pagination.total_pages;
-      })
+    this._getStories();
   }
 
-  _onScrollDown = () => {
-    if (currentPage == totalPage || loading) { return; }
-
-    loading = true;
-    currentPage++;
-
-    storyService.getAll(currentPage).then((responseJson) => {
-      let data = this.state.dataSource.concat(responseJson.data.stories);
-      this.setState({ isLoading: false, dataSource: data});
-      loading = false;
-    })
-  }
-
-  _onLayout = (event) => {
+  _onLayout(event) {
     const {width} = Dimensions.get('window');
-    // const {width} = event.nativeEvent.layout;
     const itemWidth = width/2;
-    const numColumns = Math.floor(width/itemWidth)
-    this.setState({ numColumns: numColumns, itemWidth: itemWidth })
+    const numColumns = Math.floor(width/itemWidth);
+    this.setState({ numColumns: numColumns, itemWidth: itemWidth });
   }
 
-  _renderItem = ({item}) => (
-    <TouchableOpacity
-      style={[styles.itemWrapper, {width: this.state.itemWidth}]}
-      onPress={()=> this.showModel(item)}
-    >
-      <View style={styles.item}>
-        <View style={{height: 200, borderColor: '#eee', borderWidth: 0.5, borderRadius: 3, alignItems: 'center'}}>
-          <Image
-            style={{width: 200, height: 200}}
-            source={{uri: "http://192.168.1.107:3000" + item.image}}
-          />
+  _renderItem = ({item}) => {
+    // @Todo: handle class for switch view as grid and list
+    return (
+      <TouchableOpacity
+        style={[styles.itemWrapper, {width: this.state.itemWidth}]}
+        onPress={()=> this._showModel(item)}>
+
+        <View style={styles.item}>
+          <View style={{height: 200, borderColor: '#eee', borderWidth: 0.5, borderRadius: 3, alignItems: 'center'}}>
+            <Image
+              style={{width: 200, height: 200}}
+              source={{uri: "http://192.168.1.107:3000" + item.image}}/>
+          </View>
+
+          <Text
+            style={{color: '#fff', fontSize: 20}}
+            ellipsizeMode='tail'
+            numberOfLines={1}> {item.title} </Text>
+
+          <Text style={{color: '#fff', fontSize: 18}}>{ I18n.t('author') }: {item.author}</Text>
+
+          <View style={{flexDirection:'row', flexWrap:'wrap', marginTop: 8}}>
+            <Text style={styles.tag}>{!!item.tags[0] && item.tags[0].title}</Text>
+          </View>
         </View>
-
-        <Text
-          style={{color: '#fff', fontSize: 20}}
-          ellipsizeMode='tail'
-          numberOfLines={1}
-        >
-          {item.title}
-        </Text>
-
-        <Text style={{color: '#fff', fontSize: 18}}>{I18n.t('author')}: {item.user.email.split('@')[0]}</Text>
-
-        <View style={{flexDirection:'row', flexWrap:'wrap', marginTop: 8}}>
-          <Text style={styles.tag}>{!!item.tags[0] && item.tags[0].title}</Text>
-        </View>
-      </View>
-    </TouchableOpacity>
-  )
+      </TouchableOpacity>
+    )
+  }
 
   _renderContentWithFlatList() {
     return (
       <View
         style={styles.container}
         contentContainerStyle={{flex:1, alignItems: 'center'}}
-        onLayout={this._onLayout} >
+        onLayout={() => this._onLayout()} >
 
         <FlatList
           data={this.state.dataSource}
@@ -128,9 +124,9 @@ export default class Home extends Component {
           numColumns={this.state.numColumns}
           renderItem={this._renderItem}
           onEndReachedThreshold={0.1}
-          onEndReached={this._onScrollDown}
+          onEndReached={() => this._onEndReached()}
           refreshing={this.state.refreshing}
-          onRefresh={this._getStories}
+          onRefresh={() => this._onRefresh()}
         />
       </View>
     )
@@ -146,12 +142,6 @@ export default class Home extends Component {
         readNow={(story) => this.readNow(story)}
       ></StoryModal>
     )
-  }
-
-  readNow(story) {
-    this.setState({modalVisible: false});
-    this.props.onSetActive('library');
-    this.props.onSetStory(story);
   }
 
   render() {

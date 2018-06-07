@@ -76,7 +76,7 @@ export default class StoryPreviewModal extends Component {
         storyReadUuid: this.storyRead.uuid,
       })
 
-      if (slideIndex == this.dataSource.length - 2) {
+      if (action.linkScene.isEnd || slideIndex == this.dataSource.length - 2) {
         this.storyRead.finishedAt = new Date;
 
         // console.log('=============this.storyRead', this.storyRead);
@@ -105,7 +105,7 @@ export default class StoryPreviewModal extends Component {
   }
 
   _renderActionButtons(scene, slideIndex) {
-    if (scene.isEnd || (!scene.sceneActions.length && !!this.questions.length)){
+    if ((scene.isEnd || !scene.sceneActions.length) && !!this.questions.length) {
       return (
         <Button
           onPress={()=> this._slideTo()}
@@ -242,15 +242,14 @@ export default class StoryPreviewModal extends Component {
         <Toolbar
           leftElement="arrow-back"
           centerElement={<Text style={headerStyle.title}>{story.title}</Text>}
-          onLeftElementPress={() => this._closeModal()}
-        />
+          onLeftElementPress={() => this._closeModal()} />
 
         <View style={{flex: 1}}>
           <IndicatorViewPager
             style={{flex: 1}}
             ref="mySlider"
-            horizontalScroll={false}
-          >
+            horizontalScroll={false}>
+
             { this._renderScenes() }
             { this._renderQuizzes() }
             { this._renderQuizResult() }
