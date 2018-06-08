@@ -7,6 +7,7 @@ import {
   Image,
   Modal,
   Dimensions,
+  NetInfo,
 } from 'react-native';
 
 import { IndicatorViewPager } from 'rn-viewpager';
@@ -17,6 +18,7 @@ import headerStyle from '../assets/style_sheets/header';
 import realm from '../schema';
 import Button from '../components/button';
 import MyText from '../components/text';
+import uploadService from '../services/upload.service';
 
 const win = Dimensions.get('window');
 
@@ -260,7 +262,18 @@ export default class StoryPreviewModal extends Component {
   }
 
   _closeModal() {
+    this._handleUpload();
     this.props.onRequestClose();
+  }
+
+  _handleUpload() {
+    if (!this.storyRead || !this.storyRead.finishedAt) { return; }
+
+    NetInfo.isConnected.fetch().then(isConnected => {
+      if (isConnected) {
+        uploadService.upload();
+      }
+    });
   }
 
   render() {

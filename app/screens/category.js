@@ -21,7 +21,7 @@ export default class Category extends Component {
   }
 
   componentDidMount() {
-    // this._getCategories();
+    this._getCategories();
   }
 
   _getCategories() {
@@ -33,84 +33,6 @@ export default class Category extends Component {
       })
   }
 
-  // ----------------------------Story upload start
-  _renderBtnUpload() {
-    let obj = realm.objects('StoryRead').filtered('finishedAt != $0', null);
-    console.log('==========StoryRead', obj);
-
-    return (
-      <Button
-        onPress={()=> this._upload()}
-        title={ 'Upload' }
-      />
-    )
-  }
-
-  _upload(index=0) {
-    let obj = realm.objects('StoryRead').filtered('finishedAt != $0', null)[index];
-    if (!obj) { return; }
-
-    statisticService.uploadStoryRead(this._buildData(obj))
-      .then((responseJson) => {
-        if (responseJson.ok) {
-          this._deleteRecord(obj);
-          this._upload();
-        } else {
-          console.log('------------------uploadError');
-        }
-      })
-  }
-
-  _deleteRecord(obj) {
-    realm.write(() => {
-      let storyResponses = realm.objects('StoryResponse').filtered(`storyReadUuid='${obj.uuid}'`);
-      let quizResponses = realm.objects('QuizResponse').filtered(`storyReadUuid='${obj.uuid}'`);
-
-      realm.delete(storyResponses);
-      realm.delete(quizResponses);
-      realm.delete(obj);
-    })
-  }
-
-  _buildData(storyRead) {
-    return {
-      story_id: storyRead.storyId,
-      user_uuid: '12345',
-      finished_at: storyRead.finishedAt,
-      quiz_finished: storyRead.isQuizFinished,
-      story_responses_attributes: this._buildStoryResponses(storyRead.uuid),
-      quiz_responses_attributes: this._buildQuizResponses(storyRead.uuid)
-    };
-  }
-
-  _buildStoryResponses(storyReadUuid) {
-    let arr = realm.objects('StoryResponse').filtered(`storyReadUuid='${storyReadUuid}'`)
-
-    return (
-      arr.map((obj) => {
-        return {
-          scene_id: obj.sceneId,
-          scene_action_id: obj.sceneActionId
-        }
-      })
-    );
-  }
-
-  _buildQuizResponses(storyReadUuid) {
-    let arr = realm.objects('QuizResponse').filtered(`storyReadUuid='${storyReadUuid}'`)
-
-    return (
-      arr.map((obj) => {
-        return {
-          question_id: obj.questionId,
-          choice_id: obj.choiceId
-        }
-      })
-    );
-  }
-
-  // ---------------Story upload end
-
   render() {
     return (
       <View style={{flex: 1}}>
@@ -120,7 +42,6 @@ export default class Category extends Component {
 
         <ScrollView style={{flex: 1}}>
           <Text>Category</Text>
-          { this._renderBtnUpload() }
         </ScrollView>
       </View>
     )
