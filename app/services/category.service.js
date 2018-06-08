@@ -6,10 +6,7 @@ const api = create({
 })
 
 export default {
-  increaseStoryDownload(body) {
-    return api.post(`/story_downloads`, body);
-  },
-  uploadStoryRead(body) {
-    return api.post(`/story_reads`, body);
+  getAll() {
+    return api.get(`/tags`);
   }
 }
