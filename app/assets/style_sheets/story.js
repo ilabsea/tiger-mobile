@@ -13,6 +13,11 @@ export default StyleSheet.create({
     alignItems: 'center',
     overflow: 'hidden',
   },
+  image: {
+    flex: 1,
+    height: 200,
+    borderRadius: 3,
+  },
   tagsWrapper: {
     flexDirection:'row',
     flexWrap:'wrap',
@@ -24,6 +29,7 @@ export default StyleSheet.create({
     paddingHorizontal: 4,
     color: '#111',
     fontSize: 10,
+    marginRight: 5,
   },
   title: {
     color: '#fff',

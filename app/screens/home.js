@@ -17,8 +17,8 @@ import I18n from '../i18n/i18n';
 import headerStyle from '../assets/style_sheets/header';
 import storyStyle from '../assets/style_sheets/story';
 import storyService from '../services/story.service';
-import StoryModal from './story_modal';
 import layoutSerive from '../services/layout.service';
+import StoryModal from './story_modal';
 
 export default class Home extends Component {
   _data = [];
@@ -34,17 +34,18 @@ export default class Home extends Component {
       dataScource: [],
       modalVisible: false,
       story: {tags: []},
-      viewIcon: 'th-list',
     };
-
-    layoutSerive.get((view) => {
-      this.setState({view: view});
-    })
   }
 
   componentDidMount() {
+    layoutSerive.get((view) => {
+      let viewIcon = view == 'grid' ? 'th-list' : 'th-large';
+      this.setState({view: view, viewIcon: viewIcon});
+    })
+
     this._setDownloadedStories();
     this._onRefresh();
+
   }
 
   readNow(story) {
@@ -104,7 +105,7 @@ export default class Home extends Component {
 
           <View style={storyStyle.imageWrapper}>
             <Image
-              style={{height: 200, flex: 1}}
+              style={storyStyle.image}
               source={{uri: `http://192.168.1.107:3000` + item.image}}/>
           </View>
 

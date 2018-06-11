@@ -15,6 +15,7 @@ import RNFS from 'react-native-fs';
 import * as Progress from 'react-native-progress';
 import I18n from '../i18n/i18n';
 import headerStyle from '../assets/style_sheets/header';
+import storyStyle from '../assets/style_sheets/story';
 import realm from '../schema';
 import sceneService from '../services/scene.service';
 import questionService from '../services/question.service';
@@ -37,7 +38,7 @@ export default class StoryModal extends Component {
     let days = ['អាទិត្យ', 'ច័ន្ទ', 'អង្គារ', 'ពុធ', 'ព្រហស្បតិ៍', 'សុក្រ', 'សៅរ៍'];
     let months = ['មករា', 'កុម្ភៈ', 'មិនា', 'មេសា', 'ឧសភា', 'មិថុនា', 'កក្តដា', 'សីហា', 'កញ្ញា', 'តុលា', 'វិច្ឆិកា', 'ធ្នូ'];
     let time = new Date(createdAt);
-    return "ថ្ងៃ" + days[time.getDay()] + ' ទី' + time.getDate() + ' ខែ' + months[time.getMonth()] + ' ឆ្នាំ' + time.getFullYear();
+    return 'ថ្ងៃទី' + time.getDate() + ' ' + months[time.getMonth()] + ' ' + time.getFullYear();
   }
 
   _buildStory = (story) => {
@@ -234,16 +235,16 @@ export default class StoryModal extends Component {
   _renderShortInfo(story) {
     let tags = story.tags.map((tag, index) => {
       return (
-        <Text key={index} style={styles.tag}>{tag['title']}</Text>
+        <Text key={index} style={storyStyle.tag}>{tag['title']}</Text>
       )
     })
 
     return (
       <View style={{flex: 1}}>
         <Text>{I18n.t('published_at')} { this._getFullDate(story.published_at)}</Text>
-        <Text style={{fontSize: 20}}>{I18n.t('story_title')} {story.title}</Text>
+        <Text style={{fontSize: 16}}>{story.title}</Text>
         <Text>{I18n.t('author')}: {!!story.user && story.user.email.split('@')[0]}</Text>
-        <View style={styles.tagsWrapper}>{tags}</View>
+        <View style={storyStyle.tagsWrapper}>{tags}</View>
 
         { this._renderBtnDownload(story) }
       </View>
@@ -252,7 +253,7 @@ export default class StoryModal extends Component {
 
   _renderDescription(story) {
     return (
-      <View style={{padding: 24}}>
+      <View style={{padding: 16}}>
         <Text style={styles.descriptionTitle}>{I18n.t('story_description')}</Text>
 
         <Text style={{marginTop: 24}}>
@@ -264,9 +265,9 @@ export default class StoryModal extends Component {
 
   _renderImage(story) {
     return (
-      <View style={styles.imageWrapper}>
+      <View style={[storyStyle.imageWrapper, {paddingRight: 16}]}>
         <Image
-          style={styles.image}
+          style={storyStyle.image}
           source={{uri: "http://192.168.1.107:3000" + story.image}}
         />
       </View>
@@ -334,18 +335,6 @@ export default class StoryModal extends Component {
 }
 
 const styles = StyleSheet.create({
-  imageWrapper: {
-    height: 200,
-    borderColor: '#eee',
-    borderWidth: 0.5,
-    borderRadius: 3,
-    alignItems: 'center',
-  },
-  image: {
-    width: 180,
-    height: 200,
-    marginRight: 20,
-  },
   descriptionTitle: {
     color: 'green',
     textDecorationLine: 'underline',
@@ -370,18 +359,6 @@ const styles = StyleSheet.create({
   },
   shortInfo: {
     flexDirection: 'row',
-    padding: 24,
+    padding: 16,
   },
-  tagsWrapper: {
-    flexDirection:'row',
-    flexWrap:'wrap',
-    marginTop: 8,
-  },
-  tag: {
-    marginRight: 5,
-    backgroundColor: '#eee',
-    borderRadius: 3,
-    paddingHorizontal: 4,
-    color: '#111'
-  }
 });

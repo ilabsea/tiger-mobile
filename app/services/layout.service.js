@@ -7,7 +7,7 @@ export default class Layout {
 
   static get(callback) {
     if (!!this.layout) {
-      return this.layout;
+      return !!callback && callback(this.layout);;
     }
 
     AsyncStorage.getItem(LAYOUT_KEY, (err, view) => {
