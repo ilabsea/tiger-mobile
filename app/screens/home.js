@@ -15,6 +15,7 @@ import AwesomeIcon from 'react-native-vector-icons/FontAwesome';
 import realm from '../schema';
 import I18n from '../i18n/i18n';
 import headerStyle from '../assets/style_sheets/header';
+import storyStyle from '../assets/style_sheets/story';
 import storyService from '../services/story.service';
 import StoryModal from './story_modal';
 
@@ -32,7 +33,8 @@ export default class Home extends Component {
       dataScource: [],
       modalVisible: false,
       story: {tags: []},
-      listIcon: 'th-list',
+      viewIcon: 'th-list',
+      view: 'grid',
     };
   }
 
@@ -74,45 +76,47 @@ export default class Home extends Component {
   }
 
   _onEndReached() {
-    if (this._currentPage == this._totalPage) {
-      return;
-    }
+    if (this._currentPage == this._totalPage) { return; }
 
     this._getStories();
   }
 
-  _onLayout(event) {
-    const {width} = Dimensions.get('window');
-    const itemWidth = width/2;
-    const numColumns = Math.floor(width/itemWidth);
-    this.setState({ numColumns: numColumns, itemWidth: itemWidth });
-  }
-
   _renderItem = ({item}) => {
-    // @Todo: handle class for switch view as grid and list
+    const { width } = Dimensions.get('window');
+    let w = width - 16;
+    let itemWidth = this.state.view == 'grid' ? w/2 : w;
+    let flexDirection = this.state.view == 'grid' ? 'column' : 'row';
+    let infoStyle = this.state.view == 'grid' ? {} : storyStyle.listViewInfo
+
     return (
       <TouchableOpacity
-        style={[styles.itemWrapper, {width: this.state.itemWidth}]}
+        style={{padding: 8, width: itemWidth}}
         onPress={()=> this._showModel(item)}>
+        <View style={[storyStyle.item, {flexDirection: flexDirection}]}>
+          {
+            !this.state.downloadedStories.includes(item.id) &&
+            <Text style={storyStyle.downloadLabel}>{I18n.t('download')}</Text>
+          }
 
-        <View style={styles.item}>
-          { !this.state.downloadedStories.includes(item.id) && <Text style={styles.downloadLabel}>{I18n.t('download')}</Text> }
-
-          <View style={{flexDirection: 'row', height: 200, borderColor: '#eee', borderWidth: 0.5, borderRadius: 3, alignItems: 'center'}}>
+          <View style={storyStyle.imageWrapper}>
             <Image
               style={{height: 200, flex: 1}}
-              source={{uri: "http://192.168.1.107:3000" + item.image}}/>
+              source={{uri: `http://192.168.1.107:3000` + item.image}}/>
           </View>
 
-          <Text
-            style={{color: '#fff', fontSize: 18, marginTop: 8}}
-            ellipsizeMode='tail'
-            numberOfLines={1}> {item.title} </Text>
+          <View style={[{flex: 1}, infoStyle]}>
+            <Text
+              style={[storyStyle.title]}
+              ellipsizeMode='tail'
+              numberOfLines={1}>
+              {item.title}
+            </Text>
 
-          <Text style={{color: '#fff', fontSize: 14}}>{ I18n.t('author') }: {item.author}</Text>
+            <Text style={storyStyle.author}>{ I18n.t('author') }: {item.author}</Text>
 
-          <View style={{flexDirection:'row', flexWrap:'wrap', marginTop: 8}}>
-            <Text style={styles.tag}>{!!item.tags[0] && item.tags[0].title}</Text>
+            <View style={storyStyle.tagsWrapper}>
+              <Text style={storyStyle.tag}>{!!item.tags[0] && item.tags[0].title}</Text>
+            </View>
           </View>
         </View>
       </TouchableOpacity>
@@ -120,21 +124,20 @@ export default class Home extends Component {
   }
 
   _renderContentWithFlatList() {
-    return (
-      <View
-        style={styles.container}
-        contentContainerStyle={{flex:1, alignItems: 'center'}}
-        onLayout={() => this._onLayout()} >
+    let numColumns = this.state.view == 'grid' ? 2 : 1;
 
+    return (
+      <View style={{flex: 1, backgroundColor: COLOR.cyan900}}>
         <FlatList
           data={this.state.dataSource}
           keyExtractor={(item, index) => index.toString()}
-          key={this.state.numColumns}
-          numColumns={this.state.numColumns}
+          key={numColumns}
+          numColumns={numColumns}
           renderItem={this._renderItem}
           onEndReachedThreshold={0.1}
           onEndReached={() => this._onEndReached()}
           refreshing={this.state.refreshing}
+          contentContainerStyle={{padding: 8}}
           onRefresh={() => this._onRefresh()}
         />
       </View>
@@ -157,8 +160,9 @@ export default class Home extends Component {
   }
 
   _toggleLayout() {
-    let iconName = this.state.listIcon == 'th-list' ? 'th-large' : 'th-list';
-    this.setState({listIcon: iconName});
+    let iconName = this.state.viewIcon == 'th-list' ? 'th-large' : 'th-list';
+    let view = this.state.view == 'grid' ? 'list' : 'grid';
+    this.setState({viewIcon: iconName, view: view});
   }
 
   render() {
@@ -171,12 +175,12 @@ export default class Home extends Component {
     }
 
     return (
-      <View style={styles.flex}>
+      <View style={{flex: 1}}>
         <Toolbar
           centerElement={<Text style={headerStyle.title}>{I18n.t('home')}</Text>}
           rightElement={
             <TouchableOpacity onPress={() => this._toggleLayout()} style={{paddingHorizontal: 20}}>
-              <AwesomeIcon name={this.state.listIcon} color='#fff' size={24} />
+              <AwesomeIcon name={this.state.viewIcon} color='#fff' size={24} />
             </TouchableOpacity>
           }
         />
@@ -187,46 +191,3 @@ export default class Home extends Component {
     )
   }
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: COLOR.cyan900,
-  },
-  scrollContainer: {
-    flex: 1,
-    margin: 4,
-  },
-  flex: {
-    flex: 1,
-  },
-  itemWrapper: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: 'transparent',
-    padding: 8,
-  },
-  item: {
-    flex: 1,
-    height: 310,
-    position: 'relative',
-  },
-  tag: {
-    backgroundColor: '#eee',
-    borderRadius: 3,
-    paddingHorizontal: 4,
-    color: '#111',
-    fontSize: 14,
-  },
-  downloadLabel: {
-    position: 'absolute',
-    top: 0,
-    right: 0,
-    backgroundColor: 'red',
-    zIndex: 1,
-    color: '#fff',
-    paddingHorizontal: 5,
-    paddingBottom: 5,
-    borderBottomLeftRadius: 5,
-  }
-});
