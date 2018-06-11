@@ -55,6 +55,23 @@ export default StyleSheet.create({
     borderBottomLeftRadius: 3,
     borderTopRightRadius: 3,
     fontSize: 12,
-  }
+  },
+  btnDownload: {
+    paddingVertical: 10,
+    borderRadius: 10,
+    backgroundColor: '#E4145C',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: 150,
+  },
+  btnReadNow: {
+    backgroundColor: 'green',
+    width: 200,
+  },
+  btnLabel: {
+    color: '#fff',
+    marginLeft: 10,
+  },
 
 })

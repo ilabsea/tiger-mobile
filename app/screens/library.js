@@ -8,6 +8,7 @@ import {
   ListView,
   RefreshControl,
   Alert,
+  TouchableOpacity,
 } from 'react-native';
 
 import { Toolbar, Icon, Card } from 'react-native-material-ui';
@@ -17,6 +18,7 @@ import realm from '../schema';
 import I18n from '../i18n/i18n';
 import uuidv4 from '../utils/uuidv4';
 import headerStyle from '../assets/style_sheets/header';
+import storyStyle from '../assets/style_sheets/story';
 import storyService from '../services/story.service';
 import StoryPreviewModal from './story_preview_modal';
 
@@ -107,21 +109,21 @@ export default class Labrary extends Component {
   _renderItem(item) {
     let tags = item.tags.map((tag, index) => {
       return (
-        <Text key={index} style={styles.tag}>{tag}</Text>
+        <Text key={index} style={storyStyle.tag}>{tag}</Text>
       )
     })
 
     return (
       <Card>
         <View style={styles.item}>
-          <View style={{height: 200, borderColor: '#eee', borderWidth: 0.5, borderRadius: 3, alignItems: 'center'}}>
+          <View style={[storyStyle.imageWrapper, {paddingRight: 16}]}>
             <Image
-              style={{width: 150, height: 200, marginRight: 16}}
+              style={storyStyle.image}
               source={{uri: `file://${item.image}`}}
             />
           </View>
 
-          <View style={styles.flex}>
+          <View style={{flex: 1}}>
             <Text
               style={{fontSize: 20, fontFamily: 'KhmerOS'}}
               ellipsizeMode='tail'
@@ -130,8 +132,17 @@ export default class Labrary extends Component {
               {item.title}
             </Text>
 
-            <Text style={styles.author}>{I18n.t('author')}: {item.author}</Text>
-            <View style={styles.tagWrapper}>{tags}</View>
+            <Text>{I18n.t('author')}: {item.author}</Text>
+            <View style={storyStyle.tagsWrapper}>{tags}</View>
+
+            <View style={{marginTop: 20}}>
+              <TouchableOpacity
+                onPress={()=> this._showModal(item)}
+                style={[storyStyle.btnDownload, storyStyle.btnReadNow, {width: 150}]}>
+                <Icon name="book" color='#fff' size={24} />
+                <Text style={storyStyle.btnLabel}>{I18n.t('read_now')}</Text>
+              </TouchableOpacity>
+            </View>
           </View>
 
           <Menu>
@@ -140,10 +151,6 @@ export default class Labrary extends Component {
             </MenuTrigger>
 
             <MenuOptions>
-              <MenuOption onSelect={()=> this._showModal(item)}>
-                <Text style={styles.menuOption}>{I18n.t('read_now')}</Text>
-              </MenuOption>
-
               <MenuOption onSelect={() => this._confirmDelete(item)} >
                 <Text style={[styles.menuOption, {color: 'red'}]}>{I18n.t('delete')}</Text>
               </MenuOption>
@@ -225,7 +232,7 @@ export default class Labrary extends Component {
     }
 
     return (
-      <View style={styles.flex}>
+      <View style={{flex: 1}}>
         <Toolbar
           centerElement={<Text style={headerStyle.title}>{I18n.t('my_library')}</Text>}
         />
@@ -238,9 +245,6 @@ export default class Labrary extends Component {
 }
 
 const styles = StyleSheet.create({
-  flex: {
-    flex: 1,
-  },
   item: {
     flex: 1,
     minHeight: 232,
@@ -250,20 +254,4 @@ const styles = StyleSheet.create({
   menuOption: {
     padding: 10
   },
-  tagWrapper: {
-    flexDirection:'row',
-    flexWrap:'wrap',
-    marginTop: 8,
-  },
-  author: {
-    color: '#bbb',
-    fontSize: 18
-  },
-  tag: {
-    marginRight: 5,
-    backgroundColor: '#eee',
-    borderRadius: 3,
-    paddingHorizontal: 4,
-    color: '#111'
-  }
 });

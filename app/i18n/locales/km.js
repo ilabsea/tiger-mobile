@@ -9,7 +9,7 @@ export default {
   story_title: 'ចំណងជើងរឿង',
   published_at: 'ចេញផ្សាយ',
   story_description: 'សង្ខេបនៃរឿង',
-  read_now: 'ចូលអាន',
+  read_now: 'អានរឿងនេះ',
   go_to_quiz: 'ចូលទៅកាន់សំណួរ',
   quiz: 'តេស្ត',
   question: 'សំណួរ',

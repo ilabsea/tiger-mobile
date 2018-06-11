@@ -10,7 +10,10 @@ export default class myButton extends Component {
         {...props}
         raised
         accent
-        style={{container: {marginTop: 6}}}
+        style={{
+          container: {marginTop: 6},
+          text: {fontFamily: 'KhSiemreap'}
+        }}
         onPress={onPress}
         text={title} />
     )

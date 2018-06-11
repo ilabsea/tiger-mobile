@@ -218,10 +218,10 @@ export default class StoryModal extends Component {
         { ( !this.props.storyDownloaded && !this.state.showReadNow ) &&
           <TouchableOpacity
             onPress={()=> this._downloadStory(story)}
-            style={styles.btnDownload}
+            style={storyStyle.btnDownload}
           >
             <Icon name="cloud-download" color='#fff' size={24} />
-            <Text style={styles.btnLabel}>{I18n.t('download')}</Text>
+            <Text style={storyStyle.btnLabel}>{I18n.t('download')}</Text>
           </TouchableOpacity>
         }
 
@@ -279,9 +279,9 @@ export default class StoryModal extends Component {
       <View style={{alignItems: 'center'}}>
         <TouchableOpacity
           onPress={()=> {this.props.readNow(story)}}
-          style={[styles.btnDownload, styles.btnReadNow]}>
+          style={[storyStyle.btnDownload, storyStyle.btnReadNow]}>
           <Icon name="book" color='#fff' size={24} />
-          <Text style={styles.btnLabel}>{I18n.t('read_now')}</Text>
+          <Text style={storyStyle.btnLabel}>{I18n.t('read_now')}</Text>
         </TouchableOpacity>
       </View>
     )
@@ -338,24 +338,6 @@ const styles = StyleSheet.create({
   descriptionTitle: {
     color: 'green',
     textDecorationLine: 'underline',
-  },
-  btnDownload: {
-    paddingVertical: 10,
-    borderRadius: 10,
-    backgroundColor: '#E4145C',
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    width: 150,
-  },
-  btnReadNow: {
-    backgroundColor: 'green',
-    marginHorizontal: 24,
-    width: 200,
-  },
-  btnLabel: {
-    color: '#fff',
-    marginLeft: 10,
   },
   shortInfo: {
     flexDirection: 'row',

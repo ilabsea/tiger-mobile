@@ -19,13 +19,10 @@ import About from '../screens/about';
 import Category from '../screens/category';
 
 const uiTheme = {
+  fontFamily: 'KhSiemreap',
   palette: {
     primaryColor: COLOR.tealA700,
   },
-  toolbar: {
-    container: {
-    }
-  }
 };
 
 export default class Tabs extends Component {
