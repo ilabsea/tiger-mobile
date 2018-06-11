@@ -18,6 +18,7 @@ import headerStyle from '../assets/style_sheets/header';
 import storyStyle from '../assets/style_sheets/story';
 import storyService from '../services/story.service';
 import StoryModal from './story_modal';
+import layoutSerive from '../services/layout.service';
 
 export default class Home extends Component {
   _data = [];
@@ -34,8 +35,11 @@ export default class Home extends Component {
       modalVisible: false,
       story: {tags: []},
       viewIcon: 'th-list',
-      view: 'grid',
     };
+
+    layoutSerive.get((view) => {
+      this.setState({view: view});
+    })
   }
 
   componentDidMount() {
@@ -162,6 +166,7 @@ export default class Home extends Component {
   _toggleLayout() {
     let iconName = this.state.viewIcon == 'th-list' ? 'th-large' : 'th-list';
     let view = this.state.view == 'grid' ? 'list' : 'grid';
+    layoutSerive.set(view);
     this.setState({viewIcon: iconName, view: view});
   }
 
