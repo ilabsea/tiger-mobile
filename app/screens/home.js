@@ -7,10 +7,11 @@ import {
   Dimensions,
   FlatList,
   ActivityIndicator,
-  Image,
+  Image
 } from 'react-native';
 
-import { Toolbar, COLOR } from 'react-native-material-ui';
+import { Toolbar, COLOR, Button } from 'react-native-material-ui';
+import AwesomeIcon from 'react-native-vector-icons/FontAwesome';
 import realm from '../schema';
 import I18n from '../i18n/i18n';
 import headerStyle from '../assets/style_sheets/header';
@@ -31,6 +32,7 @@ export default class Home extends Component {
       dataScource: [],
       modalVisible: false,
       story: {tags: []},
+      listIcon: 'th-list',
     };
   }
 
@@ -96,18 +98,18 @@ export default class Home extends Component {
         <View style={styles.item}>
           { !this.state.downloadedStories.includes(item.id) && <Text style={styles.downloadLabel}>{I18n.t('download')}</Text> }
 
-          <View style={{height: 200, borderColor: '#eee', borderWidth: 0.5, borderRadius: 3, alignItems: 'center'}}>
+          <View style={{flexDirection: 'row', height: 200, borderColor: '#eee', borderWidth: 0.5, borderRadius: 3, alignItems: 'center'}}>
             <Image
-              style={{width: 200, height: 200}}
+              style={{height: 200, flex: 1}}
               source={{uri: "http://192.168.1.107:3000" + item.image}}/>
           </View>
 
           <Text
-            style={{color: '#fff', fontSize: 20}}
+            style={{color: '#fff', fontSize: 18, marginTop: 8}}
             ellipsizeMode='tail'
             numberOfLines={1}> {item.title} </Text>
 
-          <Text style={{color: '#fff', fontSize: 18}}>{ I18n.t('author') }: {item.author}</Text>
+          <Text style={{color: '#fff', fontSize: 14}}>{ I18n.t('author') }: {item.author}</Text>
 
           <View style={{flexDirection:'row', flexWrap:'wrap', marginTop: 8}}>
             <Text style={styles.tag}>{!!item.tags[0] && item.tags[0].title}</Text>
@@ -154,6 +156,11 @@ export default class Home extends Component {
     )
   }
 
+  _toggleLayout() {
+    let iconName = this.state.listIcon == 'th-list' ? 'th-large' : 'th-list';
+    this.setState({listIcon: iconName});
+  }
+
   render() {
     if(this.state.isLoading){
       return(
@@ -167,6 +174,11 @@ export default class Home extends Component {
       <View style={styles.flex}>
         <Toolbar
           centerElement={<Text style={headerStyle.title}>{I18n.t('home')}</Text>}
+          rightElement={
+            <TouchableOpacity onPress={() => this._toggleLayout()} style={{paddingHorizontal: 20}}>
+              <AwesomeIcon name={this.state.listIcon} color='#fff' size={24} />
+            </TouchableOpacity>
+          }
         />
 
         { this._renderContentWithFlatList() }
@@ -196,14 +208,15 @@ const styles = StyleSheet.create({
   },
   item: {
     flex: 1,
-    height: 300,
+    height: 310,
     position: 'relative',
   },
   tag: {
     backgroundColor: '#eee',
     borderRadius: 3,
     paddingHorizontal: 4,
-    color: '#111'
+    color: '#111',
+    fontSize: 14,
   },
   downloadLabel: {
     position: 'absolute',

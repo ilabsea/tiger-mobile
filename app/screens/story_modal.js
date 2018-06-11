@@ -234,16 +234,16 @@ export default class StoryModal extends Component {
   _renderShortInfo(story) {
     let tags = story.tags.map((tag, index) => {
       return (
-        <Text key={index} style={{marginRight: 5, backgroundColor: '#eee', borderRadius: 3, paddingHorizontal: 4}}>{tag.title}</Text>
+        <Text key={index} style={styles.tag}>{tag['title']}</Text>
       )
     })
 
     return (
       <View style={{flex: 1}}>
         <Text>{I18n.t('published_at')} { this._getFullDate(story.published_at)}</Text>
-        <Text style={{fontFamily: 'KhmerOureang'}}>{I18n.t('story_title')} {story.title}</Text>
+        <Text style={{fontSize: 20}}>{I18n.t('story_title')} {story.title}</Text>
         <Text>{I18n.t('author')}: {!!story.user && story.user.email.split('@')[0]}</Text>
-        <Text style={styles.tagsWrapper}> { tags } </Text>
+        <View style={styles.tagsWrapper}>{tags}</View>
 
         { this._renderBtnDownload(story) }
       </View>
@@ -253,7 +253,7 @@ export default class StoryModal extends Component {
   _renderDescription(story) {
     return (
       <View style={{padding: 24}}>
-        <Text style={styles.descriptionTitle}>{I18n.t('introduction')}</Text>
+        <Text style={styles.descriptionTitle}>{I18n.t('story_description')}</Text>
 
         <Text style={{marginTop: 24}}>
           {story.description}
@@ -376,5 +376,12 @@ const styles = StyleSheet.create({
     flexDirection:'row',
     flexWrap:'wrap',
     marginTop: 8,
+  },
+  tag: {
+    marginRight: 5,
+    backgroundColor: '#eee',
+    borderRadius: 3,
+    paddingHorizontal: 4,
+    color: '#111'
   }
 });

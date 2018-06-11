@@ -1,10 +1,20 @@
 import React, { Component } from 'react';
 import Tabs from './app/screens/tabs';
 import { NetInfo } from 'react-native';
+import { setCustomText} from 'react-native-global-props';
 
 import realm from './app/schema';
 import statisticService from './app/services/statistic.service';
 import uploadService from './app/services/upload.service';
+
+const customTextProps = {
+  style: {
+    fontFamily: 'KhSiemreap',
+    color: '#111'
+  }
+};
+
+setCustomText(customTextProps);
 
 export default class App extends Component {
   componentDidMount() {

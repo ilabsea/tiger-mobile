@@ -8,7 +8,7 @@ export default {
   author: 'អ្នកនិពន្ធ',
   story_title: 'ចំណងជើងរឿង',
   published_at: 'ចេញផ្សាយ',
-  introduction: 'សេចក្តីណែនាំ',
+  story_description: 'សង្ខេបនៃរឿង',
   read_now: 'ចូលអាន',
   go_to_quiz: 'ចូលទៅកាន់សំណួរ',
   quiz: 'តេស្ត',
