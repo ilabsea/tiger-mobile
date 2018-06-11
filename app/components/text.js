@@ -7,7 +7,7 @@ export default class myText extends Component {
 
     return (
       <Text
-        style={[{fontFamily: 'KhmerOS'}, style]}
+        style={[{fontFamily: 'KhSiemreap'}, style]}
         { ...props }
       >
         { children }

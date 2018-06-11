@@ -5,6 +5,6 @@ export default StyleSheet.create({
     color: '#fff',
     fontSize: 20,
     lineHeight: 36,
-    fontFamily: 'KhmerOureang',
+    fontFamily: 'KhSiemreap',
   }
 })
