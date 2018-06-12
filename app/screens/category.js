@@ -2,35 +2,133 @@ import React, {Component} from 'react';
 import {
   Text,
   View,
+  TouchableOpacity,
+  Dimensions,
+  FlatList,
+  ActivityIndicator,
   ScrollView,
   StyleSheet,
+  NetInfo,
 } from 'react-native';
 
-import { Toolbar } from 'react-native-material-ui';
+import { Toolbar, COLOR } from 'react-native-material-ui';
 import I18n from '../i18n/i18n';
 import headerStyle from '../assets/style_sheets/header';
+import storyStyle from '../assets/style_sheets/story';
 import categoryService from '../services/category.service';
-
-import Button from '../components/button';
-import realm from '../schema';
-import statisticService from '../services/statistic.service';
+import CategoryModal from './category_modal';
 
 export default class Category extends Component {
+  _isOnline = false;
+  _data = [];
+
   constructor(props) {
     super(props);
+
+    this.state = {
+      isLoading: true,
+      refreshing: false,
+      modalVisible: false,
+      dataSource: [],
+    };
   }
 
   componentDidMount() {
-    this._getCategories();
+    this._handleInternetConnection();
+  }
+
+  _handleInternetConnection() {
+    NetInfo.isConnected.fetch().then(isConnected => {
+      this._isOnline = isConnected;
+      this._onRefresh();
+    });
+
+    NetInfo.isConnected.addEventListener(
+      'connectionChange',
+      this._handleFirstConnectivityChange
+    );
+  }
+
+  _handleFirstConnectivityChange = (isConnected) => {
+    this._isOnline = isConnected;
+  }
+
+  _onRefresh() {
+    if (!this._isOnline) { return; }
+
+    this._getCategories()
   }
 
   _getCategories() {
     categoryService.getAll()
       .then((responseJson) => {
-        console.log('===============categories', responseJson.data.tags );
-
-        this.setState({categories: responseJson.data.tags});
+        // console.log('===============categories', responseJson.data.tags );
+        this._data = this._data.concat(responseJson.data.tags);
+        this.setState({ isLoading: false, dataSource: this._data });
       })
+  }
+
+  _renderItem = ({item}) => {
+    const { width } = Dimensions.get('window');
+    let itemWidth = (width - 16)/2;
+
+    return (
+      <TouchableOpacity
+        style={{padding: 8, width: itemWidth}}
+        onPress={()=> this._showModel(item)}>
+        <View style={styles.item}>
+          <View style={[styles.icon, {backgroundColor: item.color}]}>
+          </View>
+
+          <View style={{flex: 1}}>
+            <Text
+              style={[{color: '#111'}]}
+              ellipsizeMode='tail'
+              numberOfLines={1}>
+              {item.title}
+            </Text>
+
+            <Text style={[storyStyle.author, {color: COLOR.green700}]}>{item.stories_count} {I18n.t('book')}</Text>
+          </View>
+        </View>
+      </TouchableOpacity>
+    )
+  }
+
+  _renderContentWithFlatList() {
+    return (
+      <View style={{flex: 1}}>
+        <FlatList
+          data={this.state.dataSource}
+          keyExtractor={(item, index) => index.toString()}
+          key={2}
+          numColumns={2}
+          renderItem={this._renderItem}
+          onEndReachedThreshold={0.1}
+          onEndReached={() => {}}
+          refreshing={this.state.refreshing}
+          contentContainerStyle={{padding: 8}}
+          onRefresh={() => this._onRefresh()}
+        />
+      </View>
+    )
+  }
+
+  _renderModal() {
+    return (
+      <CategoryModal
+        modalVisible={this.state.modalVisible}
+        category={this.state.category}
+        isOnline={this._isOnline}
+        onRequestClose={() => {
+          this.setState({modalVisible: false});
+        }}
+      ></CategoryModal>
+    )
+  }
+
+  _showModel(category) {
+    this.setState({modalVisible: true, category: category});
   }
 
   render() {
@@ -40,14 +138,27 @@ export default class Category extends Component {
           centerElement={<Text style={headerStyle.title}>{I18n.t('category')}</Text>}
         />
 
-        <ScrollView style={{flex: 1}}>
-          <Text>Category</Text>
-        </ScrollView>
+        { this._renderContentWithFlatList() }
+        { this._renderModal() }
       </View>
     )
   }
 }
 
 const styles = StyleSheet.create({
-
+  icon: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    marginBottom: 16,
+  },
+  item: {
+    flexDirection: 'column',
+    backgroundColor: '#fff',
+    padding: 16,
+    borderRadius: 3,
+    borderWidth: 1,
+    borderRadius: 2,
+    borderColor: '#ddd',
+  }
 });

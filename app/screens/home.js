@@ -2,7 +2,6 @@ import React, {Component} from 'react';
 import {
   Text,
   View,
-  StyleSheet,
   TouchableOpacity,
   Dimensions,
   FlatList,
@@ -35,8 +34,8 @@ export default class Home extends Component {
     this.state = {
       isLoading: true,
       refreshing: false,
-      dataScource: [],
       modalVisible: false,
+      dataSource: [],
       story: {tags: []},
     };
   }

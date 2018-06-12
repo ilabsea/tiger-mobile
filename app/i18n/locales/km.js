@@ -23,4 +23,5 @@ export default {
   answer: 'ចម្លើយ',
   download: 'ទាញយក',
   no_connection: 'គ្មានការតភ្ជាប់បណ្តាញ',
+  book: 'សៀវភៅ',
 };
