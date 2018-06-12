@@ -16,6 +16,7 @@ import I18n from '../i18n/i18n';
 import headerStyle from '../assets/style_sheets/header';
 import storyStyle from '../assets/style_sheets/story';
 import categoryService from '../services/category.service';
+import storyService from '../services/story.service';
 import CategoryModal from './category_modal';
 
 export default class Category extends Component {
@@ -30,6 +31,8 @@ export default class Category extends Component {
       refreshing: false,
       modalVisible: false,
       dataSource: [],
+      category: {},
+      stories: [],
     };
   }
 
@@ -119,6 +122,7 @@ export default class Category extends Component {
       <CategoryModal
         modalVisible={this.state.modalVisible}
         category={this.state.category}
+        stories={this.state.stories}
         isOnline={this._isOnline}
         onRequestClose={() => {
           this.setState({modalVisible: false});
@@ -128,7 +132,10 @@ export default class Category extends Component {
   }
 
   _showModel(category) {
-    this.setState({modalVisible: true, category: category});
+    storyService.getAllByTag(category.id, 1)
+      .then((responseJson) => {
+        this.setState({modalVisible: true, category: category, stories: responseJson.data.stories});
+      })
   }
 
   render() {

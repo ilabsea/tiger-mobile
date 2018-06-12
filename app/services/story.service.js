@@ -12,4 +12,7 @@ export default {
   getAll(page=1) {
     return api.get('/stories?per_page=' + perPage + '&page=' + page);
   },
+  getAllByTag(tagId) {
+    return api.get(`/tags/${tagId}/stories`);
+  }
 }
