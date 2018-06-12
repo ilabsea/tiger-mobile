@@ -13,7 +13,7 @@ export default {
   go_to_quiz: 'ចូលទៅកាន់សំណួរ',
   quiz: 'តេស្ត',
   question: 'សំណួរ',
-  result: 'លទ្ធផល',
+  result: 'ផ្ទៀងផ្ទាត់ចម្លើយ',
   done: 'រួចរាល់',
   delete: 'លុបចោល',
   delete_story: 'អះអាងលុបរឿង',
@@ -22,4 +22,5 @@ export default {
   cancel: 'បោះបង់',
   answer: 'ចម្លើយ',
   download: 'ទាញយក',
+  no_connection: 'គ្មានការតភ្ជាប់បណ្តាញ',
 };

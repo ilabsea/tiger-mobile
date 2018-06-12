@@ -7,9 +7,11 @@ import {
   Dimensions,
   FlatList,
   ActivityIndicator,
-  Image
+  Image,
+  NetInfo,
 } from 'react-native';
 
+import RNFS from 'react-native-fs';
 import { Toolbar, COLOR, Button } from 'react-native-material-ui';
 import AwesomeIcon from 'react-native-vector-icons/FontAwesome';
 import realm from '../schema';
@@ -19,11 +21,13 @@ import storyStyle from '../assets/style_sheets/story';
 import storyService from '../services/story.service';
 import layoutSerive from '../services/layout.service';
 import StoryModal from './story_modal';
+import { environment } from '../environments/environment';
 
 export default class Home extends Component {
   _data = [];
   _currentPage = 0;
   _totalPage = 0;
+  _isOnline = false;
 
   constructor(props) {
     super(props);
@@ -38,20 +42,40 @@ export default class Home extends Component {
   }
 
   componentDidMount() {
+    this._handleInternetConnection();
+
     layoutSerive.get((view) => {
       let viewIcon = view == 'grid' ? 'th-list' : 'th-large';
       this.setState({view: view, viewIcon: viewIcon});
     })
-
     this._setDownloadedStories();
-    this._onRefresh();
-
   }
 
   readNow(story) {
     this.setState({modalVisible: false});
     this.props.onSetActive('library');
     this.props.onSetStory(story);
+  }
+
+  _handleInternetConnection() {
+    NetInfo.isConnected.fetch().then(isConnected => {
+      this._isOnline = isConnected;
+      this._onRefresh();
+    });
+
+    NetInfo.isConnected.addEventListener(
+      'connectionChange',
+      this._handleFirstConnectivityChange
+    );
+  }
+
+  _handleFirstConnectivityChange = (isConnected) => {
+    this._isOnline = isConnected;
+
+    if (!!this.refs.home) {
+      this.setState({modalVisible: false});
+      this._onRefresh();
+    }
   }
 
   _setDownloadedStories() {
@@ -61,10 +85,30 @@ export default class Home extends Component {
   _onRefresh() {
     this._currentPage = 0;
     this._data = [];
+
+    if (!this._isOnline) {
+      return this._getOfflineStories();
+    }
+
     this._getStories();
   }
 
+  _getOfflineStories() {
+    console.log('===================_getOfflineStories');
+    this._currentPage++;
+
+    let allStories = realm.objects('StoryBackup').sorted('publishedAt', true);
+    let start = (this._currentPage - 1) * storyService.perPage;
+    let end = this._currentPage * storyService.perPage;
+    let stories = allStories.slice(start, end);
+
+    this._data = this._data.concat(stories);
+    this._totalPage = Math.round(allStories.length / storyService.perPage);
+    this.setState({ isLoading: false, dataSource: this._data });
+  }
+
   _getStories() {
+    console.log('===================_getStories');
     this._currentPage++;
 
     storyService.getAll(this._currentPage)
@@ -72,7 +116,51 @@ export default class Home extends Component {
         this._data = this._data.concat(responseJson.data.stories);
         this._totalPage = responseJson.data.meta.pagination.total_pages;
         this.setState({ isLoading: false, dataSource: this._data });
+        this._handleBackupStories();
       })
+  }
+
+  _handleBackupStories() {
+    let stories = realm.objects('StoryBackup');
+
+    realm.write(() => {
+      // realm.delete(stories);
+
+      this._data.map((story) => {
+        realm.create('StoryBackup', this._buildStory(story), true);
+        this._downloadFile(story);
+      })
+    })
+  }
+
+  _buildStory = (story) => {
+    return {
+      id: story.id,
+      title: story.title,
+      description: story.description,
+      image: '',
+      author: story.author,
+      sourceLink: story.source_link,
+      publishedAt: story.published_at,
+      tags: story.tags,
+      createdAt: new Date()
+    };
+  }
+
+  _downloadFile(story) {
+    let image = story.image;
+    let url = `${environment.domain}${image}`;
+    let fileName = image.split('/').slice(-1)[0];
+    let downloadDest = `${RNFS.CachesDirectoryPath}/${fileName}`;
+    let ret = RNFS.downloadFile({ fromUrl: url, toFile: downloadDest });
+
+    ret.promise.then(res => {
+      realm.write(() => {
+        let obj = realm.objects('StoryBackup').filtered(`id=${story.id}`)[0];
+        obj.image = downloadDest;
+      })
+    }).catch(err => {
+    });
   }
 
   _showModel(story) {
@@ -83,6 +171,10 @@ export default class Home extends Component {
   _onEndReached() {
     if (this._currentPage == this._totalPage) { return; }
 
+    if (!this._isOnline) {
+      return this._getOfflineStories();
+    }
+
     this._getStories();
   }
 
@@ -92,6 +184,7 @@ export default class Home extends Component {
     let itemWidth = this.state.view == 'grid' ? w/2 : w;
     let flexDirection = this.state.view == 'grid' ? 'column' : 'row';
     let infoStyle = this.state.view == 'grid' ? {} : storyStyle.listViewInfo
+    let HOST = this._isOnline ? environment.domain : 'file://'
 
     return (
       <TouchableOpacity
@@ -106,7 +199,7 @@ export default class Home extends Component {
           <View style={storyStyle.imageWrapper}>
             <Image
               style={storyStyle.image}
-              source={{uri: `http://192.168.1.107:3000` + item.image}}/>
+              source={{uri: `${HOST}${item.image}` }}/>
           </View>
 
           <View style={[{flex: 1}, infoStyle]}>
@@ -120,7 +213,7 @@ export default class Home extends Component {
             <Text style={storyStyle.author}>{ I18n.t('author') }: {item.author}</Text>
 
             <View style={storyStyle.tagsWrapper}>
-              <Text style={storyStyle.tag}>{!!item.tags[0] && item.tags[0].title}</Text>
+              <Text style={storyStyle.tag}>{item.tags[0]}</Text>
             </View>
           </View>
         </View>
@@ -154,6 +247,7 @@ export default class Home extends Component {
       <StoryModal
         modalVisible={this.state.modalVisible}
         story={this.state.story}
+        isOnline={this._isOnline}
         onRequestClose={() => {
           this.setState({modalVisible: false});
           this._setDownloadedStories();
@@ -181,7 +275,7 @@ export default class Home extends Component {
     }
 
     return (
-      <View style={{flex: 1}}>
+      <View style={{flex: 1}} ref="home">
         <Toolbar
           centerElement={<Text style={headerStyle.title}>{I18n.t('home')}</Text>}
           rightElement={

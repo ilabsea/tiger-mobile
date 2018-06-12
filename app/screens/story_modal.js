@@ -8,6 +8,8 @@ import {
   Image,
   Modal,
   ScrollView,
+  NetInfo,
+  Alert,
 } from 'react-native';
 
 import { Toolbar, Icon } from 'react-native-material-ui';
@@ -20,11 +22,11 @@ import realm from '../schema';
 import sceneService from '../services/scene.service';
 import questionService from '../services/question.service';
 import statisticService from '../services/statistic.service';
-
-let jobId = -1;
-let images = [];
+import { environment } from '../environments/environment';
 
 export default class StoryModal extends Component {
+  images = [];
+
   constructor(props) {
     super(props);
 
@@ -50,14 +52,14 @@ export default class StoryModal extends Component {
       author: story.author,
       sourceLink: story.source_link,
       publishedAt: story.published_at,
-      tags: story.tags.map(tag => tag.title),
+      tags: story.tags,
       createdAt: new Date()
     };
   }
 
   _importStory(story) {
     realm.create('Story', this._buildStory(story), true);
-    images.push(story.image);
+    this.images.push(story.image);
   }
 
   _importScenes(story, scenes) {
@@ -109,44 +111,38 @@ export default class StoryModal extends Component {
 
   _downloadFiles(story, scenes) {
     let scenesList = scenes.filter(s => !!s.image);
-    images = [{type: 'Story', id: story.id, url: story.image}];
-    scenesList.map((s)=>{ images.push({type: 'Scene', id: s.id, url: s.image}) });
+    this.images = [{type: 'Story', id: story.id, url: story.image}];
+    scenesList.map((s)=>{ this.images.push({type: 'Scene', id: s.id, url: s.image}) });
     this.setState({showProgress: true, progress: 0});
     this._downloadFile(0);
   }
 
   // https://github.com/cjdell/react-native-fs-test/blob/master/index.common.js
   _downloadFile(index) {
-    let image = images[index];
+    let image = this.images[index];
     let progress = data => {};
     let begin = res => {};
     let progressDivider = 1;
     let background = false;
-    let url = `http://192.168.1.107:3000${image.url}`;
+    let url = `${environment.domain}${image.url}`;
     let fileName = image.url.split('/').slice(-1)[0];
     let downloadDest = `${RNFS.DocumentDirectoryPath}/${fileName}`;
-
     let ret = RNFS.downloadFile({ fromUrl: url, toFile: downloadDest, begin, progress, background, progressDivider });
-    jobId = ret.jobId;
 
     ret.promise.then(res => {
       realm.write(() => {
         let obj = realm.objects(image.type).filtered(`id=${image.id}`)[0];
         obj.image = downloadDest;
-        this.setState({progress: index+1/images.length});
+        this.setState({progress: index+1/this.images.length});
       })
 
-      jobId = -1;
-
-      if (index + 1 < images.length) {
+      if (index + 1 < this.images.length) {
         this._downloadFile(index + 1);
       } else {
         this.setState({showProgress: false, showReadNow: true});
       }
     }).catch(err => {
-      jobId = -1;
-
-      if (index + 1 < images.length) {
+      if (index + 1 < this.images.length) {
         this._downloadFile(index + 1);
       } else {
         this.setState({showProgress: false, showReadNow: true});
@@ -155,6 +151,10 @@ export default class StoryModal extends Component {
   }
 
   _downloadStory(story) {
+    if (!this.props.isOnline) {
+      return Alert.alert('', I18n.t('no_connection'));
+    }
+
     sceneService.getAll(story.id)
       .then((responseJson) => {
         realm.write(() => {
@@ -235,7 +235,7 @@ export default class StoryModal extends Component {
   _renderShortInfo(story) {
     let tags = story.tags.map((tag, index) => {
       return (
-        <Text key={index} style={storyStyle.tag}>{tag['title']}</Text>
+        <Text key={index} style={storyStyle.tag}>{tag}</Text>
       )
     })
 
@@ -243,7 +243,7 @@ export default class StoryModal extends Component {
       <View style={{flex: 1}}>
         <Text>{I18n.t('published_at')} { this._getFullDate(story.published_at)}</Text>
         <Text style={{fontSize: 16}}>{story.title}</Text>
-        <Text>{I18n.t('author')}: {!!story.user && story.user.email.split('@')[0]}</Text>
+        <Text>{I18n.t('author')}: {!!story.author}</Text>
         <View style={storyStyle.tagsWrapper}>{tags}</View>
 
         { this._renderBtnDownload(story) }
@@ -264,11 +264,13 @@ export default class StoryModal extends Component {
   }
 
   _renderImage(story) {
+    let HOST = this.props.isOnline ? environment.domain : 'file://';
+
     return (
       <View style={[storyStyle.imageWrapper, {paddingRight: 16}]}>
         <Image
           style={storyStyle.image}
-          source={{uri: "http://192.168.1.107:3000" + story.image}}
+          source={{uri: `${HOST}${story.image}`}}
         />
       </View>
     )

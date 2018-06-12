@@ -5,6 +5,7 @@
 
 import Realm from 'realm';
 import Story from './schemas/story';
+import StoryBackup from './schemas/story_backup';
 import Scene from './schemas/scene';
 import SceneAction from './schemas/scene_action';
 import Question from './schemas/question';
@@ -15,6 +16,7 @@ import QuizResponse from './schemas/quiz_response';
 
 export default new Realm({schema: [
   Story,
+  StoryBackup,
   Scene,
   SceneAction,
   Question,
