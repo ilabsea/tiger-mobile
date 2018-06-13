@@ -117,7 +117,7 @@ export default class CategoryModal extends Component {
       <StoryModal
         modalVisible={this.state.modalVisible}
         story={this.state.story}
-        isOnline={true}
+        isOnline={this.props.isOnline}
         onRequestClose={() => {
           this.setState({modalVisible: false});
           this._setDownloadedStories();

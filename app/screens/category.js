@@ -9,6 +9,7 @@ import {
   ScrollView,
   StyleSheet,
   NetInfo,
+  ToastAndroid,
 } from 'react-native';
 
 import { Toolbar, COLOR } from 'react-native-material-ui';
@@ -60,6 +61,13 @@ export default class Category extends Component {
 
   _handleFirstConnectivityChange = (isConnected) => {
     this._isOnline = isConnected;
+    if (!isConnected) {
+      this._showNoConnectionMessage();
+    }
+  }
+
+  _showNoConnectionMessage() {
+    ToastAndroid.show(I18n.t('no_connection'), ToastAndroid.LONG);
   }
 
   _onRefresh() {
@@ -140,6 +148,10 @@ export default class Category extends Component {
   }
 
   _showModel(category) {
+    if (!this._isOnline) {
+      return this._showNoConnectionMessage();
+    }
+
     storyService.getAllByTag(category.id, 1)
       .then((responseJson) => {
         this.setState({modalVisible: true, category: category, stories: responseJson.data.stories});
