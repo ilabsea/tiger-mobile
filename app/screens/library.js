@@ -222,6 +222,14 @@ export default class Labrary extends Component {
     this.props.onSetStory(null);
   }
 
+  _renderNoData() {
+    return (
+      <View style={headerStyle.centerChildWrapper}>
+        <Text>{I18n.t('no_data')}</Text>
+      </View>
+    );
+  }
+
   render() {
     if(this.state.isLoading){
       return(
@@ -231,13 +239,16 @@ export default class Labrary extends Component {
       )
     }
 
+    let allStories = realm.objects('Story').sorted('createdAt', true);
+
     return (
       <View style={{flex: 1}}>
         <Toolbar
           centerElement={<Text style={headerStyle.title}>{I18n.t('my_library')}</Text>}
         />
 
-        { this._renderList() }
+        { !allStories.length && this._renderNoData() }
+        { !!allStories.length && this._renderList() }
         { this._renderModal() }
       </View>
     )

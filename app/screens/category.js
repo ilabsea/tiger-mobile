@@ -146,6 +146,14 @@ export default class Category extends Component {
       })
   }
 
+  _renderNoData() {
+    return (
+      <View style={headerStyle.centerChildWrapper}>
+        <Text>{I18n.t('no_data')}</Text>
+      </View>
+    );
+  }
+
   render() {
     return (
       <View style={{flex: 1}}>
@@ -153,7 +161,8 @@ export default class Category extends Component {
           centerElement={<Text style={headerStyle.title}>{I18n.t('category')}</Text>}
         />
 
-        { this._renderContentWithFlatList() }
+        { !this.state.dataSource.length && this._renderNoData() }
+        { !!this.state.dataSource.length && this._renderContentWithFlatList() }
         { this._renderModal() }
       </View>
     )

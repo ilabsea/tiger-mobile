@@ -24,4 +24,5 @@ export default {
   download: 'ទាញយក',
   no_connection: 'គ្មានការតភ្ជាប់បណ្តាញ',
   book: 'សៀវភៅ',
+  no_data: 'មិនទាន់មានទិន្នន័យ',
 };

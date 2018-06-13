@@ -271,6 +271,14 @@ export default class Home extends Component {
     this.setState({viewIcon: iconName, view: view});
   }
 
+  _renderNoData() {
+    return (
+      <View style={headerStyle.centerChildWrapper}>
+        <Text>{I18n.t('no_data')}</Text>
+      </View>
+    );
+  }
+
   render() {
     if(this.state.isLoading){
       return(
@@ -291,7 +299,8 @@ export default class Home extends Component {
           }
         />
 
-        { this._renderContentWithFlatList() }
+        { !this.state.dataSource.length && this._renderNoData() }
+        { !!this.state.dataSource.length && this._renderContentWithFlatList() }
         { this._renderModal() }
       </View>
     )
