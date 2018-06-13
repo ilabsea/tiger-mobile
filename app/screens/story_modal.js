@@ -243,7 +243,7 @@ export default class StoryModal extends Component {
       <View style={{flex: 1}}>
         <Text>{I18n.t('published_at')} { this._getFullDate(story.published_at)}</Text>
         <Text style={{fontSize: 16}}>{story.title}</Text>
-        <Text>{I18n.t('author')}: {!!story.author}</Text>
+        <Text>{I18n.t('author')}: {story.author}</Text>
         <View style={storyStyle.tagsWrapper}>{tags}</View>
 
         { this._renderBtnDownload(story) }

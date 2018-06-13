@@ -28,7 +28,7 @@ const uiTheme = {
 export default class Tabs extends Component {
   constructor(props) {
     super(props);
-    this.state = { active: 'category' };
+    this.state = { active: 'home' };
   }
 
   onSetActive(tab) {
