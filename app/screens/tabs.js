@@ -54,7 +54,12 @@ export default class Tabs extends Component {
               ></Home>
             }
 
-            { this.state.active == 'category' && <Category></Category> }
+            { this.state.active == 'category' &&
+              <Category
+                onSetActive={(tab) => this.onSetActive(tab)}
+                onSetStory={(story) => this.onSetStory(story)}
+              ></Category>
+            }
             { this.state.active == 'library' &&
               <Library
                 story={this.state.story}

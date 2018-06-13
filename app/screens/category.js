@@ -40,6 +40,12 @@ export default class Category extends Component {
     this._handleInternetConnection();
   }
 
+  readNow(story) {
+    this.setState({modalVisible: false});
+    this.props.onSetActive('library');
+    this.props.onSetStory(story);
+  }
+
   _handleInternetConnection() {
     NetInfo.isConnected.fetch().then(isConnected => {
       this._isOnline = isConnected;
@@ -57,6 +63,8 @@ export default class Category extends Component {
   }
 
   _onRefresh() {
+    this._data = [];
+
     if (!this._isOnline) { return; }
 
     this._getCategories()
@@ -65,7 +73,6 @@ export default class Category extends Component {
   _getCategories() {
     categoryService.getAll()
       .then((responseJson) => {
-        // console.log('===============categories', responseJson.data.tags );
         this._data = this._data.concat(responseJson.data.tags);
         this.setState({ isLoading: false, dataSource: this._data });
       })
@@ -127,6 +134,7 @@ export default class Category extends Component {
         onRequestClose={() => {
           this.setState({modalVisible: false});
         }}
+        readNow={(story) => this.readNow(story)}
       ></CategoryModal>
     )
   }
