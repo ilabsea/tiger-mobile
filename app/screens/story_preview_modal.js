@@ -18,7 +18,6 @@ import uuidv4 from '../utils/uuidv4';
 import headerStyle from '../assets/style_sheets/header';
 import realm from '../schema';
 import Button from '../components/button';
-import MyText from '../components/text';
 import uploadService from '../services/upload.service';
 
 const win = Dimensions.get('window');
@@ -144,7 +143,7 @@ export default class StoryPreviewModal extends Component {
   _renderDescription(scene, index) {
     return (
       <View style={{}}>
-        <MyText style={[styles.textShadow, {padding: 16}]}>{scene.description}</MyText>
+        <Text style={[styles.textShadow, {padding: 16}]}>{scene.description}</Text>
 
         <View style={{padding: 16}}>
           { this._renderActionButtons(scene, index) }
@@ -207,7 +206,7 @@ export default class StoryPreviewModal extends Component {
             <Text style={styles.title}>{ I18n.t('quiz')}: {I18n.t('question')} {index + 1}/{this.questions.length }</Text>
 
             <View style={[headerStyle.centerChildWrapper, {padding: 16}]}>
-              <MyText style={styles.textShadow}>{ question.label }</MyText>
+              <Text style={styles.textShadow}>{ question.label }</Text>
             </View>
 
             <View style={{padding: 16}}>
@@ -223,7 +222,7 @@ export default class StoryPreviewModal extends Component {
     let doms = this.state.questions.map((question, index) => {
       return (
         <View key={index} style={{marginBottom: 16}}>
-          <MyText style={styles.textShadow}>{index+1}) {question.label}</MyText>
+          <Text style={styles.textShadow}>{index+1}) {question.label}</Text>
           <Text style={styles.textShadow}>
             <Text style={{fontWeight: '500'}}>{I18n.t('answer')}: </Text>
 

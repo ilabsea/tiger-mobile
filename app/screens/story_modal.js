@@ -142,18 +142,18 @@ export default class StoryModal extends Component {
         this.setState({progress: index+1/this.images.length});
       })
 
-      if (index + 1 < this.images.length) {
-        this._downloadFile(index + 1);
-      } else {
-        this.setState({showProgress: false, showReadNow: true});
-      }
+      this._handleDownloadProgress(index);
     }).catch(err => {
-      if (index + 1 < this.images.length) {
-        this._downloadFile(index + 1);
-      } else {
-        this.setState({showProgress: false, showReadNow: true});
-      }
+      this._handleDownloadProgress(index);
     });
+  }
+
+  _handleDownloadProgress(index) {
+    if (index + 1 < this.images.length) {
+      this._downloadFile(index + 1);
+    } else {
+      this.setState({showProgress: false, showReadNow: true});
+    }
   }
 
   _downloadStory(story) {
@@ -224,8 +224,8 @@ export default class StoryModal extends Component {
         { ( !this.props.storyDownloaded && !this.state.showReadNow ) &&
           <TouchableOpacity
             onPress={()=> this._downloadStory(story)}
-            style={storyStyle.btnDownload}
-          >
+            style={storyStyle.btnDownload}>
+
             <Icon name="cloud-download" color='#fff' size={24} />
             <Text style={storyStyle.btnLabel}>{I18n.t('download')}</Text>
           </TouchableOpacity>
@@ -270,7 +270,7 @@ export default class StoryModal extends Component {
   }
 
   _renderImage(story) {
-    let HOST = this.props.isOnline ? environment.domain : 'file://';
+    let HOST = this.props.isOnline ? environment.domain : `file://`;
 
     return (
       <View style={[storyStyle.imageWrapper, {paddingRight: 16}]}>
@@ -319,10 +319,7 @@ export default class StoryModal extends Component {
 
   _closeModal() {
     this.props.onRequestClose();
-    this.setState({
-      showReadNow: false,
-      showProgress: false,
-    })
+    this.setState({ showReadNow: false, showProgress: false })
   }
 
   render() {

@@ -6,11 +6,7 @@ import {
   StatusBar
 } from 'react-native';
 
-import {
-  ThemeProvider,
-  COLOR,
-  BottomNavigation,
-} from 'react-native-material-ui';
+import { ThemeProvider, COLOR, BottomNavigation } from 'react-native-material-ui';
 import { MenuProvider } from 'react-native-popup-menu';
 import I18n from '../i18n/i18n';
 import Home from '../screens/home';
