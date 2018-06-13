@@ -85,14 +85,13 @@ export default class CategoryModal extends Component {
             <Text style={storyStyle.author}>{ I18n.t('author') }: {item.author}</Text>
 
             <View style={storyStyle.tagsWrapper}>
-              <Text style={storyStyle.tag}>{item.tags[0]}</Text>
+              <Text style={storyStyle.tag}>{!!item.tags[0] && item.tags[0].title}</Text>
             </View>
           </View>
         </View>
       </TouchableOpacity>
     )
   }
-
 
   _renderContentWithFlatList() {
     return (
@@ -127,12 +126,6 @@ export default class CategoryModal extends Component {
         readNow={(story) => this.props.readNow(story)}
       ></StoryModal>
     )
-  }
-
-  readNow(story) {
-    this.setState({modalVisible: false});
-    // this.props.onSetActive('library');
-    // this.props.onSetStory(story);
   }
 
   _renderModelContent = (category) => {

@@ -109,7 +109,7 @@ export default class Labrary extends Component {
   _renderItem(item) {
     let tags = item.tags.map((tag, index) => {
       return (
-        <Text key={index} style={storyStyle.tag}>{tag}</Text>
+        <Text key={index} style={storyStyle.tag}>{tag.title}</Text>
       )
     })
 
@@ -225,7 +225,7 @@ export default class Labrary extends Component {
   render() {
     if(this.state.isLoading){
       return(
-        <View style={{flex: 1, padding: 20}}>
+        <View style={[headerStyle.centerChildWrapper, {padding: 20}]}>
           <ActivityIndicator/>
         </View>
       )

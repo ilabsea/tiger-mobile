@@ -135,7 +135,7 @@ export default class StoryPreviewModal extends Component {
 
   _renderImage(image) {
     return (
-      <View style={[styles.centerChildWrapper]}>
+      <View style={[headerStyle.centerChildWrapper]}>
         <Image style={styles.image} source={image} />
       </View>
     )
@@ -206,7 +206,7 @@ export default class StoryPreviewModal extends Component {
           <View key={index}>
             <Text style={styles.title}>{ I18n.t('quiz')}: {I18n.t('question')} {index + 1}/{this.questions.length }</Text>
 
-            <View style={[styles.centerChildWrapper, {padding: 16}]}>
+            <View style={[headerStyle.centerChildWrapper, {padding: 16}]}>
               <MyText style={styles.textShadow}>{ question.label }</MyText>
             </View>
 
@@ -337,9 +337,4 @@ const styles = StyleSheet.create({
     lineHeight: 24,
     padding: 16
   },
-  centerChildWrapper: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center'
-  }
 });

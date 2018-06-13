@@ -6,5 +6,10 @@ export default StyleSheet.create({
     fontSize: 20,
     lineHeight: 36,
     fontFamily: 'KhSiemreap',
+  },
+  centerChildWrapper: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center'
   }
 })

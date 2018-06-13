@@ -133,6 +133,13 @@ export default class Home extends Component {
   }
 
   _buildStory = (story) => {
+    let tags = story.tags.map((tag) => {
+      return {
+        id: tag.id,
+        title: tag.title
+      }
+    })
+
     return {
       id: story.id,
       title: story.title,
@@ -141,7 +148,7 @@ export default class Home extends Component {
       author: story.author,
       sourceLink: story.source_link,
       publishedAt: story.published_at,
-      tags: story.tags,
+      tags: tags,
       createdAt: new Date()
     };
   }
@@ -212,7 +219,7 @@ export default class Home extends Component {
             <Text style={storyStyle.author}>{ I18n.t('author') }: {item.author}</Text>
 
             <View style={storyStyle.tagsWrapper}>
-              <Text style={storyStyle.tag}>{item.tags[0]}</Text>
+              <Text style={storyStyle.tag}>{item.tags[0] && item.tags[0].title}</Text>
             </View>
           </View>
         </View>
@@ -267,7 +274,7 @@ export default class Home extends Component {
   render() {
     if(this.state.isLoading){
       return(
-        <View style={{flex: 1, padding: 20}}>
+        <View style={[headerStyle.centerChildWrapper, {padding: 20}]}>
           <ActivityIndicator/>
         </View>
       )

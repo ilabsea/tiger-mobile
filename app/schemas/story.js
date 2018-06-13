@@ -15,7 +15,7 @@ Story.schema = {
     author: 'string',
     sourceLink: 'string?',
     publishedAt: 'string',
-    tags: 'string[]',
+    tags: 'Tag[]',
     scenes: { type: 'list', objectType: 'Scene' },
     questions: { type: 'list', objectType: 'Question' },
     isRead: { type: 'bool', default: false },

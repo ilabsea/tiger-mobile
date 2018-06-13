@@ -13,6 +13,7 @@ import Choice from './schemas/choice';
 import StoryRead from './schemas/story_read';
 import StoryResponse from './schemas/story_response';
 import QuizResponse from './schemas/quiz_response';
+import Tag from './schemas/tag';
 
 export default new Realm({schema: [
   Story,
@@ -24,4 +25,5 @@ export default new Realm({schema: [
   StoryRead,
   StoryResponse,
   QuizResponse,
+  Tag
 ]});

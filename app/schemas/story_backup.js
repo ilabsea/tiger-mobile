@@ -15,7 +15,7 @@ StoryBackup.schema = {
     author: 'string',
     sourceLink: 'string?',
     publishedAt: 'string',
-    tags: 'string[]',
+    tags: 'Tag[]',
     createdAt: 'date'
   }
 }

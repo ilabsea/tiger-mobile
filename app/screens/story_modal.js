@@ -37,13 +37,19 @@ export default class StoryModal extends Component {
   }
 
   _getFullDate(createdAt) {
-    let days = ['អាទិត្យ', 'ច័ន្ទ', 'អង្គារ', 'ពុធ', 'ព្រហស្បតិ៍', 'សុក្រ', 'សៅរ៍'];
     let months = ['មករា', 'កុម្ភៈ', 'មិនា', 'មេសា', 'ឧសភា', 'មិថុនា', 'កក្តដា', 'សីហា', 'កញ្ញា', 'តុលា', 'វិច្ឆិកា', 'ធ្នូ'];
     let time = new Date(createdAt);
     return 'ថ្ងៃទី' + time.getDate() + ' ' + months[time.getMonth()] + ' ' + time.getFullYear();
   }
 
   _buildStory = (story) => {
+    let tags = story.tags.map((tag) => {
+      return {
+        id: tag.id,
+        title: tag.title
+      }
+    })
+
     return {
       id: story.id,
       title: story.title,
@@ -52,7 +58,7 @@ export default class StoryModal extends Component {
       author: story.author,
       sourceLink: story.source_link,
       publishedAt: story.published_at,
-      tags: story.tags,
+      tags: tags,
       createdAt: new Date()
     };
   }
@@ -235,7 +241,7 @@ export default class StoryModal extends Component {
   _renderShortInfo(story) {
     let tags = story.tags.map((tag, index) => {
       return (
-        <Text key={index} style={storyStyle.tag}>{tag}</Text>
+        <Text key={index} style={storyStyle.tag}>{tag.title}</Text>
       )
     })
 
