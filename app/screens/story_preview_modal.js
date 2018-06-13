@@ -284,7 +284,9 @@ export default class StoryPreviewModal extends Component {
   }
 
   _handleUpload() {
-    if (!this.storyRead || !this.storyRead.finishedAt) { return; }
+    if (!this.storyRead || !this.storyRead.isValid() || !this.storyRead.finishedAt) {
+      return;
+    }
 
     NetInfo.isConnected.fetch().then(isConnected => {
       if (isConnected) {
