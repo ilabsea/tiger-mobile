@@ -8,6 +8,7 @@ import {
   Modal,
   Dimensions,
   NetInfo,
+  ImageBackground,
 } from 'react-native';
 
 import { IndicatorViewPager } from 'rn-viewpager';
@@ -132,34 +133,50 @@ export default class StoryPreviewModal extends Component {
     )
   }
 
-  _renderImage(scene) {
-    let image = !!scene.image ? { uri: `file://${scene.image}` } : require('../assets/images/scenes/default.jpg');
-
+  _renderImage(image) {
     return (
-      <View style={styles.centerChildWrapper}>
-        <Image style={styles.image} resizeMode={'contain'} source={image} />
+      <View style={[styles.centerChildWrapper]}>
+        <Image style={styles.image} source={image} />
+      </View>
+    )
+  }
+
+  _renderDescription(scene, index) {
+    return (
+      <View style={{}}>
+        <MyText style={[styles.textShadow, {padding: 16}]}>{scene.description}</MyText>
+
+        <View style={{padding: 16}}>
+          { this._renderActionButtons(scene, index) }
+        </View>
       </View>
     )
   }
 
   _renderScenes() {
+
     return(
       (this.dataSource).map((scene, index) => {
-        let style = (!scene.image || scene.imageAsBackground) ? styles.popLayer : {}
+        let isImageDisplayAsBackground = !scene.image || scene.imageAsBackground;
+        let image = !!scene.image ? { uri: `file://${scene.image}` } : require('../assets/images/scenes/default.jpg');
 
         return (
           <View key={index}>
             { scene.visibleName && <Text style={[styles.title]}>{scene.name}</Text> }
 
-            { this._renderImage(scene) }
-
-            <View style={style}>
-              <MyText style={[styles.textShadow, {padding: 16}]}>{scene.description}</MyText>
-
-              <View style={{padding: 16}}>
-                { this._renderActionButtons(scene, index) }
+            { !isImageDisplayAsBackground &&
+              <View style={{flex: 1}}>
+                { this._renderImage(image) }
+                { this._renderDescription(scene, index) }
               </View>
-            </View>
+            }
+
+            { isImageDisplayAsBackground &&
+              <ImageBackground source={ image } style={{flex: 1}} >
+                <View style={{flex: 1}}></View>
+                { this._renderDescription(scene, index) }
+              </ImageBackground>
+            }
 
           </View>
         )
@@ -299,10 +316,6 @@ export default class StoryPreviewModal extends Component {
 }
 
 const styles = StyleSheet.create({
-  popLayer: {
-    position: 'absolute',
-    bottom: 0
-  },
   image: {
     flex: 1,
     alignSelf: 'stretch',
