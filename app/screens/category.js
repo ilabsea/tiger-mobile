@@ -197,6 +197,12 @@ export default class Category extends Component {
           centerElement={<Text style={headerStyle.title}>{I18n.t('category')}</Text>}
         />
 
+        { this.state.isLoading &&
+          <View style={[headerStyle.centerChildWrapper]}>
+            <ActivityIndicator/>
+          </View>
+        }
+
         { this.state.isOnline && this._renderContentWithFlatList() }
         { !this.state.isOnline && this._renderNoConnection() }
         { this._renderModal() }
