@@ -12,7 +12,8 @@ import {
   ToastAndroid,
 } from 'react-native';
 
-import { Toolbar, COLOR } from 'react-native-material-ui';
+import { Toolbar, COLOR, Button } from 'react-native-material-ui';
+import PropTypes from 'prop-types';
 import I18n from '../i18n/i18n';
 import headerStyle from '../assets/style_sheets/header';
 import storyStyle from '../assets/style_sheets/story';
@@ -21,7 +22,6 @@ import storyService from '../services/story.service';
 import CategoryModal from './category_modal';
 
 export default class Category extends Component {
-  _isOnline = false;
   _data = [];
 
   constructor(props) {
@@ -34,6 +34,7 @@ export default class Category extends Component {
       dataSource: [],
       category: {},
       stories: [],
+      isOnline: true,
     };
   }
 
@@ -49,8 +50,7 @@ export default class Category extends Component {
 
   _handleInternetConnection() {
     NetInfo.isConnected.fetch().then(isConnected => {
-      this._isOnline = isConnected;
-      this._onRefresh();
+      this._handleConnection(isConnected);
     });
 
     NetInfo.isConnected.addEventListener(
@@ -60,21 +60,32 @@ export default class Category extends Component {
   }
 
   _handleFirstConnectivityChange = (isConnected) => {
-    this._isOnline = isConnected;
-    if (!isConnected) {
-      this._showNoConnectionMessage();
-    }
+    this._handleConnection(isConnected);
+
+    NetInfo.isConnected.removeEventListener(
+      'connectionChange',
+      this._handleFirstConnectivityChange
+    );
   }
 
-  _showNoConnectionMessage() {
+  _handleConnection = (isConnected) => {
+    if(!this.refs.category) { return; }
+
+    this.setState({isOnline: isConnected});
+
+    if (isConnected) {
+      return this._onRefresh();
+    }
+
+    this._showNoConnectionMessage();
+  }
+
+  _showNoConnectionMessage = () => {
     ToastAndroid.show(I18n.t('no_connection'), ToastAndroid.LONG);
   }
 
   _onRefresh() {
     this._data = [];
-
-    if (!this._isOnline) { return; }
-
     this._getCategories()
   }
 
@@ -113,7 +124,19 @@ export default class Category extends Component {
     )
   }
 
+  _renderNoConnection() {
+    return (
+      <View style={headerStyle.centerChildWrapper}>
+        <Text style={{marginBottom: 16}}>{I18n.t('no_connection')}</Text>
+        <Button raised accent text={I18n.t('retry')} onPress={() => this._handleInternetConnection()} />
+      </View>
+    );
+  }
+
   _renderContentWithFlatList() {
+    if (this.state.isLoading) { return (null); }
+    if (!this.state.dataSource.length) { return this._renderNoData(); }
+
     return (
       <View style={{flex: 1}}>
         <FlatList
@@ -138,7 +161,7 @@ export default class Category extends Component {
         modalVisible={this.state.modalVisible}
         category={this.state.category}
         stories={this.state.stories}
-        isOnline={this._isOnline}
+        isOnline={this.state.isOnline}
         onRequestClose={() => {
           this.setState({modalVisible: false});
         }}
@@ -148,14 +171,15 @@ export default class Category extends Component {
   }
 
   _showModel(category) {
-    if (!this._isOnline) {
+    if (!this.state.isOnline) {
       return this._showNoConnectionMessage();
     }
 
     storyService.getAllByTag(category.id, 1)
+      .then((response) => response.json())
       .then((responseJson) => {
-        this.setState({modalVisible: true, category: category, stories: responseJson.data.stories});
-      })
+        this.setState({modalVisible: true, category: category, stories: responseJson.stories});
+      });
   }
 
   _renderNoData() {
@@ -168,13 +192,13 @@ export default class Category extends Component {
 
   render() {
     return (
-      <View style={{flex: 1}}>
+      <View style={{flex: 1}} ref='category'>
         <Toolbar
           centerElement={<Text style={headerStyle.title}>{I18n.t('category')}</Text>}
         />
 
-        { !this.state.dataSource.length && this._renderNoData() }
-        { !!this.state.dataSource.length && this._renderContentWithFlatList() }
+        { this.state.isOnline && this._renderContentWithFlatList() }
+        { !this.state.isOnline && this._renderNoConnection() }
         { this._renderModal() }
       </View>
     )

@@ -10,9 +10,11 @@ export default {
   perPage: perPage,
 
   getAll(page=1) {
-    return api.get('/stories?per_page=' + perPage + '&page=' + page);
+    // return api.get('/stories?per_page=' + perPage + '&page=' + page);
+    return fetch(`${environment.apiUrl}/stories?per_page=${perPage}&page=${page}`);
+
   },
   getAllByTag(tagId) {
-    return api.get(`/tags/${tagId}/stories`);
+    return fetch(`${environment.apiUrl}/tags/${tagId}/stories`);
   }
 }

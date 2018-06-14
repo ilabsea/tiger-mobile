@@ -9,7 +9,7 @@ import {
   Modal,
   ScrollView,
   NetInfo,
-  Alert,
+  ToastAndroid,
 } from 'react-native';
 
 import { Toolbar, Icon } from 'react-native-material-ui';
@@ -158,7 +158,7 @@ export default class StoryModal extends Component {
 
   _downloadStory(story) {
     if (!this.props.isOnline) {
-      return Alert.alert('', I18n.t('no_connection'));
+      return ToastAndroid.show(I18n.t('no_connection'), ToastAndroid.LONG);
     }
 
     sceneService.getAll(story.id)
@@ -211,9 +211,10 @@ export default class StoryModal extends Component {
 
   _getQuizzes(story) {
     questionService.getAll(story.id)
+      .then((response) => response.json())
       .then((responseJson) => {
         realm.write(() => {
-          this._importQuestions(story, responseJson.data.questions);
+          this._importQuestions(story, responseJson.questions);
         });
       })
   }

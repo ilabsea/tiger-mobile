@@ -7,6 +7,7 @@ const api = create({
 
 export default {
   getAll(storyId) {
-    return api.get(`/stories/${storyId}/questions`);
+    // return api.get(`/stories/${storyId}/questions`);
+    return fetch(`${environment.apiUrl}/stories/${storyId}/questions`);
   }
 }
