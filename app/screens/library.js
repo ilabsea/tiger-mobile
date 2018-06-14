@@ -114,7 +114,7 @@ export default class Labrary extends Component {
     })
 
     return (
-      <Card>
+      <View style={styles.card}>
         <View style={styles.item}>
           <View style={[storyStyle.imageWrapper, {paddingRight: 16}]}>
             <Image
@@ -150,14 +150,14 @@ export default class Labrary extends Component {
               <Icon name="more-vert" size={24} />
             </MenuTrigger>
 
-            <MenuOptions>
+            <MenuOptions style={{borderWidth: 1, borderColor: '#ddd', borderRadius: 3}}>
               <MenuOption onSelect={() => this._confirmDelete(item)} >
                 <Text style={[styles.menuOption, {color: 'red'}]}>{I18n.t('delete')}</Text>
               </MenuOption>
             </MenuOptions>
           </Menu>
         </View>
-      </Card>
+      </View>
     )
   }
 
@@ -196,6 +196,7 @@ export default class Labrary extends Component {
         renderRow={(rowData) => this._renderItem(rowData)}
         enableEmptySections={ true }
         style={{flex: 1, paddingBottom: 16}}
+        contentContainerStyle={{paddingBottom: 16}}
         refreshControl={
           <RefreshControl
             refreshing={ false }
@@ -259,10 +260,19 @@ const styles = StyleSheet.create({
   item: {
     flex: 1,
     minHeight: 232,
-    padding: 16,
     flexDirection: 'row',
+    padding: 16,
   },
   menuOption: {
     padding: 10
   },
+  card: {
+    backgroundColor: '#fff',
+    borderRadius: 3,
+    borderWidth: 1,
+    borderRadius: 2,
+    borderColor: '#ddd',
+    margin: 16,
+    marginBottom: 0,
+  }
 });

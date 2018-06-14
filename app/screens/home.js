@@ -26,7 +26,6 @@ export default class Home extends Component {
   _data = [];
   _currentPage = 0;
   _totalPage = 0;
-  _isOnline = false;
 
   constructor(props) {
     super(props);
@@ -58,8 +57,8 @@ export default class Home extends Component {
 
   _handleInternetConnection() {
     NetInfo.isConnected.fetch().then(isConnected => {
-      this._isOnline = isConnected;
-      this._onRefresh();
+      this.setState({isOnline: isConnected});
+      this._onRefresh(isConnected);
     });
 
     NetInfo.isConnected.addEventListener(
@@ -69,31 +68,42 @@ export default class Home extends Component {
   }
 
   _handleFirstConnectivityChange = (isConnected) => {
-    this._isOnline = isConnected;
+    if (!this.refs.home) { return; }
 
-    if (!!this.refs.home) {
-      this.setState({modalVisible: false});
-      this._onRefresh();
-    }
+    this.setState({modalVisible: false, isOnline: isConnected});
+    this._onRefresh(isConnected);
   }
 
   _setDownloadedStories() {
     this.setState({downloadedStories: realm.objects('Story').map(story => story.id)})
   }
 
-  _onRefresh() {
+  _onRefresh(isConnected=false) {
     this._currentPage = 0;
     this._data = [];
 
-    if (!this._isOnline) {
-      return this._getOfflineStories();
+    if (isConnected || this.state.isOnline) {
+      this._currentPage++;
+
+      storyService.getAll(this._currentPage)
+        .then((response) => response.json())
+        .then((responseJson) => {
+          this._data = [].concat(responseJson.stories);
+          this._totalPage = responseJson.meta.pagination.total_pages;
+          this.setState({ isLoading: false, dataSource: this._data });
+          this._handleBackupStories();
+        })
+        .catch((error) =>{
+          console.error(error);
+        });
+
+      return;
     }
 
-    this._getStories();
+    this._getOfflineStories();
   }
 
   _getOfflineStories() {
-    console.log('===================_getOfflineStories');
     this._currentPage++;
 
     let allStories = realm.objects('StoryBackup').sorted('publishedAt', true);
@@ -107,16 +117,20 @@ export default class Home extends Component {
   }
 
   _getStories() {
-    console.log('===================_getStories');
     this._currentPage++;
+    console.log('===================_getStoriesOut');
 
     storyService.getAll(this._currentPage)
+      .then((response) => response.json())
       .then((responseJson) => {
-        this._data = this._data.concat(responseJson.data.stories);
-        this._totalPage = responseJson.data.meta.pagination.total_pages;
+        this._data = this._data.concat(responseJson.stories);
+        this._totalPage = responseJson.meta.pagination.total_pages;
         this.setState({ isLoading: false, dataSource: this._data });
         this._handleBackupStories();
       })
+      .catch((error) =>{
+        console.error(error);
+      });
   }
 
   _handleBackupStories() {
@@ -176,12 +190,9 @@ export default class Home extends Component {
 
   _onEndReached() {
     if (this._currentPage == this._totalPage) { return; }
+    if (this.state.isOnline) { return this._getStories(); }
 
-    if (!this._isOnline) {
-      return this._getOfflineStories();
-    }
-
-    this._getStories();
+    this._getOfflineStories();
   }
 
   _renderItem = ({item}) => {
@@ -190,7 +201,7 @@ export default class Home extends Component {
     let itemWidth = this.state.view == 'grid' ? w/2 : w;
     let flexDirection = this.state.view == 'grid' ? 'column' : 'row';
     let infoStyle = this.state.view == 'grid' ? {} : storyStyle.listViewInfo
-    let HOST = this._isOnline ? environment.domain : 'file://'
+    let HOST = this.state.isOnline ? environment.domain : 'file://'
 
     return (
       <TouchableOpacity
@@ -228,6 +239,10 @@ export default class Home extends Component {
   }
 
   _renderContentWithFlatList() {
+    if (!this.state.dataSource.length) {
+      return this._renderNoData();
+    }
+
     let numColumns = this.state.view == 'grid' ? 2 : 1;
 
     return (
@@ -253,7 +268,7 @@ export default class Home extends Component {
       <StoryModal
         modalVisible={this.state.modalVisible}
         story={this.state.story}
-        isOnline={this._isOnline}
+        isOnline={this.state.isOnline}
         onRequestClose={() => {
           this.setState({modalVisible: false});
           this._setDownloadedStories();
@@ -280,14 +295,6 @@ export default class Home extends Component {
   }
 
   render() {
-    if(this.state.isLoading){
-      return(
-        <View style={[headerStyle.centerChildWrapper, {padding: 20}]}>
-          <ActivityIndicator/>
-        </View>
-      )
-    }
-
     return (
       <View style={{flex: 1}} ref="home">
         <Toolbar
@@ -299,8 +306,13 @@ export default class Home extends Component {
           }
         />
 
-        { !this.state.dataSource.length && this._renderNoData() }
-        { !!this.state.dataSource.length && this._renderContentWithFlatList() }
+        { this.state.isLoading &&
+          <View style={[headerStyle.centerChildWrapper]}>
+            <ActivityIndicator/>
+          </View>
+        }
+
+        { !this.state.isLoading && this._renderContentWithFlatList() }
         { this._renderModal() }
       </View>
     )

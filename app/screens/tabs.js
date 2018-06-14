@@ -35,12 +35,19 @@ export default class Tabs extends Component {
     this.setState({story: story})
   }
 
+  _renderStatusBar() {
+    return (
+      <View>
+        <StatusBar backgroundColor="rgba(0, 0, 0, 0.2)" translucent />
+        <View style={{ backgroundColor: COLOR.tealA700, height: 24 }} />
+      </View>
+    )
+  }
+
   render() {
     return (
       <ThemeProvider uiTheme={uiTheme}>
         <MenuProvider style={{flex:1}}>
-          <StatusBar backgroundColor="rgba(0, 0, 0, 0.2)" translucent />
-          <View style={{ backgroundColor: COLOR.tealA700, height: 24 }} />
 
           <View style={{flex: 1}}>
             { this.state.active == 'home' &&
