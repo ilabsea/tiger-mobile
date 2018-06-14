@@ -48,6 +48,7 @@ export default class Tabs extends Component {
     return (
       <ThemeProvider uiTheme={uiTheme}>
         <MenuProvider style={{flex:1}}>
+          <StatusBar backgroundColor={COLOR.teal600} />
 
           <View style={{flex: 1}}>
             { this.state.active == 'home' &&
