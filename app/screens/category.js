@@ -71,13 +71,13 @@ export default class Category extends Component {
   _handleConnection = (isConnected) => {
     if(!this.refs.category) { return; }
 
-    this.setState({isOnline: isConnected});
+    this.setState({isOnline: isConnected, isLoading: false});
 
     if (isConnected) {
       return this._onRefresh();
     }
 
-    this._showNoConnectionMessage();
+    // this._showNoConnectionMessage();
   }
 
   _showNoConnectionMessage = () => {
@@ -92,7 +92,8 @@ export default class Category extends Component {
   _getCategories() {
     categoryService.getAll()
       .then((responseJson) => {
-        this._data = this._data.concat(responseJson.data.tags);
+        // this._data = this._data.concat(responseJson.data.tags);
+        this._data = [].concat(responseJson.data.tags);
         this.setState({ isLoading: false, dataSource: this._data });
       })
   }
@@ -203,8 +204,8 @@ export default class Category extends Component {
           </View>
         }
 
-        { this.state.isOnline && this._renderContentWithFlatList() }
-        { !this.state.isOnline && this._renderNoConnection() }
+        { !this.state.isLoading && this.state.isOnline && this._renderContentWithFlatList() }
+        { !this.state.isLoading && !this.state.isOnline && this._renderNoConnection() }
         { this._renderModal() }
       </View>
     )
