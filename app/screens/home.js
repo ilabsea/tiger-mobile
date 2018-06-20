@@ -246,7 +246,7 @@ export default class Home extends Component {
     let numColumns = this.state.view == 'grid' ? 2 : 1;
 
     return (
-      <View style={{flex: 1, backgroundColor: COLOR.cyan900}}>
+      <View style={{flex: 1, backgroundColor: '#fff3df'}}>
         <FlatList
           data={this.state.dataSource}
           keyExtractor={(item, index) => index.toString()}

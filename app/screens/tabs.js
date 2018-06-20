@@ -13,11 +13,12 @@ import Home from '../screens/home';
 import Library from '../screens/library';
 import About from '../screens/about';
 import Category from '../screens/category';
+import SplashScreen from 'react-native-splash-screen';
 
 const uiTheme = {
   fontFamily: 'KhSiemreap',
   palette: {
-    primaryColor: COLOR.tealA700,
+    primaryColor: '#f55b1f',
   },
 };
 
@@ -25,6 +26,12 @@ export default class Tabs extends Component {
   constructor(props) {
     super(props);
     this.state = { active: 'home' };
+  }
+
+  componentDidMount() {
+    setTimeout(function() {
+      SplashScreen.hide();
+    }, 3000);
   }
 
   onSetActive(tab) {
@@ -35,20 +42,11 @@ export default class Tabs extends Component {
     this.setState({story: story})
   }
 
-  _renderStatusBar() {
-    return (
-      <View>
-        <StatusBar backgroundColor="rgba(0, 0, 0, 0.2)" translucent />
-        <View style={{ backgroundColor: COLOR.tealA700, height: 24 }} />
-      </View>
-    )
-  }
-
   render() {
     return (
       <ThemeProvider uiTheme={uiTheme}>
         <MenuProvider style={{flex:1}}>
-          <StatusBar backgroundColor={COLOR.teal600} />
+          <StatusBar backgroundColor={'#e2561f'} />
 
           <View style={{flex: 1}}>
             { this.state.active == 'home' &&

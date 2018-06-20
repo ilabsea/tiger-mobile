@@ -22,6 +22,7 @@
     "react-native-material-ui": "^1.22.3",
     "react-native-popup-menu": "^0.13.1",
     "react-native-progress": "^3.4.0",
+    "react-native-splash-screen": "^3.0.9",
     "react-native-vector-icons": "^4.6.0",
     "realm": "^2.6.0",
     "rn-viewpager": "^1.2.9"

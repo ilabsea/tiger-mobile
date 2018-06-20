@@ -95,7 +95,7 @@ export default class CategoryModal extends Component {
 
   _renderContentWithFlatList() {
     return (
-      <View style={{flex: 1, backgroundColor: COLOR.cyan900}}>
+      <View style={{flex: 1, backgroundColor: '#fff3df'}}>
         <FlatList
           data={this.props.stories}
           keyExtractor={(item, index) => index.toString()}

@@ -17,6 +17,7 @@ export default StyleSheet.create({
     flex: 1,
     height: 200,
     borderRadius: 3,
+    backgroundColor: '#eee',
   },
   tagsWrapper: {
     flexDirection:'row',
@@ -32,7 +33,6 @@ export default StyleSheet.create({
     marginRight: 5,
   },
   title: {
-    color: '#fff',
     fontSize: 12,
     marginTop: 8
   },
@@ -40,7 +40,7 @@ export default StyleSheet.create({
     padding: 20,
   },
   author: {
-    color: '#fff',
+    color: '#f55b1f',
     fontSize: 10
   },
   downloadLabel: {
