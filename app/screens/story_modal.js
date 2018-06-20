@@ -301,7 +301,13 @@ export default class StoryModal extends Component {
       <View style={{flex: 1}}>
         <Toolbar
           leftElement="arrow-back"
-          centerElement={<Text style={headerStyle.title}>{story.title}</Text>}
+          centerElement={
+            <Text
+              ellipsizeMode='tail'
+              numberOfLines={1}
+              style={[headerStyle.title, {marginRight: 16}]}
+            >{story.title}</Text>
+          }
           onLeftElementPress={() => this._closeModal()}
         />
 
