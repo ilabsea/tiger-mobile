@@ -5,6 +5,11 @@ export default StyleSheet.create({
     color: '#fff',
     fontSize: 20,
     lineHeight: 36,
-    fontFamily: 'KhmerOureang',
+    fontFamily: 'KhSiemreap',
+  },
+  centerChildWrapper: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center'
   }
 })
