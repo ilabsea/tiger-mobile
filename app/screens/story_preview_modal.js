@@ -278,6 +278,7 @@ export default class StoryPreviewModal extends Component {
   }
 
   _closeModal() {
+    this.setState({questions: []});
     this._handleUpload();
     this.props.onRequestClose();
   }

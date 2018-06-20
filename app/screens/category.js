@@ -71,10 +71,12 @@ export default class Category extends Component {
   _handleConnection = (isConnected) => {
     if(!this.refs.category) { return; }
 
-    this.setState({isOnline: isConnected, isLoading: false});
+    this.setState({isOnline: isConnected});
 
     if (isConnected) {
       return this._onRefresh();
+    } else {
+      return this.setState({isLoading: false});
     }
 
     // this._showNoConnectionMessage();
@@ -135,7 +137,6 @@ export default class Category extends Component {
   }
 
   _renderContentWithFlatList() {
-    if (this.state.isLoading) { return (null); }
     if (!this.state.dataSource.length) { return this._renderNoData(); }
 
     return (
