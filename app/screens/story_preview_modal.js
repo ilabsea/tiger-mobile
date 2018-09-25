@@ -112,11 +112,14 @@ export default class StoryPreviewModal extends Component {
   }
 
   _renderActionButtons(scene, slideIndex) {
+    let textStyle = { fontSize: this.state.textSize || this.props.textSize };
+
     if ((scene.isEnd || !scene.sceneActions.length) && !!this.questions.length) {
       return (
         <Button
           onPress={()=> this._slideTo()}
           title={ I18n.t('go_to_quiz') }
+          textStyle={textStyle}
         ></Button>
       )
     }
@@ -131,6 +134,7 @@ export default class StoryPreviewModal extends Component {
               this._saveStoryResponse(action, slideIndex);
             }}
             title={action.name}
+            textStyle={textStyle}
           ></Button>
         )
       })
@@ -196,6 +200,8 @@ export default class StoryPreviewModal extends Component {
   }
 
   _renderChoices(question, slideIndex) {
+    let textStyle = { fontSize: this.state.textSize || this.props.textSize };
+
     return(
       (question.choices || []).map((choice, i) => (
         <Button
@@ -205,6 +211,7 @@ export default class StoryPreviewModal extends Component {
             this._saveQuizResponse(choice, slideIndex);
           }}
           title={choice.label}
+          textStyle={textStyle}
         ></Button>
       ))
     )
@@ -264,6 +271,7 @@ export default class StoryPreviewModal extends Component {
           <Button
             title={I18n.t('done')}
             onPress={() => this._closeModal()}
+            textStyle={textStyle}
           ></Button>
         </View>
       </View>
@@ -331,7 +339,7 @@ export default class StoryPreviewModal extends Component {
     )
   }
 
-  _renderModelContent = (story) => {
+  _renderModalContent = (story) => {
     return (
       <View style={{flex: 1}}>
         <Toolbar
@@ -399,7 +407,7 @@ export default class StoryPreviewModal extends Component {
         visible={modalVisible}
         onRequestClose={() => this._closeModal()}>
 
-        { this._renderModelContent(story) }
+        { this._renderModalContent(story) }
       </Modal>
     )
   }

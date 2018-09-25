@@ -1,21 +1,38 @@
 import React, {Component} from 'react';
-import {Button} from 'react-native-material-ui';
+import {
+  TouchableOpacity,
+  Text,
+  StyleSheet,
+} from 'react-native';
 
 export default class myButton extends Component {
   render() {
-    const { title, onPress, ...props} = this.props;
+    const { style, textStyle, title, onPress, ...props} = this.props;
 
     return (
-      <Button
+      <TouchableOpacity
         {...props}
-        raised
-        accent
-        style={{
-          container: {marginTop: 6},
-          text: {fontFamily: 'KhSiemreap'}
-        }}
         onPress={onPress}
-        text={title} />
+        style={[styles.btn, style]}>
+
+        <Text style={[styles.btnText, textStyle]}> {title}</Text>
+      </TouchableOpacity>
     )
   }
 }
+
+const styles = StyleSheet.create({
+  btn: {
+    backgroundColor: '#F14435',
+    marginTop: 6,
+    borderRadius: 10,
+    paddingVertical: 8,
+    justifyContent: 'center',
+  },
+  btnText: {
+    fontSize: 16,
+    color: '#fff',
+    fontFamily: 'KhSiemreap',
+    textAlign: 'center',
+  }
+});
