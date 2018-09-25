@@ -156,27 +156,33 @@ export default class StoryPreviewModal extends Component {
 
     return(
       (this.dataSource).map((scene, index) => {
-        let isImageDisplayAsBackground = !scene.image || scene.imageAsBackground;
-        let image = !!scene.image ? { uri: `file://${scene.image}` } : require('../assets/images/scenes/default.jpg');
+        let imageUri = { uri: `file://${scene.image}` };
+        let bgStyle = !!scene.image ? {} : { backgroundColor: '#fff3df' };
 
         return (
-          <View key={index}>
+          <View key={index} style={bgStyle}>
             { scene.visibleName && <Text style={[styles.title]}>{scene.name}</Text> }
 
-            { !isImageDisplayAsBackground &&
-              <View style={{flex: 1}}>
-                { this._renderImage(image) }
-                { this._renderDescription(scene, index) }
-              </View>
-            }
-
-            { isImageDisplayAsBackground &&
-              <ImageBackground source={ image } style={{flex: 1}} >
+            { !!scene.image && scene.imageAsBackground &&
+              <ImageBackground source={ imageUri } style={{flex: 1}} >
                 <View style={{flex: 1}}></View>
                 { this._renderDescription(scene, index) }
               </ImageBackground>
             }
 
+            { !!scene.image && !scene.imageAsBackground &&
+              <View style={{flex: 1}}>
+                { this._renderImage(imageUri) }
+                { this._renderDescription(scene, index) }
+              </View>
+            }
+
+            { !scene.image &&
+              <View style={{flex: 1}} >
+                <View style={{flex: 1}}></View>
+                { this._renderDescription(scene, index) }
+              </View>
+            }
           </View>
         )
       })
