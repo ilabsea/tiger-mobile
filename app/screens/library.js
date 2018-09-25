@@ -9,6 +9,7 @@ import {
   RefreshControl,
   Alert,
   TouchableOpacity,
+  AsyncStorage,
 } from 'react-native';
 
 import { Toolbar, Icon, Card } from 'react-native-material-ui';
@@ -82,8 +83,10 @@ export default class Labrary extends Component {
   }
 
   _showModal(item) {
-    this.setState({modalVisible: true, story: item});
-    this._handleStoryRead(item);
+    AsyncStorage.getItem('textSize').then((textSize) => {
+      this.setState({modalVisible: true, story: item, textSize: parseInt(textSize) || 16});
+      this._handleStoryRead(item);
+    });
   }
 
   _handleStoryRead(story) {
@@ -215,6 +218,7 @@ export default class Labrary extends Component {
       <StoryPreviewModal
         modalVisible={this.state.modalVisible}
         story={this.state.story}
+        textSize={this.state.textSize}
         onRequestClose={() => this._closeModal()}
       ></StoryPreviewModal>
     )

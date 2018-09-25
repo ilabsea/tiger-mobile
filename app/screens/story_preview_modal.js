@@ -9,7 +9,12 @@ import {
   Dimensions,
   NetInfo,
   ImageBackground,
+  TouchableOpacity,
+  Slider,
+  AsyncStorage,
 } from 'react-native';
+
+import ModalDialog from "react-native-modal";
 
 import { IndicatorViewPager } from 'rn-viewpager';
 import { Toolbar, Icon } from 'react-native-material-ui';
@@ -141,9 +146,11 @@ export default class StoryPreviewModal extends Component {
   }
 
   _renderDescription(scene, index) {
+    let textStyle = { fontSize: this.state.textSize || this.props.textSize };
+
     return (
       <View style={{}}>
-        <Text style={[styles.textShadow, {padding: 16}]}>{scene.description}</Text>
+        <Text style={[styles.textShadow, textStyle, {padding: 16}]}>{scene.description}</Text>
 
         <View style={{padding: 16}}>
           { this._renderActionButtons(scene, index) }
@@ -153,7 +160,6 @@ export default class StoryPreviewModal extends Component {
   }
 
   _renderScenes() {
-
     return(
       (this.dataSource).map((scene, index) => {
         let imageUri = { uri: `file://${scene.image}` };
@@ -205,6 +211,8 @@ export default class StoryPreviewModal extends Component {
   }
 
   _renderQuizzes() {
+    let textStyle = { fontSize: this.state.textSize || this.props.textSize };
+
     return(
       this.questions.map((question, index) => {
         return (
@@ -212,7 +220,7 @@ export default class StoryPreviewModal extends Component {
             <Text style={styles.title}>{ I18n.t('quiz')}: {I18n.t('question')} {index + 1}/{this.questions.length }</Text>
 
             <View style={[headerStyle.centerChildWrapper, {padding: 16}]}>
-              <Text style={styles.textShadow}>{ question.label }</Text>
+              <Text style={[styles.textShadow, textStyle]}>{ question.label }</Text>
             </View>
 
             <View style={{padding: 16}}>
@@ -225,11 +233,13 @@ export default class StoryPreviewModal extends Component {
   }
 
   _renderQuizResult() {
+    let textStyle = { fontSize: this.state.textSize || this.props.textSize };
+
     let doms = this.state.questions.map((question, index) => {
       return (
         <View key={index} style={{marginBottom: 16}}>
-          <Text style={styles.textShadow}>{index+1}) {question.label}</Text>
-          <Text style={styles.textShadow}>
+          <Text style={[styles.textShadow, textStyle]}>{index+1}) {question.label}</Text>
+          <Text style={[styles.textShadow, textStyle]}>
             <Text style={{fontWeight: '500'}}>{I18n.t('answer')}: </Text>
 
             { !this._isCorrect(question.user_choice.id, question.choices) &&
@@ -260,13 +270,76 @@ export default class StoryPreviewModal extends Component {
     )
   }
 
+  _renderFormatSizeDialog() {
+    return (
+      <View>
+        <ModalDialog isVisible={this.state.isDialogVisible}>
+          <View style={{ padding: 20, backgroundColor: '#fff'}}>
+            <Text>{I18n.t('text_size')}</Text>
+            { this._renderSlider() }
+          </View>
+        </ModalDialog>
+      </View>
+    )
+  }
+
+  _change = (textSize) => {
+    this.setState({textSize: textSize});
+  }
+
+  _onSaveSize = () => {
+    let size = this.state.textSize || this.props.textSize;
+
+    AsyncStorage.setItem('textSize', String(size), () => {
+      this.setState({ isDialogVisible: false });
+    });
+  }
+
+  _renderSlider() {
+    return (
+      <View style={styles.container}>
+        <View
+          style={{flexDirection: 'row', alignItems: 'flex-end', paddingHorizontal: 16, paddingTop: 16}} >
+
+          <Text style={[styles.textSize, { fontSize: 14 }, this._activeKlass(14)]}>A</Text>
+          <View style={{flex: 1}}></View>
+
+          <Text style={[styles.textSize, {fontSize: 16}, this._activeKlass(16)]}>A</Text>
+          <View style={{flex: 1}}></View>
+
+          <Text style={[styles.textSize, {fontSize: 18}, this._activeKlass(18)]}>A</Text>
+          <View style={{flex: 1}}></View>
+
+          <Text style={[styles.textSize, {fontSize: 20}, this._activeKlass(20)]}>A</Text>
+        </View>
+
+        <Slider
+          step={2}
+          maximumValue={20}
+          minimumValue={14}
+          onValueChange={this._change}
+          value={this.state.textSize || this.props.textSize}
+        />
+
+        <View style={{flexDirection: 'row', justifyContent: 'flex-end'}}>
+          <TouchableOpacity onPress={this._onSaveSize} style={styles.btnDone}>
+            <Text style={{color: '#fff'}}>{I18n.t('done')}</Text>
+          </TouchableOpacity>
+        </View>
+
+      </View>
+    )
+  }
+
   _renderModelContent = (story) => {
     return (
       <View style={{flex: 1}}>
         <Toolbar
           leftElement="arrow-back"
           centerElement={<Text style={headerStyle.title}>{story.title}</Text>}
-          onLeftElementPress={() => this._closeModal()} />
+          rightElement="format-size"
+          onLeftElementPress={() => this._closeModal()}
+          onRightElementPress={()=> this.setState({ isDialogVisible: true }) } />
 
         <View style={{flex: 1}}>
           <IndicatorViewPager
@@ -278,7 +351,10 @@ export default class StoryPreviewModal extends Component {
             { this._renderQuizzes() }
             { this._renderQuizResult() }
           </IndicatorViewPager>
+
+          { this._renderFormatSizeDialog() }
         </View>
+
       </View>
     )
   }
@@ -299,6 +375,12 @@ export default class StoryPreviewModal extends Component {
         uploadService.upload();
       }
     });
+  }
+
+  _activeKlass = (value) => {
+    let size = this.state.textSize || this.props.textSize;
+
+    return value == size ? styles.activeSize : {} ;
   }
 
   render() {
@@ -343,4 +425,22 @@ const styles = StyleSheet.create({
     lineHeight: 24,
     padding: 16
   },
+  textSize: {
+    color: '#ddd',
+    justifyContent: 'flex-end',
+    alignItems: 'flex-end',
+  },
+  activeSize: {
+    color: '#111',
+  },
+  btnDone: {
+    marginTop: 20,
+    paddingVertical: 16,
+    borderRadius: 10,
+    backgroundColor: '#E4145C',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: 100,
+  }
 });

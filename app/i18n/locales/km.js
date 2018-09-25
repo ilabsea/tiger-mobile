@@ -30,4 +30,5 @@ export default {
   tiger_app_definition: 'គឺជាកម្មវិធីទូរស័ព្ទមួយដែលលើកកម្ពស់ការឆ្លើយតបនឹងសមភាពយេនឌ័រក្នុងការបង្រៀននិងរៀន។',
   tiger_app_creation: 'កម្មវិធី TIGER (Teaching for Improved Gender Equality and Responsiveness) ត្រូវបានបង្កើតឡើងដោយអង្គការ សកម្មភាពសម្រាប់បឋមសិក្សានៅកម្ពុជា (KAPE)',
   tiger_app_collaboration: 'សហការជំនួយបច្ចេកទេសដោយអង្គការ InSTEDD iLab Southeast Asia',
+  text_size: 'ទំហំពុម្ពអក្សរ',
 };
