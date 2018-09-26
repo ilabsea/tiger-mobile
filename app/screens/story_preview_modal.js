@@ -282,7 +282,10 @@ export default class StoryPreviewModal extends Component {
   _renderFormatSizeDialog() {
     return (
       <View>
-        <ModalDialog isVisible={this.state.isDialogVisible}>
+        <ModalDialog
+          isVisible={this.state.isDialogVisible}
+          onBackdropPress={() => this.setState({isDialogVisible: false})}
+        >
           <View style={{ padding: 20, backgroundColor: '#fff'}}>
             <Text>{I18n.t('text_size')}</Text>
             { this._renderSlider() }
@@ -290,10 +293,6 @@ export default class StoryPreviewModal extends Component {
         </ModalDialog>
       </View>
     )
-  }
-
-  _change = (textSize) => {
-    this.setState({textSize: textSize});
   }
 
   _onSaveSize = () => {
@@ -326,7 +325,7 @@ export default class StoryPreviewModal extends Component {
           step={2}
           maximumValue={20}
           minimumValue={14}
-          onValueChange={this._change}
+          onValueChange={(textSize) => this.setState({textSize: textSize})}
           value={this.state.textSize || this.props.textSize}
         />
 

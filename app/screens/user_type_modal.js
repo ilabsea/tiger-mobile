@@ -12,7 +12,8 @@ import { Toolbar } from 'react-native-material-ui';
 import I18n from '../i18n/i18n';
 import headerStyle from '../assets/style_sheets/header';
 import { USER_TYPE } from '../utils/variable';
-import ModalDialog from "react-native-modal";
+import ModalDialog from 'react-native-modal';
+import styles from '../assets/style_sheets/user_type';
 
 export default class UserTypeModal extends Component {
   static navigationOptions = {
@@ -54,32 +55,16 @@ export default class UserTypeModal extends Component {
       <ModalDialog
         {...props}
         visible={modalVisible}
-        onRequestClose={onRequestClose} >
+        onRequestClose={onRequestClose}
+        animationType={'slide'}
+      >
 
         <View style={{ padding: 20, backgroundColor: '#fff'}}>
           <Text>{I18n.t('choose_user_type')}</Text>
+
           { this._renderContent() }
         </View>
       </ModalDialog>
     )
   }
 }
-
-const styles = StyleSheet.create({
-  container: {
-    margin: 24,
-    alignItems: 'center',
-  },
-  btn: {
-    backgroundColor: 'green',
-    borderRadius: 10,
-    width: 150,
-    marginBottom: 16,
-  },
-  btnText: {
-    padding: 10,
-    color: '#fff',
-    fontSize: 20,
-    textAlign: 'center',
-  },
-});

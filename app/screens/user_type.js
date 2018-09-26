@@ -3,7 +3,6 @@ import {
   Text,
   View,
   ScrollView,
-  StyleSheet,
   TouchableOpacity,
   AsyncStorage,
 } from 'react-native';
@@ -12,6 +11,7 @@ import { Toolbar } from 'react-native-material-ui';
 import I18n from '../i18n/i18n';
 import headerStyle from '../assets/style_sheets/header';
 import { USER_TYPE } from '../utils/variable';
+import styles from '../assets/style_sheets/user_type';
 
 export default class UserType extends Component {
   static navigationOptions = {
@@ -60,22 +60,3 @@ export default class UserType extends Component {
     )
   }
 }
-
-const styles = StyleSheet.create({
-  container: {
-    margin: 24,
-    alignItems: 'center',
-  },
-  btn: {
-    backgroundColor: 'green',
-    borderRadius: 10,
-    width: 150,
-    marginBottom: 16,
-  },
-  btnText: {
-    padding: 10,
-    color: '#fff',
-    fontSize: 20,
-    textAlign: 'center',
-  },
-});
