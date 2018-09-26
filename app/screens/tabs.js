@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import { View } from 'react-native';
-import { ThemeProvider, COLOR, BottomNavigation } from 'react-native-material-ui';
-import { MenuProvider } from 'react-native-popup-menu';
+import { ThemeProvider, BottomNavigation } from 'react-native-material-ui';
 import I18n from '../i18n/i18n';
 
 import Home from './home';
