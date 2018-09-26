@@ -20,6 +20,7 @@ import { IndicatorViewPager } from 'rn-viewpager';
 import { Toolbar, Icon } from 'react-native-material-ui';
 import I18n from '../i18n/i18n';
 import uuidv4 from '../utils/uuidv4';
+import { TEXT_SIZE } from '../utils/variable';
 import headerStyle from '../assets/style_sheets/header';
 import realm from '../schema';
 import Button from '../components/button';
@@ -298,7 +299,7 @@ export default class StoryPreviewModal extends Component {
   _onSaveSize = () => {
     let size = this.state.textSize || this.props.textSize;
 
-    AsyncStorage.setItem('textSize', String(size), () => {
+    AsyncStorage.setItem(TEXT_SIZE, String(size), () => {
       this.setState({ isDialogVisible: false });
     });
   }

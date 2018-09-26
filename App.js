@@ -1,11 +1,9 @@
 import React, { Component } from 'react';
-import Tabs from './app/screens/tabs';
 import { NetInfo } from 'react-native';
 import { setCustomText} from 'react-native-global-props';
 
-import realm from './app/schema';
-import statisticService from './app/services/statistic.service';
 import uploadService from './app/services/upload.service';
+import AppNavigator from './app/screens/app_navigator';
 
 const customTextProps = {
   style: {
@@ -41,6 +39,6 @@ export default class App extends Component {
   }
 
   render() {
-    return (<Tabs ref="app"></Tabs>)
+    return (<AppNavigator ref="app"></AppNavigator>);
   }
 }

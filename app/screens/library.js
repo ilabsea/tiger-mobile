@@ -22,6 +22,7 @@ import headerStyle from '../assets/style_sheets/header';
 import storyStyle from '../assets/style_sheets/story';
 import storyService from '../services/story.service';
 import StoryPreviewModal from './story_preview_modal';
+import { TEXT_SIZE, USER_TYPE } from '../utils/variable';
 
 export default class Labrary extends Component {
   _data = [];
@@ -83,7 +84,7 @@ export default class Labrary extends Component {
   }
 
   _showModal(item) {
-    AsyncStorage.getItem('textSize').then((textSize) => {
+    AsyncStorage.getItem(TEXT_SIZE).then((textSize) => {
       this.setState({modalVisible: true, story: item, textSize: parseInt(textSize) || 16});
       this._handleStoryRead(item);
     });
@@ -92,21 +93,23 @@ export default class Labrary extends Component {
   _handleStoryRead(story) {
     let storyRead = realm.objects('StoryRead').filtered(`storyId=${story.id} AND finishedAt=NULL`).sorted('createdAt', true)[0];
 
-    realm.write(() => {
-      if (!!storyRead) {
-        let storyResponses = realm.objects('StoryResponse').filtered(`storyReadUuid='${storyRead.uuid}'`);
-        let quizResponses = realm.objects('QuizResponse').filtered(`storyReadUuid='${storyRead.uuid}'`);
+    AsyncStorage.getItem(USER_TYPE).then((userType) => {
+      realm.write(() => {
+        if (!!storyRead) {
+          let storyResponses = realm.objects('StoryResponse').filtered(`storyReadUuid='${storyRead.uuid}'`);
+          let quizResponses = realm.objects('QuizResponse').filtered(`storyReadUuid='${storyRead.uuid}'`);
 
-        realm.delete(storyResponses);
-        realm.delete(quizResponses);
-        realm.delete(storyRead);
-      }
+          realm.delete(storyResponses);
+          realm.delete(quizResponses);
+          realm.delete(storyRead);
+        }
 
-      realm.create('StoryRead', { uuid: uuidv4(), storyId: story.id, createdAt: new Date() });
+        realm.create('StoryRead', { uuid: uuidv4(), storyId: story.id, createdAt: new Date(), userType: userType });
 
-      let obj = realm.objects('StoryRead').filtered(`storyId=${story.id}`);
-      console.log('==========StoryRead', obj);
-    })
+        let obj = realm.objects('StoryRead').filtered(`storyId=${story.id}`);
+        console.log('==========StoryRead', obj);
+      })
+    });
   }
 
   _renderItem(item) {

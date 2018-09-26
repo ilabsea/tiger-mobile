@@ -32,6 +32,7 @@ export default {
     return {
       story_id: storyRead.storyId,
       user_uuid: '12345',
+      user_type: storyRead.userType,
       finished_at: storyRead.finishedAt,
       quiz_finished: storyRead.isQuizFinished,
       story_responses_attributes: this._buildStoryResponses(storyRead.uuid),

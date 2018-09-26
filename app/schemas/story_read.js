@@ -11,6 +11,7 @@ StoryRead.schema = {
     uuid: 'string',
     storyId: 'int',
     finishedAt: 'date?',
+    userType: 'string',
     isQuizFinished: { type: 'bool', default: false },
     isUploaded: { type: 'bool', default: false },
     createdAt: 'date',

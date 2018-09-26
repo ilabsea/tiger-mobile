@@ -31,4 +31,9 @@ export default {
   tiger_app_creation: 'កម្មវិធី TIGER (Teaching for Improved Gender Equality and Responsiveness) ត្រូវបានបង្កើតឡើងដោយអង្គការ សកម្មភាពសម្រាប់បឋមសិក្សានៅកម្ពុជា (KAPE)',
   tiger_app_collaboration: 'សហការជំនួយបច្ចេកទេសដោយអង្គការ InSTEDD iLab Southeast Asia',
   text_size: 'ទំហំពុម្ពអក្សរ',
+  choose_user_type: 'ជ្រើសរើសអ្នកប្រើប្រាស់',
+  teacher: 'គ្រូបង្រៀន',
+  parent: 'ឪពុកម្តាយ',
+  student: 'សិស្សានុសិស្ស',
+  other: 'ផ្សេងៗ',
 };

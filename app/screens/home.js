@@ -11,7 +11,7 @@ import {
 } from 'react-native';
 
 import RNFS from 'react-native-fs';
-import { Toolbar, COLOR, Button } from 'react-native-material-ui';
+import { Toolbar, COLOR, Button, Icon } from 'react-native-material-ui';
 import AwesomeIcon from 'react-native-vector-icons/FontAwesome';
 import realm from '../schema';
 import I18n from '../i18n/i18n';
@@ -294,15 +294,25 @@ export default class Home extends Component {
     );
   }
 
+  _openUserTypeDialog = () => {
+    alert('usertype');
+  }
+
   render() {
     return (
       <View style={{flex: 1}} ref="home">
         <Toolbar
           centerElement={<Text style={headerStyle.title}>{I18n.t('home')}</Text>}
           rightElement={
-            <TouchableOpacity onPress={() => this._toggleLayout()} style={{paddingHorizontal: 20}}>
-              <AwesomeIcon name={this.state.viewIcon} color='#fff' size={24} />
-            </TouchableOpacity>
+            <View style={{flexDirection: 'row'}}>
+              <TouchableOpacity onPress={() => this._toggleLayout()} style={{paddingHorizontal: 8}}>
+                <AwesomeIcon name={this.state.viewIcon} color='#fff' size={24} />
+              </TouchableOpacity>
+
+              <TouchableOpacity onPress={this._openUserTypeDialog} style={{paddingHorizontal: 8}}>
+                <Icon name='person' color='#fff' size={24} />
+              </TouchableOpacity>
+            </View>
           }
         />
 
