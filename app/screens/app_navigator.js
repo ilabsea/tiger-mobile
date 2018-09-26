@@ -31,7 +31,7 @@ export default class AppNavigator extends Component {
     super(props);
 
     AsyncStorage.getItem(USER_TYPE).then((userType) => {
-      this.setState({loaded: true, userSelected: true})
+      this.setState({loaded: true, userSelected: !!userType})
     });
   }
 

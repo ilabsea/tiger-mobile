@@ -49,13 +49,12 @@ export default class UserTypeModal extends Component {
   }
 
   render() {
-    const { modalVisible, onRequestClose, ...props } = this.props;
+    const { modalVisible, ...props } = this.props;
 
     return (
       <ModalDialog
         {...props}
         visible={modalVisible}
-        onRequestClose={onRequestClose}
         animationType={'slide'}
       >
 
