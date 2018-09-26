@@ -20,6 +20,7 @@ import storyStyle from '../assets/style_sheets/story';
 import storyService from '../services/story.service';
 import layoutSerive from '../services/layout.service';
 import StoryModal from './story_modal';
+import UserTypeModal from './user_type_modal';
 import { environment } from '../environments/environment';
 
 export default class Home extends Component {
@@ -36,6 +37,7 @@ export default class Home extends Component {
       modalVisible: false,
       dataSource: [],
       story: {tags: []},
+      visibleUserType: false,
     };
   }
 
@@ -294,8 +296,14 @@ export default class Home extends Component {
     );
   }
 
-  _openUserTypeDialog = () => {
-    alert('usertype');
+  _renderUserTypeModal() {
+    return (
+      <UserTypeModal
+        modalVisible={this.state.visibleUserType}
+        onRequestClose={() => this.setState({visibleUserType: false})}
+        onBackdropPress={() => this.setState({visibleUserType: false})}
+      ></UserTypeModal>
+    )
   }
 
   render() {
@@ -309,7 +317,7 @@ export default class Home extends Component {
                 <AwesomeIcon name={this.state.viewIcon} color='#fff' size={24} />
               </TouchableOpacity>
 
-              <TouchableOpacity onPress={this._openUserTypeDialog} style={{paddingHorizontal: 8}}>
+              <TouchableOpacity onPress={() => this.setState({visibleUserType: true})} style={{paddingHorizontal: 8}}>
                 <Icon name='person' color='#fff' size={24} />
               </TouchableOpacity>
             </View>
@@ -324,6 +332,7 @@ export default class Home extends Component {
 
         { !this.state.isLoading && this._renderContentWithFlatList() }
         { this._renderModal() }
+        { this._renderUserTypeModal() }
       </View>
     )
   }
