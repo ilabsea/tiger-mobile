@@ -17,4 +17,14 @@ export default StyleSheet.create({
     fontSize: 20,
     textAlign: 'center',
   },
+  btnDone: {
+    marginTop: 20,
+    paddingVertical: 16,
+    borderRadius: 10,
+    backgroundColor: '#E4145C',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: 100,
+  },
 })
