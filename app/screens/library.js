@@ -85,7 +85,7 @@ export default class Labrary extends Component {
 
   _showModal(item) {
     AsyncStorage.getItem(TEXT_SIZE).then((textSize) => {
-      this.setState({modalVisible: true, story: item, textSize: parseInt(textSize) || 16});
+      this.setState({modalVisible: true, story: item, textSize: parseInt(textSize) || 18});
       this._handleStoryRead(item);
     });
   }

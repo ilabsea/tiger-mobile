@@ -36,4 +36,5 @@ export default {
   guardian: 'អាណាព្យាបាល',
   student: 'សិស្សានុសិស្ស',
   other: 'ផ្សេងៗ',
+  lorem_ipsum: 'តោះទៅសាលារៀន',
 };

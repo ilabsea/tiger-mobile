@@ -288,6 +288,7 @@ export default class StoryPreviewModal extends Component {
         >
           <View style={{ padding: 20, backgroundColor: '#fff'}}>
             <Text>{I18n.t('text_size')}</Text>
+            <Text style={{fontSize: this.state.textSize, textAlign: 'center' }}>{I18n.t('lorem_ipsum')}</Text>
             { this._renderSlider() }
           </View>
         </ModalDialog>
@@ -312,28 +313,22 @@ export default class StoryPreviewModal extends Component {
           <Text style={[styles.textSize, { fontSize: 14 }, this._activeKlass(14)]}>A</Text>
           <View style={{flex: 1}}></View>
 
-          <Text style={[styles.textSize, {fontSize: 16}, this._activeKlass(16)]}>A</Text>
-          <View style={{flex: 1}}></View>
-
           <Text style={[styles.textSize, {fontSize: 18}, this._activeKlass(18)]}>A</Text>
           <View style={{flex: 1}}></View>
 
-          <Text style={[styles.textSize, {fontSize: 20}, this._activeKlass(20)]}>A</Text>
+          <Text style={[styles.textSize, {fontSize: 22}, this._activeKlass(22)]}>A</Text>
+          <View style={{flex: 1}}></View>
+
+          <Text style={[styles.textSize, {fontSize: 26}, this._activeKlass(26)]}>A</Text>
         </View>
 
         <Slider
-          step={2}
-          maximumValue={20}
+          step={4}
+          maximumValue={24}
           minimumValue={14}
           onValueChange={(textSize) => this.setState({textSize: textSize})}
           value={this.state.textSize || this.props.textSize}
         />
-
-        <View style={{flexDirection: 'row', justifyContent: 'flex-end'}}>
-          <TouchableOpacity onPress={this._onSaveSize} style={styles.btnDone}>
-            <Text style={{color: '#fff'}}>{I18n.t('done')}</Text>
-          </TouchableOpacity>
-        </View>
 
       </View>
     )
