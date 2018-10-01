@@ -16,7 +16,7 @@ import styles from '../assets/style_sheets/user_type';
 
 const radio_props = [
   {label: I18n.t('teacher'), value: 'teacher'},
-  {label: I18n.t('parent'), value: 'parent'},
+  {label: I18n.t('guardian'), value: 'guardian'},
   {label: I18n.t('student'), value: 'student'},
   {label: I18n.t('other'), value: 'other'},
 ];
@@ -26,10 +26,8 @@ export default class UserType extends Component {
     header: null,
   };
 
-  userType = '';
-
-  _onDone = () => {
-    AsyncStorage.setItem(USER_TYPE, this.userType, () => {
+  _onSelectUserType = (userType) => {
+    AsyncStorage.setItem(USER_TYPE, userType, () => {
       this.props.navigation.dispatch({type: 'Navigation/RESET', index: 0, actions: [{ type: 'Navigation/NAVIGATE', routeName:'Tabs'}]})
     });
   }
@@ -38,17 +36,12 @@ export default class UserType extends Component {
     return (
       <View style={styles.container}>
         <RadioForm
+          initial={-1}
           radio_props={radio_props}
-          onPress={(value) => this.userType = value}
+          onPress={(value) => this._onSelectUserType(value)}
           labelStyle={{fontSize: 16, lineHeight: 30}}
-          radioStyle={{marginBottom: 10}}
+          radioStyle={{marginBottom: 24}}
         />
-
-        <View style={{flexDirection: 'row', justifyContent: 'flex-end'}}>
-          <TouchableOpacity onPress={() => this._onDone()} style={styles.btnDone}>
-            <Text style={{color: '#fff'}}>{I18n.t('done')}</Text>
-          </TouchableOpacity>
-        </View>
       </View>
     )
   }

@@ -33,7 +33,7 @@ export default {
   text_size: 'ទំហំពុម្ពអក្សរ',
   choose_user_type: 'ជ្រើសរើសអ្នកប្រើប្រាស់',
   teacher: 'គ្រូបង្រៀន',
-  parent: 'ឪពុកម្តាយ',
+  guardian: 'អាណាព្យាបាល',
   student: 'សិស្សានុសិស្ស',
   other: 'ផ្សេងៗ',
 };
