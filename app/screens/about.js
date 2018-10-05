@@ -12,6 +12,7 @@ import {
 import { Toolbar } from 'react-native-material-ui';
 import I18n from '../i18n/i18n';
 import headerStyle from '../assets/style_sheets/header';
+import DeviceInfo from 'react-native-device-info';
 
 export default class About extends Component {
   constructor(props) {
@@ -42,7 +43,6 @@ export default class About extends Component {
             style={{width: 250, height: 61}}
             source={require('../assets/images/about/instedd.png')}/>
         </TouchableOpacity>
-
       </View>
     )
   }
@@ -56,6 +56,10 @@ export default class About extends Component {
 
         <ScrollView style={{flex: 1}}>
           { this._renderContent() }
+
+          <View style={styles.footer}>
+            <Text style={{textAlign: 'right'}}>ជំនាន់: {DeviceInfo.getVersion()}</Text>
+          </View>
         </ScrollView>
       </View>
     )
@@ -75,5 +79,12 @@ const styles = StyleSheet.create({
   paragraph: {
     textAlign: 'center',
     marginTop: 24,
+  },
+  footer: {
+    marginTop: 20,
+    padding: 10,
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    alignItems: 'flex-end',
   }
 });
