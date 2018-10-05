@@ -10,6 +10,7 @@ import {
   ScrollView,
   NetInfo,
   ToastAndroid,
+  AsyncStorage,
 } from 'react-native';
 
 import { Toolbar, Icon } from 'react-native-material-ui';
@@ -23,6 +24,7 @@ import sceneService from '../services/scene.service';
 import questionService from '../services/question.service';
 import statisticService from '../services/statistic.service';
 import { environment } from '../environments/environment';
+import { USER_TYPE } from '../utils/variable';
 
 export default class StoryModal extends Component {
   images = [];
@@ -176,7 +178,9 @@ export default class StoryModal extends Component {
   }
 
   _postStatistic(story) {
-    statisticService.increaseStoryDownload({story_id: story.id, device_type: 'mobile'});
+    AsyncStorage.getItem(USER_TYPE).then((userType) => {
+      statisticService.increaseStoryDownload({story_id: story.id, device_type: 'mobile', user_type: userType});
+    });
   }
 
   _importQuestions(story, questions) {
