@@ -12,7 +12,8 @@ import {
   ToastAndroid,
 } from 'react-native';
 
-import { Toolbar, COLOR, Button } from 'react-native-material-ui';
+import { Toolbar, COLOR,  } from 'react-native-material-ui';
+import Button from '../components/button';
 import PropTypes from 'prop-types';
 import I18n from '../i18n/i18n';
 import headerStyle from '../assets/style_sheets/header';
@@ -131,7 +132,12 @@ export default class Category extends Component {
     return (
       <View style={headerStyle.centerChildWrapper}>
         <Text style={{marginBottom: 16}}>{I18n.t('no_connection')}</Text>
-        <Button raised accent text={I18n.t('retry')} onPress={() => this._handleInternetConnection()} />
+
+        <Button
+          onPress={()=> this._handleInternetConnection()}
+          title={ I18n.t('retry') }
+          style={{paddingHorizontal: 10}}
+        ></Button>
       </View>
     );
   }

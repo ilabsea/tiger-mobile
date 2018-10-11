@@ -30,7 +30,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   btnText: {
-    fontSize: 16,
+    fontSize: 14,
     color: '#fff',
     fontFamily: 'KhSiemreap',
     textAlign: 'center',

@@ -40,7 +40,10 @@ export default class UserType extends Component {
           radio_props={radio_props}
           onPress={(value) => this._onSelectUserType(value)}
           labelStyle={{fontSize: 16, lineHeight: 30}}
-          radioStyle={{marginBottom: 24}}
+          radioStyle={{margin: 5}}
+          buttonColor={'rgba(0,0,0,.54)'}
+          buttonSize={15}
+          buttonOuterSize={30}
         />
       </View>
     )
@@ -54,7 +57,9 @@ export default class UserType extends Component {
         />
 
         <ScrollView style={{flex: 1}}>
-          { this._renderContent() }
+          <View style={{ padding: 24 }}>
+            { this._renderContent() }
+          </View>
         </ScrollView>
       </View>
     )

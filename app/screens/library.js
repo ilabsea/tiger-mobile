@@ -131,7 +131,7 @@ export default class Labrary extends Component {
 
           <View style={{flex: 1}}>
             <Text
-              style={{fontSize: 20, fontFamily: 'KhmerOS'}}
+              style={{fontSize: 20}}
               ellipsizeMode='tail'
               numberOfLines={1}
             >

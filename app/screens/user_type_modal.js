@@ -44,8 +44,11 @@ export default class UserTypeModal extends Component {
           radio_props={radio_props}
           initial={index}
           onPress={(value) => this._onSelectUserType(value)}
-          labelStyle={{fontSize: 16, lineHeight: 30}}
-          radioStyle={{marginBottom: 24}}
+          labelStyle={{fontSize: 16, lineHeight: 30, color: 'rgba(0,0,0,.87)'}}
+          radioStyle={{margin: 5}}
+          buttonColor={'rgba(0,0,0,.54)'}
+          buttonSize={15}
+          buttonOuterSize={30}
         />
       </View>
     )
@@ -61,7 +64,7 @@ export default class UserTypeModal extends Component {
         animationType={'slide'}
       >
 
-        <View style={{ padding: 20, backgroundColor: '#fff'}}>
+        <View style={{ padding: 24, backgroundColor: '#fff'}}>
           <Text>{I18n.t('choose_user_type')}</Text>
 
           { this._renderContent() }

@@ -8,7 +8,7 @@ import AppNavigator from './app/screens/app_navigator';
 const customTextProps = {
   style: {
     fontFamily: 'KhSiemreap',
-    color: '#111'
+    color: 'rgba(0,0,0,.87)'
   }
 };
 

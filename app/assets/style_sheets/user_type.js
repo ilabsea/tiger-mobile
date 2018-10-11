@@ -2,8 +2,8 @@ import { StyleSheet } from 'react-native';
 
 export default StyleSheet.create({
   container: {
-    margin: 24,
-    alignItems: 'center',
+    marginTop: 10,
+    alignItems: 'flex-start',
   },
   btn: {
     backgroundColor: 'green',
