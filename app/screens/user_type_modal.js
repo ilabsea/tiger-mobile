@@ -47,6 +47,7 @@ export default class UserTypeModal extends Component {
           labelStyle={{fontSize: 16, lineHeight: 30, color: 'rgba(0,0,0,.87)'}}
           radioStyle={{margin: 5}}
           buttonColor={'rgba(0,0,0,.54)'}
+          selectedButtonColor={'#f55b1f'}
           buttonSize={15}
           buttonOuterSize={30}
         />

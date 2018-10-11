@@ -42,6 +42,7 @@ export default class UserType extends Component {
           labelStyle={{fontSize: 16, lineHeight: 30}}
           radioStyle={{margin: 5}}
           buttonColor={'rgba(0,0,0,.54)'}
+          selectedButtonColor={'#f55b1f'}
           buttonSize={15}
           buttonOuterSize={30}
         />
@@ -57,7 +58,7 @@ export default class UserType extends Component {
         />
 
         <ScrollView style={{flex: 1}}>
-          <View style={{ padding: 24 }}>
+          <View style={{ padding: 20, paddingVertical: 16 }}>
             { this._renderContent() }
           </View>
         </ScrollView>
