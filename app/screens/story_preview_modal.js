@@ -156,7 +156,7 @@ export default class StoryPreviewModal extends Component {
     let textStyle = { fontSize: this.state.textSize || this.props.textSize };
 
     return (
-      <Text style={[styles.textShadow, textStyle, {padding: 16}]}>{scene.description}</Text>
+      <Text style={[styles.textShadow, textStyle, {padding: 16, flex: 1}]}>{scene.description}</Text>
     )
   }
 
@@ -172,7 +172,7 @@ export default class StoryPreviewModal extends Component {
 
             { !!scene.image && scene.imageAsBackground &&
               <ImageBackground source={ imageUri } style={{flex: 1}} >
-                <ScrollView style={{flex: 1}}>
+                <ScrollView contentContainerStyle={{flexGrow: 1}}>
                   { this._renderDescription(scene, index) }
                   { this._renderActionButtons(scene, index) }
                 </ScrollView>
@@ -180,7 +180,7 @@ export default class StoryPreviewModal extends Component {
             }
 
             { (!scene.imageAsBackground || !scene.image) &&
-              <ScrollView style={{flex: 1}}>
+              <ScrollView contentContainerStyle={{flexGrow: 1}}>
                 { !!scene.image && this._renderImage(imageUri) }
                 { this._renderDescription(scene, index) }
                 { this._renderActionButtons(scene, index) }
