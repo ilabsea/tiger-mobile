@@ -117,34 +117,36 @@ export default class StoryPreviewModal extends Component {
 
     if ((scene.isEnd || !scene.sceneActions.length) && !!this.questions.length) {
       return (
-        <Button
-          onPress={()=> this._slideTo()}
-          title={ I18n.t('go_to_quiz') }
-          textStyle={textStyle}
-        ></Button>
+        <View style={{padding: 16}}>
+          <Button
+            onPress={()=> this._slideTo()}
+            title={ I18n.t('go_to_quiz') }
+            textStyle={textStyle}
+          ></Button>
+        </View>
       )
     }
 
-    return (
-      (scene.sceneActions).map((action, i) => {
-        return(
-          <Button
-            key={i}
-            onPress={()=> {
-              this._slideTo(action.linkScene);
-              this._saveStoryResponse(action, slideIndex);
-            }}
-            title={action.name}
-            textStyle={textStyle}
-          ></Button>
-        )
-      })
-    )
+    let buttons = (scene.sceneActions).map((action, i) => {
+      return(
+        <Button
+          key={i}
+          onPress={()=> {
+            this._slideTo(action.linkScene);
+            this._saveStoryResponse(action, slideIndex);
+          }}
+          title={action.name}
+          textStyle={textStyle}
+        ></Button>
+      )
+    })
+
+    return (<View style={{padding: 16}}>{buttons}</View>)
   }
 
   _renderImage(image) {
     return (
-      <View style={[headerStyle.centerChildWrapper]}>
+      <View style={[headerStyle.centerChildWrapper, {height: 300}]}>
         <Image style={styles.image} source={image} />
       </View>
     )
@@ -154,13 +156,7 @@ export default class StoryPreviewModal extends Component {
     let textStyle = { fontSize: this.state.textSize || this.props.textSize };
 
     return (
-      <View style={{}}>
-        <Text style={[styles.textShadow, textStyle, {padding: 16}]}>{scene.description}</Text>
-
-        <View style={{padding: 16}}>
-          { this._renderActionButtons(scene, index) }
-        </View>
-      </View>
+      <Text style={[styles.textShadow, textStyle, {padding: 16}]}>{scene.description}</Text>
     )
   }
 
@@ -176,23 +172,19 @@ export default class StoryPreviewModal extends Component {
 
             { !!scene.image && scene.imageAsBackground &&
               <ImageBackground source={ imageUri } style={{flex: 1}} >
-                <View style={{flex: 1}}></View>
-                { this._renderDescription(scene, index) }
+                <ScrollView style={{flex: 1}}>
+                  { this._renderDescription(scene, index) }
+                  { this._renderActionButtons(scene, index) }
+                </ScrollView>
               </ImageBackground>
             }
 
-            { !!scene.image && !scene.imageAsBackground &&
-              <View style={{flex: 1}}>
-                { this._renderImage(imageUri) }
+            { (!scene.imageAsBackground || !scene.image) &&
+              <ScrollView style={{flex: 1}}>
+                { !!scene.image && this._renderImage(imageUri) }
                 { this._renderDescription(scene, index) }
-              </View>
-            }
-
-            { !scene.image &&
-              <View style={{flex: 1}} >
-                <View style={{flex: 1}}></View>
-                { this._renderDescription(scene, index) }
-              </View>
+                { this._renderActionButtons(scene, index) }
+              </ScrollView>
             }
           </View>
         )
@@ -203,19 +195,19 @@ export default class StoryPreviewModal extends Component {
   _renderChoices(question, slideIndex) {
     let textStyle = { fontSize: this.state.textSize || this.props.textSize };
 
-    return(
-      (question.choices || []).map((choice, i) => (
-        <Button
-          key={i}
-          onPress={()=> {
-            this._slideQuizTo(slideIndex+1, choice);
-            this._saveQuizResponse(choice, slideIndex);
-          }}
-          title={choice.label}
-          textStyle={textStyle}
-        ></Button>
-      ))
-    )
+    let buttons = (question.choices || []).map((choice, i) => (
+      <Button
+        key={i}
+        onPress={()=> {
+          this._slideQuizTo(slideIndex+1, choice);
+          this._saveQuizResponse(choice, slideIndex);
+        }}
+        title={choice.label}
+        textStyle={textStyle}
+      ></Button>
+    ))
+
+    return (<View style={{padding: 16}}>{buttons}</View>)
   }
 
   _renderQuizzes() {
@@ -227,13 +219,11 @@ export default class StoryPreviewModal extends Component {
           <View key={index}>
             <Text style={styles.title}>{ I18n.t('quiz')}: {I18n.t('question')} {index + 1}/{this.questions.length }</Text>
 
-            <View style={[headerStyle.centerChildWrapper, {padding: 16}]}>
+            <ScrollView style={{flex: 1, padding: 16}}>
               <Text style={[styles.textShadow, textStyle]}>{ question.label }</Text>
-            </View>
+            </ScrollView>
 
-            <View style={{padding: 16}}>
-              { this._renderChoices(question, index) }
-            </View>
+            { this._renderChoices(question, index) }
           </View>
         )
       })
@@ -288,7 +278,9 @@ export default class StoryPreviewModal extends Component {
         >
           <View style={{ padding: 20, backgroundColor: '#fff'}}>
             <Text>{I18n.t('text_size')}</Text>
-            <Text style={{fontSize: this.state.textSize, textAlign: 'center' }}>{I18n.t('lorem_ipsum')}</Text>
+            <View style={{height: 30}}>
+              <Text style={{fontSize: this.state.textSize, textAlign: 'center' }}>{I18n.t('lorem_ipsum')}</Text>
+            </View>
             { this._renderSlider() }
           </View>
         </ModalDialog>
@@ -307,24 +299,16 @@ export default class StoryPreviewModal extends Component {
   _renderSlider() {
     return (
       <View style={styles.container}>
-        <View
-          style={{flexDirection: 'row', alignItems: 'flex-end', paddingHorizontal: 16, paddingTop: 16}} >
-
-          <Text style={[styles.textSize, { fontSize: 14 }, this._activeKlass(14)]}>A</Text>
-          <View style={{flex: 1}}></View>
-
+        <View style={styles.letterAWrapper} >
+          <Text style={[styles.textSize, {fontSize: 14}, this._activeKlass(14)]}>A</Text>
           <Text style={[styles.textSize, {fontSize: 18}, this._activeKlass(18)]}>A</Text>
-          <View style={{flex: 1}}></View>
-
           <Text style={[styles.textSize, {fontSize: 22}, this._activeKlass(22)]}>A</Text>
-          <View style={{flex: 1}}></View>
-
           <Text style={[styles.textSize, {fontSize: 26}, this._activeKlass(26)]}>A</Text>
         </View>
 
         <Slider
           step={4}
-          maximumValue={24}
+          maximumValue={26}
           minimumValue={14}
           onValueChange={(textSize) => this.setState({textSize: textSize})}
           value={this.state.textSize || this.props.textSize}
@@ -425,8 +409,7 @@ const styles = StyleSheet.create({
   title: {
     textAlign: 'center',
     fontSize: 20,
-    lineHeight: 24,
-    padding: 16
+    lineHeight: 40,
   },
   textSize: {
     color: '#ddd',
@@ -445,5 +428,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     width: 100,
+  },
+  letterAWrapper: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'flex-end',
+    paddingHorizontal: 16,
+    paddingTop: 16
   }
 });
