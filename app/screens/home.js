@@ -310,9 +310,7 @@ export default class Home extends Component {
   }
 
   _openUserTypeModal = () => {
-    AsyncStorage.getItem(USER_TYPE).then((userType) => {
-      this.setState({visibleUserType: true, userType: userType});
-    });
+    this.setState({visibleUserType: true});
   }
 
   render() {

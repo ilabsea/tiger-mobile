@@ -8,7 +8,7 @@ import {
   AsyncStorage,
 } from 'react-native';
 
-import RadioForm from 'react-native-simple-radio-button';
+import { RadioButton } from 'react-native-material-ui';
 import { Toolbar } from 'react-native-material-ui';
 
 import I18n from '../i18n/i18n';
@@ -29,28 +29,38 @@ export default class UserTypeModal extends Component {
     header: null,
   };
 
+  state = {userType: ''};
+
+  componentDidMount() {
+    AsyncStorage.getItem(USER_TYPE).then((userType) => {
+      this.setState({userType: userType});
+    });
+  }
+
   _onSelectUserType = (userType) => {
+    this.setState({ userType: userType });
+
     AsyncStorage.setItem(USER_TYPE, userType, () => {
       this.props.onRequestClose();
     });
   }
 
   _renderContent() {
-    let index = radio_props.findIndex(b=> b.value == this.props.userType);
+    let buttons = radio_props.map((obj, i) => {
+      return(
+       <RadioButton
+          key={i}
+          label={obj.label}
+          checked={this.state.userType == obj.value}
+          value={obj.value}
+          onSelect={this._onSelectUserType}
+       />
+      )
+    })
 
     return (
       <View style={styles.container}>
-        <RadioForm
-          radio_props={radio_props}
-          initial={index}
-          onPress={(value) => this._onSelectUserType(value)}
-          labelStyle={{fontSize: 16, lineHeight: 30, color: 'rgba(0,0,0,.87)'}}
-          radioStyle={{margin: 5}}
-          buttonColor={'rgba(0,0,0,.54)'}
-          selectedButtonColor={'#f55b1f'}
-          buttonSize={15}
-          buttonOuterSize={30}
-        />
+        { buttons }
       </View>
     )
   }

@@ -4,6 +4,7 @@ export default StyleSheet.create({
   container: {
     marginTop: 10,
     alignItems: 'flex-start',
+    minHeight: 200,
   },
   btn: {
     backgroundColor: 'green',
