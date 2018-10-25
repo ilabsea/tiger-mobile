@@ -41,4 +41,5 @@ export default {
   implemented_by: 'អនុវត្តរួមគ្នាដោយអង្គការ',
   collaborated_by: 'សហការជាមួយក្រសួង',
   technical_by: 'សហការជំនួយបច្ចេកទេស',
+  download_how_to_use: 'ទាញយករបៀបប្រើប្រាស់កម្មវិធី',
 };

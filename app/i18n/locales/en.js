@@ -41,4 +41,5 @@ export default {
   implemented_by: 'Implemented by the following consortium partners',
   collaborated_by: 'In Cooperation with',
   technical_by: 'Technical by',
+  how_to_use: 'Download how to use document',
 };

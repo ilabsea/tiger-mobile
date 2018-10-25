@@ -13,8 +13,11 @@ import { Toolbar } from 'react-native-material-ui';
 import I18n from '../i18n/i18n';
 import headerStyle from '../assets/style_sheets/header';
 import DeviceInfo from 'react-native-device-info';
+import { environment } from '../environments/environment';
 
 export default class About extends Component {
+  downloadUrl = `${environment.domain}/download_mobile_guide`;
+
   constructor(props) {
     super(props);
   }
@@ -97,6 +100,12 @@ export default class About extends Component {
             <Image
               style={{width: 250, height: 61}}
               source={require('../assets/images/about/instedd.png')}/>
+          </TouchableOpacity>
+        </View>
+
+        <View style={styles.imgWrapper}>
+          <TouchableOpacity onPress={()=> this._openLink(this.downloadUrl)}>
+            <Text style={{color: '#1976d2'}}>{I18n.t('download_how_to_use')}</Text>
           </TouchableOpacity>
         </View>
       </View>
