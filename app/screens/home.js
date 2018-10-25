@@ -250,7 +250,7 @@ export default class Home extends Component {
     let numColumns = this.state.view == 'grid' ? 2 : 1;
 
     return (
-      <View style={{flex: 1, backgroundColor: '#fff3df'}}>
+      <View style={{flex: 1}}>
         <FlatList
           data={this.state.dataSource}
           keyExtractor={(item, index) => index.toString()}
@@ -315,7 +315,7 @@ export default class Home extends Component {
 
   render() {
     return (
-      <View style={{flex: 1}} ref="home">
+      <View style={{flex: 1, backgroundColor: '#fff3df'}} ref="home">
         <Toolbar
           centerElement={<Text style={headerStyle.title}>{I18n.t('home')}</Text>}
           rightElement={

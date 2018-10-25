@@ -49,7 +49,7 @@ export default class About extends Component {
 
   render() {
     return (
-      <View style={{flex: 1}}>
+      <View style={{flex: 1, backgroundColor: '#fff3df'}}>
         <Toolbar
           centerElement={<Text style={headerStyle.title}>{I18n.t('about_app')}</Text>}
         />

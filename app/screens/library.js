@@ -252,7 +252,7 @@ export default class Labrary extends Component {
     let allStories = realm.objects('Story').sorted('createdAt', true);
 
     return (
-      <View style={{flex: 1}}>
+      <View style={{flex: 1, backgroundColor: '#fff3df'}}>
         <Toolbar
           centerElement={<Text style={headerStyle.title}>{I18n.t('my_library')}</Text>}
         />

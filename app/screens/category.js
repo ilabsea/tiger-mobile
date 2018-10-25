@@ -200,7 +200,7 @@ export default class Category extends Component {
 
   render() {
     return (
-      <View style={{flex: 1}} ref='category'>
+      <View style={{flex: 1, backgroundColor: '#fff3df'}} ref='category'>
         <Toolbar
           centerElement={<Text style={headerStyle.title}>{I18n.t('category')}</Text>}
         />

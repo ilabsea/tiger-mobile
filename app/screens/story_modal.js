@@ -302,7 +302,7 @@ export default class StoryModal extends Component {
 
   _renderModelContent = (story) => {
     return (
-      <View style={{flex: 1}}>
+      <View style={{flex: 1, backgroundColor: '#fff3df'}}>
         <Toolbar
           leftElement="arrow-back"
           centerElement={

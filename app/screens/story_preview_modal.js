@@ -320,7 +320,7 @@ export default class StoryPreviewModal extends Component {
 
   _renderModalContent = (story) => {
     return (
-      <View style={{flex: 1}}>
+      <View style={{flex: 1, backgroundColor: '#fff3df'}}>
         <Toolbar
           leftElement="arrow-back"
           centerElement={<Text style={headerStyle.title}>{story.title}</Text>}
