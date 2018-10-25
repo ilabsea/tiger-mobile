@@ -164,6 +164,7 @@ export default class Home extends Component {
       description: story.description,
       image: '',
       author: story.author,
+      license: story.license,
       sourceLink: story.source_link,
       publishedAt: story.published_at,
       tags: tags,

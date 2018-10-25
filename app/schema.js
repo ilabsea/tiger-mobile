@@ -15,7 +15,7 @@ import StoryResponse from './schemas/story_response';
 import QuizResponse from './schemas/quiz_response';
 import Tag from './schemas/tag';
 
-export default new Realm({schema: [
+const schema1 = [
   Story,
   StoryBackup,
   Scene,
@@ -26,4 +26,19 @@ export default new Realm({schema: [
   StoryResponse,
   QuizResponse,
   Tag
-]});
+];
+
+function migration1(oldRealm, newRealm) {
+  if (oldRealm.schemaVersion < 1) {
+    const oldObjects = oldRealm.objects('Story');
+    const newObjects = newRealm.objects('Story');
+
+    for (let i = 0; i < oldObjects.length; i++) {
+      newObjects[i].license = 'Creative Commons license family - cc';
+    }
+  }
+}
+
+export default new Realm({
+  schema: schema1, schemaVersion: 1, migration: migration1
+});

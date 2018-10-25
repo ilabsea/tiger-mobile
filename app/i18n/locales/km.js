@@ -37,4 +37,5 @@ export default {
   student: 'សិស្សានុសិស្ស',
   other: 'ផ្សេងៗ',
   lorem_ipsum: 'តោះទៅសាលារៀន',
+  license: 'រក្សាសិទ្ធិ',
 };

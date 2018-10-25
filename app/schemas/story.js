@@ -14,6 +14,7 @@ Story.schema = {
     image: 'string',
     author: 'string',
     sourceLink: 'string?',
+    license: 'string',
     publishedAt: 'string',
     tags: 'Tag[]',
     scenes: { type: 'list', objectType: 'Scene' },

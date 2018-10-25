@@ -58,6 +58,7 @@ export default class StoryModal extends Component {
       description: story.description,
       image: '',
       author: story.author,
+      license: story.license,
       sourceLink: story.source_link,
       publishedAt: story.published_at,
       tags: tags,
@@ -255,8 +256,8 @@ export default class StoryModal extends Component {
         <Text>{I18n.t('published_at')} { this._getFullDate(story.published_at)}</Text>
         <Text style={{fontSize: 16}}>{story.title}</Text>
         <Text>{I18n.t('author')}: {story.author}</Text>
+        <Text>{I18n.t('license')}: {story.license}</Text>
         <View style={storyStyle.tagsWrapper}>{tags}</View>
-
         { this._renderBtnDownload(story) }
       </View>
     )
