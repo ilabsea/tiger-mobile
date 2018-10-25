@@ -28,21 +28,77 @@ export default class About extends Component {
       <View style={styles.container}>
         <Text style={styles.title}>{I18n.t('tiger_app')}</Text>
         <Text style={styles.paragraph}>{I18n.t('tiger_app_definition')}</Text>
+
+        <View style={styles.imgWrapper}>
+          <Image
+            style={{maxHeight: 70}}
+            resizeMode="contain"
+            source={require('../assets/images/about/tiger_app.jpg')}/>
+        </View>
+
         <Text style={styles.paragraph}>{I18n.t('tiger_app_creation')}</Text>
 
-        <TouchableOpacity onPress={()=> this._openLink('http://www.kapekh.org/')}>
-          <Image
-            style={{width: 140, height: 140}}
-            source={require('../assets/images/about/kape.png')}/>
-        </TouchableOpacity>
+        <Text style={styles.paragraph}>{I18n.t('supported_by')}</Text>
 
-        <Text style={styles.paragraph}>{I18n.t('tiger_app_collaboration')}</Text>
-
-        <TouchableOpacity onPress={()=> this._openLink('http://ilabsoutheastasia.org/')}>
+        <View style={styles.imgWrapper}>
           <Image
-            style={{width: 250, height: 61}}
-            source={require('../assets/images/about/instedd.png')}/>
-        </TouchableOpacity>
+            style={[styles.img]}
+            resizeMode="contain"
+            source={require('../assets/images/about/supported_by/eu.jpg')}/>
+          <Image
+            style={[styles.img, {marginHorizontal: 15, flex: 3}]}
+            resizeMode="contain"
+            source={require('../assets/images/about/supported_by/belgium.png')}/>
+          <Image
+            style={[styles.img, {flex: 2}]}
+            resizeMode="contain"
+            source={require('../assets/images/about/supported_by/flanders.jpg')}/>
+        </View>
+
+        <Text style={styles.paragraph}>{I18n.t('implemented_by')}</Text>
+
+        <View style={styles.imgWrapper}>
+          <Image
+            style={[styles.img, {maxHeight: 60, flex: 2}]}
+            resizeMode="contain"
+            source={require('../assets/images/about/implemented_by/vvob.gif')}/>
+          <Image
+            style={[styles.img, {maxHeight: 60}]}
+            resizeMode="contain"
+            source={require('../assets/images/about/implemented_by/kape.png')}/>
+          <Image
+            style={[styles.img, {maxHeight: 60}]}
+            resizeMode="contain"
+            source={require('../assets/images/about/implemented_by/gadc.gif')}/>
+          <Image
+            style={[styles.img, {maxHeight: 60}]}
+            resizeMode="contain"
+            source={require('../assets/images/about/implemented_by/pko.jpg')}/>
+        </View>
+
+        <Text style={styles.paragraph}>{I18n.t('collaborated_by')}</Text>
+
+        <View style={styles.imgWrapper}>
+          <Image
+            style={{maxWidth: 70, maxHeight: 70, marginRight: 15}}
+            resizeMode="contain"
+            source={require('../assets/images/about/collaborated_by/moey.jpg')}/>
+
+          <Image
+            style={{maxWidth: 70, maxHeight: 70}}
+            resizeMode="contain"
+            source={require('../assets/images/about/collaborated_by/women_affairs.jpg')}/>
+        </View>
+
+        <Text style={styles.paragraph}>{I18n.t('technical_by')}</Text>
+
+        <View style={styles.imgWrapper}>
+          <TouchableOpacity onPress={()=> this._openLink('http://ilabsoutheastasia.org/')}>
+            <Image
+              style={{width: 250, height: 61}}
+              source={require('../assets/images/about/instedd.png')}/>
+          </TouchableOpacity>
+        </View>
       </View>
     )
   }
@@ -58,7 +114,7 @@ export default class About extends Component {
           { this._renderContent() }
 
           <View style={styles.footer}>
-            <Text style={{textAlign: 'right'}}>ជំនាន់: {DeviceInfo.getVersion()}</Text>
+            <Text style={{textAlign: 'right'}}>{I18n.t('version')}: {DeviceInfo.getVersion()}</Text>
           </View>
         </ScrollView>
       </View>
@@ -85,5 +141,15 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'flex-end',
     alignItems: 'flex-end',
+  },
+  imgWrapper: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 24,
+  },
+  img: {
+    flex: 1,
+    maxHeight: 50,
   }
+
 });

@@ -11,13 +11,15 @@ I18n.translations = {
 
 import I18n from 'react-native-i18n';
 import km from './locales/km';
+import en from './locales/en';
 
 I18n.fallbacks = true;
 
 I18n.translations = {
-  km
+  km,
+  en
 };
 
-I18n.defaultLocale = 'km'
+I18n.locale = 'km';
 
 export default I18n;
