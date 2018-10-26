@@ -40,7 +40,7 @@ export default {
   supported_by: 'គាំទ្រថវិកា',
   implemented_by: 'អនុវត្តរួមគ្នាដោយអង្គការ',
   collaborated_by: 'សហការជាមួយក្រសួង',
-  technical_by: 'សហការជំនួយបច្ចេកទេស',
+  technical_by: 'សហការជំនួយបច្ចេកទេសដោយអង្គការ',
   download_how_to_use: 'ទាញយករបៀបប្រើប្រាស់កម្មវិធី',
   km: 'ខ្មែរ',
   en: 'English',

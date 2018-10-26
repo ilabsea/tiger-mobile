@@ -45,7 +45,7 @@ export default class About extends Component {
 
         <View style={styles.imgWrapper}>
           <Image
-            style={[styles.img]}
+            style={styles.img}
             resizeMode="contain"
             source={require('../assets/images/about/supported_by/eu.jpg')}/>
           <Image
@@ -62,19 +62,19 @@ export default class About extends Component {
 
         <View style={styles.imgWrapper}>
           <Image
-            style={[styles.img, {maxHeight: 60, flex: 2}]}
+            style={[styles.img, {flex: 2}]}
             resizeMode="contain"
             source={require('../assets/images/about/implemented_by/vvob.gif')}/>
           <Image
-            style={[styles.img, {maxHeight: 60}]}
+            style={styles.img}
             resizeMode="contain"
             source={require('../assets/images/about/implemented_by/kape.png')}/>
           <Image
-            style={[styles.img, {maxHeight: 60}]}
+            style={styles.img}
             resizeMode="contain"
             source={require('../assets/images/about/implemented_by/gadc.gif')}/>
           <Image
-            style={[styles.img, {maxHeight: 60}]}
+            style={styles.img}
             resizeMode="contain"
             source={require('../assets/images/about/implemented_by/pko.jpg')}/>
         </View>
@@ -159,7 +159,7 @@ const styles = StyleSheet.create({
   },
   img: {
     flex: 1,
-    maxHeight: 50,
+    maxHeight: 60,
   }
 
 });
