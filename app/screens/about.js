@@ -98,7 +98,8 @@ export default class About extends Component {
         <View style={styles.imgWrapper}>
           <TouchableOpacity onPress={()=> this._openLink('http://ilabsoutheastasia.org/')}>
             <Image
-              style={{width: 250, height: 61}}
+              style={{height: 60}}
+              resizeMode="contain"
               source={require('../assets/images/about/instedd.png')}/>
           </TouchableOpacity>
         </View>
