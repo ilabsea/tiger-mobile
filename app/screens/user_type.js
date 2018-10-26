@@ -15,10 +15,10 @@ import { USER_TYPE } from '../utils/variable';
 import styles from '../assets/style_sheets/user_type';
 
 const radio_props = [
-  {label: I18n.t('teacher'), value: 'teacher'},
-  {label: I18n.t('guardian'), value: 'guardian'},
-  {label: I18n.t('student'), value: 'student'},
-  {label: I18n.t('other'), value: 'other'},
+  {label: 'teacher', value: 'teacher'},
+  {label: 'guardian', value: 'guardian'},
+  {label: 'student', value: 'student'},
+  {label: 'other', value: 'other'},
 ];
 
 export default class UserType extends Component {
@@ -41,7 +41,7 @@ export default class UserType extends Component {
       return(
        <RadioButton
           key={i}
-          label={obj.label}
+          label={I18n.t(obj.label)}
           checked={this.state.userType == obj.value}
           value={obj.value}
           onSelect={this._onSelectUserType}
