@@ -44,53 +44,76 @@ export default class About extends Component {
         <Text style={styles.paragraph}>{I18n.t('supported_by')}</Text>
 
         <View style={styles.imgWrapper}>
-          <Image
-            style={styles.img}
-            resizeMode="contain"
-            source={require('../assets/images/about/supported_by/eu.jpg')}/>
-          <Image
-            style={[styles.img, {marginHorizontal: 15, flex: 3}]}
-            resizeMode="contain"
-            source={require('../assets/images/about/supported_by/belgium.png')}/>
-          <Image
-            style={[styles.img, {flex: 2}]}
-            resizeMode="contain"
-            source={require('../assets/images/about/supported_by/flanders.jpg')}/>
+          <TouchableOpacity style={styles.imgButton} onPress={()=> this._openLink('http://europa.eu/')}>
+            <Image
+              style={styles.img}
+              resizeMode="contain"
+              source={require('../assets/images/about/supported_by/eu.jpg')}/>
+          </TouchableOpacity>
+
+          <TouchableOpacity style={[styles.imgButton, {marginHorizontal: 15, flex: 3}]} onPress={()=> this._openLink('#')}>
+            <Image
+              style={styles.img}
+              resizeMode="contain"
+              source={require('../assets/images/about/supported_by/belgium.png')}/>
+          </TouchableOpacity>
+
+          <TouchableOpacity style={[styles.imgButton, {flex: 2}]} onPress={()=> this._openLink('https://www.visitflanders.com/en/?country=en_US')}>
+            <Image
+              style={styles.img}
+              resizeMode="contain"
+              source={require('../assets/images/about/supported_by/flanders.jpg')}/>
+          </TouchableOpacity>
         </View>
 
         <Text style={styles.paragraph}>{I18n.t('implemented_by')}</Text>
 
         <View style={styles.imgWrapper}>
-          <Image
-            style={[styles.img, {flex: 2}]}
-            resizeMode="contain"
-            source={require('../assets/images/about/implemented_by/vvob.gif')}/>
-          <Image
-            style={styles.img}
-            resizeMode="contain"
-            source={require('../assets/images/about/implemented_by/kape.png')}/>
-          <Image
-            style={styles.img}
-            resizeMode="contain"
-            source={require('../assets/images/about/implemented_by/gadc.gif')}/>
-          <Image
-            style={styles.img}
-            resizeMode="contain"
-            source={require('../assets/images/about/implemented_by/pko.jpg')}/>
+          <TouchableOpacity style={[styles.imgButton, {flex: 2}]} onPress={()=> this._openLink('https://cambodia.vvob.be/')}>
+            <Image
+              style={styles.img}
+              resizeMode="contain"
+              source={require('../assets/images/about/implemented_by/vvob.gif')}/>
+          </TouchableOpacity>
+
+          <TouchableOpacity style={styles.imgButton} onPress={()=> this._openLink('http://www.kapekh.org/')}>
+            <Image
+              style={styles.img}
+              resizeMode="contain"
+              source={require('../assets/images/about/implemented_by/kape.png')}/>
+          </TouchableOpacity>
+
+          <TouchableOpacity style={styles.imgButton} onPress={()=> this._openLink('http://www.gadc.org.kh/')}>
+            <Image
+              style={styles.img}
+              resizeMode="contain"
+              source={require('../assets/images/about/implemented_by/gadc.gif')}/>
+          </TouchableOpacity>
+
+          <TouchableOpacity style={styles.imgButton} onPress={()=> this._openLink('http://pkocambodia.org/')}>
+            <Image
+              style={styles.img}
+              resizeMode="contain"
+              source={require('../assets/images/about/implemented_by/pko.jpg')}/>
+          </TouchableOpacity>
         </View>
 
         <Text style={styles.paragraph}>{I18n.t('collaborated_by')}</Text>
 
-        <View style={styles.imgWrapper}>
-          <Image
-            style={{maxWidth: 70, maxHeight: 70, marginRight: 15}}
-            resizeMode="contain"
-            source={require('../assets/images/about/collaborated_by/moey.jpg')}/>
+        <View style={[styles.imgWrapper, {alignItems: 'center'}]}>
+          <TouchableOpacity style={{flexDirection: 'row'}} onPress={()=> this._openLink('http://www.moeys.gov.kh')}>
+            <Image
+              style={{maxWidth: 70, maxHeight: 70, marginRight: 15, alignSelf: 'flex-end'}}
+              resizeMode="contain"
+              source={require('../assets/images/about/collaborated_by/moey.jpg')}/>
+          </TouchableOpacity>
 
-          <Image
-            style={{maxWidth: 70, maxHeight: 70}}
-            resizeMode="contain"
-            source={require('../assets/images/about/collaborated_by/women_affairs.jpg')}/>
+          <TouchableOpacity style={{flexDirection: 'row'}} onPress={()=> this._openLink('http://mwa.gov.kh')}>
+            <Image
+              style={{maxWidth: 70, maxHeight: 70, alignSelf: 'flex-start'}}
+              resizeMode="contain"
+              source={require('../assets/images/about/collaborated_by/women_affairs.jpg')}/>
+          </TouchableOpacity>
         </View>
 
         <Text style={styles.paragraph}>{I18n.t('technical_by')}</Text>
@@ -154,12 +177,14 @@ const styles = StyleSheet.create({
   },
   imgWrapper: {
     flexDirection: 'row',
-    alignItems: 'center',
     marginTop: 24,
   },
   img: {
     flex: 1,
     maxHeight: 60,
+  },
+  imgButton: {
+    flex: 1,
+    flexDirection: 'row'
   }
-
 });
