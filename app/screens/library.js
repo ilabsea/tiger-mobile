@@ -119,6 +119,8 @@ export default class Labrary extends Component {
       )
     })
 
+    let license = (item.license || '').split(' - ')[1];
+
     return (
       <View style={styles.card}>
         <View style={styles.item}>
@@ -139,7 +141,7 @@ export default class Labrary extends Component {
             </Text>
 
             <Text>{I18n.t('author')}: {item.author}</Text>
-            <Text>{I18n.t('license')}: {item.license}</Text>
+            <Text>{I18n.t('license')}: {license}</Text>
             <View style={storyStyle.tagsWrapper}>{tags}</View>
 
             <View style={{marginTop: 20}}>

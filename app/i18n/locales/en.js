@@ -40,7 +40,7 @@ export default {
   supported_by: 'Financial Support by:',
   implemented_by: 'Implemented by the following consortium partners',
   collaborated_by: 'In Cooperation with',
-  technical_by: 'Technical by',
+  technical_by: 'Developed by',
   download_how_to_use: 'Download how to use',
   km: 'ខ្មែរ',
   en: 'English',
