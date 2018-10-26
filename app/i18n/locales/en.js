@@ -41,5 +41,8 @@ export default {
   implemented_by: 'Implemented by the following consortium partners',
   collaborated_by: 'In Cooperation with',
   technical_by: 'Technical by',
-  how_to_use: 'Download how to use document',
+  download_how_to_use: 'Download how to use',
+  km: 'ខ្មែរ',
+  en: 'English',
+  choose_language: 'Choose Language',
 };

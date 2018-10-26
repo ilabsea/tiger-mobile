@@ -22,6 +22,7 @@ import storyService from '../services/story.service';
 import layoutSerive from '../services/layout.service';
 import StoryModal from './story_modal';
 import UserTypeModal from './user_type_modal';
+import LanguageModal from './language_modal';
 import { environment } from '../environments/environment';
 import { USER_TYPE } from '../utils/variable';
 
@@ -37,6 +38,7 @@ export default class Home extends Component {
       isLoading: true,
       refreshing: false,
       modalVisible: false,
+      visibleLanguageModal: false,
       dataSource: [],
       story: {tags: []},
       visibleUserType: false,
@@ -310,8 +312,25 @@ export default class Home extends Component {
     )
   }
 
+  _renderLanguageModal() {
+    return (
+      <LanguageModal
+        modalVisible={this.state.visibleLanguageModal}
+        onRequestClose={() => {
+          this.setState({visibleLanguageModal: false});
+          this.props.onSetActive('home');
+        }}
+        onBackdropPress={() => this.setState({visibleLanguageModal: false})}
+      ></LanguageModal>
+    )
+  }
+
   _openUserTypeModal = () => {
     this.setState({visibleUserType: true});
+  }
+
+  _openLanguageModal = () => {
+    this.setState({visibleLanguageModal: true});
   }
 
   render() {
@@ -328,6 +347,10 @@ export default class Home extends Component {
               <TouchableOpacity onPress={this._openUserTypeModal} style={{paddingHorizontal: 8}}>
                 <Icon name='person' color='#fff' size={24} />
               </TouchableOpacity>
+
+              <TouchableOpacity onPress={this._openLanguageModal} style={{paddingHorizontal: 8}}>
+                <Icon name='language' color='#fff' size={24} />
+              </TouchableOpacity>
             </View>
           }
         />
@@ -341,6 +364,7 @@ export default class Home extends Component {
         { !this.state.isLoading && this._renderContentWithFlatList() }
         { this._renderModal() }
         { this._renderUserTypeModal() }
+        { this._renderLanguageModal() }
       </View>
     )
   }

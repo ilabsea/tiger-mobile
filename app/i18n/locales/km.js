@@ -42,4 +42,7 @@ export default {
   collaborated_by: 'សហការជាមួយក្រសួង',
   technical_by: 'សហការជំនួយបច្ចេកទេស',
   download_how_to_use: 'ទាញយករបៀបប្រើប្រាស់កម្មវិធី',
+  km: 'ខ្មែរ',
+  en: 'English',
+  choose_language: 'ជ្រើសរើសភាសា',
 };

@@ -8,30 +8,27 @@ import {
 import { RadioButton } from 'react-native-material-ui';
 import I18n from '../i18n/i18n';
 import headerStyle from '../assets/style_sheets/header';
-import { USER_TYPE } from '../utils/variable';
-import ModalDialog from 'react-native-modal';
+import { LANGUAGE } from '../utils/variable';
 import styles from '../assets/style_sheets/user_type';
+import ModalDialog from 'react-native-modal';
 
 const radio_props = [
-  {label: 'teacher', value: 'teacher'},
-  {label: 'guardian', value: 'guardian'},
-  {label: 'student', value: 'student'},
-  {label: 'other', value: 'other'}
-]
+  {label: I18n.t('km'), value: 'km'},
+  {label: I18n.t('en'), value: 'en'}
+];
 
-export default class UserTypeModal extends Component {
-  state = { userType: '' };
+export default class LanguageModal extends Component {
 
-  componentDidMount() {
-    AsyncStorage.getItem(USER_TYPE).then((userType) => {
-      this.setState({userType: userType});
-    });
+  constructor(props) {
+    super(props);
+
+    this.state = { language: I18n.currentLocale() };
   }
 
-  _onSelectUserType = (userType) => {
-    this.setState({ userType: userType });
-
-    AsyncStorage.setItem(USER_TYPE, userType, () => {
+  _onSelectLanguage = (language) => {
+    AsyncStorage.setItem(LANGUAGE, language, () => {
+      I18n.locale = language;
+      this.setState({ language: language });
       this.props.onRequestClose();
     });
   }
@@ -41,16 +38,16 @@ export default class UserTypeModal extends Component {
       return(
        <RadioButton
           key={i}
-          label={I18n.t(obj.label)}
-          checked={this.state.userType == obj.value}
+          label={obj.label}
+          checked={this.state.language == obj.value}
           value={obj.value}
-          onSelect={this._onSelectUserType}
+          onSelect={this._onSelectLanguage}
        />
       )
     })
 
     return (
-      <View style={styles.container}>
+      <View style={[styles.container, {minHeight: 100}]}>
         { buttons }
       </View>
     )
@@ -67,7 +64,7 @@ export default class UserTypeModal extends Component {
       >
 
         <View style={{ padding: 24, backgroundColor: '#fff'}}>
-          <Text>{I18n.t('choose_user_type')}</Text>
+          <Text>{I18n.t('choose_language')}</Text>
 
           { this._renderContent() }
         </View>

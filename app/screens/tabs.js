@@ -64,25 +64,25 @@ export default class Tabs extends Component {
               key="home"
               icon="home"
               label={I18n.t('home')}
-              onPress={() => this.setState({ active: 'home' })}
+              onPress={() => this.onSetActive('home')}
           />
           <BottomNavigation.Action
               key="category"
               icon="apps"
               label={I18n.t('category')}
-              onPress={() => this.setState({ active: 'category' })}
+              onPress={() => this.onSetActive('category')}
           />
           <BottomNavigation.Action
               key="library"
               icon="library-books"
               label={I18n.t('my_library')}
-              onPress={() => this.setState({ active: 'library' })}
+              onPress={() => this.onSetActive('library')}
           />
           <BottomNavigation.Action
               key="about"
               icon="settings"
               label={I18n.t('about_app')}
-              onPress={() => this.setState({ active: 'about' })}
+              onPress={() => this.onSetActive('about')}
           />
         </BottomNavigation>
       </View>
