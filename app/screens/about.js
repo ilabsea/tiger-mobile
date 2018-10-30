@@ -51,12 +51,12 @@ export default class About extends Component {
               source={require('../assets/images/about/supported_by/eu.jpg')}/>
           </TouchableOpacity>
 
-          <TouchableOpacity style={[styles.imgButton, {marginHorizontal: 15, flex: 3}]} onPress={()=> this._openLink('#')}>
+          <View style={[styles.imgButton, {marginHorizontal: 15, flex: 3}]}>
             <Image
               style={styles.img}
               resizeMode="contain"
               source={require('../assets/images/about/supported_by/belgium.png')}/>
-          </TouchableOpacity>
+          </View>
 
           <TouchableOpacity style={[styles.imgButton, {flex: 2}]} onPress={()=> this._openLink('https://www.visitflanders.com/en/?country=en_US')}>
             <Image
