@@ -23,8 +23,7 @@ I18n.translations = {
 };
 
 AsyncStorage.getItem(LANGUAGE).then((language) => {
-  I18n.defaultLocale = 'km';
-  I18n.locale = language || I18n.defaultLocale;
+  I18n.locale = language || 'km';
 });
 
 export default I18n;

@@ -36,7 +36,7 @@ export default class About extends Component {
           <Image
             style={{maxHeight: 70}}
             resizeMode="contain"
-            source={require('../assets/images/about/tiger_app.jpg')}/>
+            source={require('../assets/images/about/tiger_app.png')}/>
         </View>
 
         <Text style={styles.paragraph}>{I18n.t('tiger_app_creation')}</Text>
