@@ -323,7 +323,14 @@ export default class StoryPreviewModal extends Component {
       <View style={{flex: 1, backgroundColor: '#fff3df'}}>
         <Toolbar
           leftElement="arrow-back"
-          centerElement={<Text style={headerStyle.title}>{story.title}</Text>}
+          centerElement={
+            <Text
+              ellipsizeMode='tail'
+              numberOfLines={1}
+              style={headerStyle.title}>
+              {story.title}
+            </Text>
+          }
           rightElement="format-size"
           onLeftElementPress={() => this._closeModal()}
           onRightElementPress={()=> this.setState({ isDialogVisible: true }) } />

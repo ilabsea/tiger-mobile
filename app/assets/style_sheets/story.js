@@ -23,6 +23,7 @@ export default StyleSheet.create({
     flexDirection:'row',
     flexWrap:'wrap',
     marginTop: 8,
+    alignItems: 'center',
   },
   tag: {
     backgroundColor: '#eee',
@@ -73,5 +74,10 @@ export default StyleSheet.create({
     color: '#fff',
     marginLeft: 10,
   },
+  licenseText: {
+    marginLeft: 5,
+    height: 18,
+    backgroundColor: '#fafafa'
+  }
 
 })

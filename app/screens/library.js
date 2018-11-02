@@ -141,7 +141,10 @@ export default class Labrary extends Component {
             </Text>
 
             <Text>{I18n.t('author')}: {item.author}</Text>
-            <Text>{I18n.t('license')}: {license}</Text>
+            <View style={storyStyle.tagsWrapper}>
+              <Text>{I18n.t('license')}:</Text>
+              <Text style={[storyStyle.tag, storyStyle.licenseText]}>{license}</Text>
+            </View>
             <View style={storyStyle.tagsWrapper}>{tags}</View>
 
             <View style={{marginTop: 20}}>
