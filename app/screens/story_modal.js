@@ -258,17 +258,21 @@ export default class StoryModal extends Component {
     let regex = /https?:\/\//g;
     let isLink = !!story.source_link.match(regex);
 
-    return (
-      <View style={{flexDirection: 'row', alignItems: 'center'}}>
-        <Text>{I18n.t('acknowledgement')}: </Text>
-
-        { isLink &&
-          <TouchableOpacity onPress={()=> this._openLink(story.source_link)}>
-            <Text style={{color: '#1976d2'}}>{I18n.t('source')}</Text>
+    if (isLink) {
+      return(
+        <View style={{flexDirection: 'row', alignItems: 'center'}}>
+          <Text>{I18n.t('source_link')}: </Text>
+          <TouchableOpacity onPress={()=> this._openLink(story.source_link)} style={{flex: 1}}>
+            <Text style={{color: '#1976d2'}} ellipsizeMode='tail' numberOfLines={1}>{story.source_link}</Text>
           </TouchableOpacity>
-        }
+        </View>
+      )
+    }
 
-        { !isLink && <Text>{story.source_link}</Text> }
+    return (
+      <View style={{flexDirection: 'row'}}>
+        <Text>{I18n.t('acknowledgement')}: </Text>
+        <Text style={{flex: 1, paddingRight: 8}}>{story.source_link}</Text>
       </View>
     )
   }

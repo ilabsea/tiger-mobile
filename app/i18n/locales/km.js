@@ -45,7 +45,7 @@ export default {
   km: 'ខ្មែរ',
   en: 'English',
   choose_language: 'ជ្រើសរើសភាសា',
-  acknowledgement: 'ដកស្រង់ពី',
-  source: 'ប្រភព',
+  acknowledgement: 'សេចក្តីគោរពជូន',
+  source_link: 'ស្រង់ចេញពីប្រភព',
   educational_message: 'សារអប់រំ',
 };

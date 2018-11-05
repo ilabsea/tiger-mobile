@@ -46,6 +46,6 @@ export default {
   en: 'English',
   choose_language: 'Choose Language',
   acknowledgement: 'Acknowledgement',
-  source: 'Source',
+  source_link: 'Source',
   educational_message: 'Educational message',
 };
