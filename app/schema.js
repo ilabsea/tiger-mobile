@@ -39,6 +39,18 @@ function migration1(oldRealm, newRealm) {
   }
 }
 
-export default new Realm({
-  schema: schema1, schemaVersion: 1, migration: migration1
-});
+const schemas = [
+  { schema: schema1, schemaVersion: 1, migration: migration1 },
+  { schema: schema1, schemaVersion: 2 },
+]
+
+// the first schema to update to is the current schema version
+// since the first schema in our array is at
+let nextSchemaIndex = Realm.schemaVersion(Realm.defaultPath);
+while (nextSchemaIndex < schemas.length) {
+  const migratedRealm = new Realm({ ...schemas[nextSchemaIndex] });
+  nextSchemaIndex += 1;
+  migratedRealm.close();
+}
+
+export default new Realm(schemas[schemas.length-1]);

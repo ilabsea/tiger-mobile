@@ -12,6 +12,7 @@ Question.schema = {
     label: 'string',
     displayOrder: 'int?',
     choices: {type: 'list', objectType: 'Choice'},
+    message: 'string?',
     storyId: 'int',
   }
 }

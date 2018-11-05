@@ -230,6 +230,10 @@ export default class StoryPreviewModal extends Component {
     )
   }
 
+  _showMessage(question) {
+    this.setState({message: question.message, isMessageVisible: true});
+  }
+
   _renderQuizResult() {
     let textStyle = { fontSize: this.state.textSize || this.props.textSize };
 
@@ -237,15 +241,22 @@ export default class StoryPreviewModal extends Component {
       return (
         <View key={index} style={{marginBottom: 16}}>
           <Text style={[styles.textShadow, textStyle]}>{index+1}) {question.label}</Text>
-          <Text style={[styles.textShadow, textStyle]}>
-            <Text style={{fontWeight: '500'}}>{I18n.t('answer')}: </Text>
+
+          <View style={{flexDirection: 'row', alignItems: 'center'}}>
+            <Text style={[styles.textShadow, textStyle, {fontWeight: '500'}]}>{I18n.t('answer')}: </Text>
 
             { !this._isCorrect(question.user_choice.id, question.choices) &&
-              <Text style={{color: 'red', textDecorationLine: 'line-through'}}>{question.user_choice.label} / </Text>
+              <Text style={[styles.textShadow, textStyle, styles.wrong]}>{question.user_choice.label} / </Text>
             }
 
-            <Text style={{color: 'green'}}>[{this._getAnswers(question.choices)}]</Text>
-          </Text>
+            { !!question.message &&
+              <TouchableOpacity onPress={() => this._showMessage(question)}>
+                <Text style={[styles.textShadow, textStyle, {color: 'green'}]}>[{this._getAnswers(question.choices)}]</Text>
+              </TouchableOpacity>
+            }
+
+            { !question.message && <Text style={[styles.textShadow, textStyle, {color: 'green'}]}>[{this._getAnswers(question.choices)}]</Text> }
+          </View>
         </View>
       )
     })
@@ -271,20 +282,34 @@ export default class StoryPreviewModal extends Component {
 
   _renderFormatSizeDialog() {
     return (
-      <View>
-        <ModalDialog
-          isVisible={this.state.isDialogVisible}
-          onBackdropPress={() => this.setState({isDialogVisible: false})}
-        >
-          <View style={{ padding: 20, backgroundColor: '#fff'}}>
-            <Text>{I18n.t('text_size')}</Text>
-            <View style={{height: 30}}>
-              <Text style={{fontSize: this.state.textSize, textAlign: 'center' }}>{I18n.t('lorem_ipsum')}</Text>
-            </View>
-            { this._renderSlider() }
+      <ModalDialog
+        isVisible={this.state.isDialogVisible}
+        onBackdropPress={() => this.setState({isDialogVisible: false})}
+      >
+        <View style={{ padding: 20, backgroundColor: '#fff'}}>
+          <Text>{I18n.t('text_size')}</Text>
+          <View style={{height: 30}}>
+            <Text style={{fontSize: this.state.textSize, textAlign: 'center' }}>{I18n.t('lorem_ipsum')}</Text>
           </View>
-        </ModalDialog>
-      </View>
+          { this._renderSlider() }
+        </View>
+      </ModalDialog>
+    )
+  }
+
+  _renderMessageDialog() {
+    return (
+      <ModalDialog
+        isVisible={this.state.isMessageVisible}
+        onBackdropPress={() => this.setState({isMessageVisible: false})}
+      >
+        <View style={{ padding: 20, backgroundColor: '#fff'}}>
+          <Text style={{fontSize: 16}}>{I18n.t('educational_message')}</Text>
+          <ScrollView>
+            <Text>{this.state.message}</Text>
+          </ScrollView>
+        </View>
+      </ModalDialog>
     )
   }
 
@@ -347,6 +372,7 @@ export default class StoryPreviewModal extends Component {
           </IndicatorViewPager>
 
           { this._renderFormatSizeDialog() }
+          { this._renderMessageDialog() }
         </View>
 
       </View>
@@ -442,5 +468,9 @@ const styles = StyleSheet.create({
     alignItems: 'flex-end',
     paddingHorizontal: 16,
     paddingTop: 16
+  },
+  wrong: {
+    color: 'red',
+    textDecorationLine: 'line-through'
   }
 });

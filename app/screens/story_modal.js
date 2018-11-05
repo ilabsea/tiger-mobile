@@ -197,6 +197,7 @@ export default class StoryModal extends Component {
         label: question.label,
         displayOrder: question.display_order,
         storyId: question.story_id,
+        message: question.message
       }, true)
 
       question.choices.map((choice) => {

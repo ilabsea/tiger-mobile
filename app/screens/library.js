@@ -10,6 +10,7 @@ import {
   Alert,
   TouchableOpacity,
   AsyncStorage,
+  Linking,
 } from 'react-native';
 
 import { Toolbar, Icon, Card } from 'react-native-material-ui';
@@ -112,6 +113,33 @@ export default class Labrary extends Component {
     });
   }
 
+  _openLink(url) {
+    Linking.openURL(url);
+  }
+
+  _renderAcknowledgementOrSourceLink(story) {
+    if (!story.sourceLink) {
+      return (null);
+    }
+
+    let regex = /https?:\/\//g;
+    let isLink = !!story.sourceLink.match(regex);
+
+    return (
+      <View style={{flexDirection: 'row', alignItems: 'center'}}>
+        <Text>{I18n.t('acknowledgement')}: </Text>
+
+        { isLink &&
+          <TouchableOpacity onPress={()=> this._openLink(story.sourceLink)}>
+            <Text style={{color: '#1976d2'}}>{I18n.t('source')}</Text>
+          </TouchableOpacity>
+        }
+
+        { !isLink && <Text>{story.sourceLink}</Text> }
+      </View>
+    )
+  }
+
   _renderItem(item) {
     let tags = item.tags.map((tag, index) => {
       return (
@@ -141,6 +169,8 @@ export default class Labrary extends Component {
             </Text>
 
             <Text>{I18n.t('author')}: {item.author}</Text>
+            { this._renderAcknowledgementOrSourceLink(item) }
+
             <View style={storyStyle.tagsWrapper}>
               <Text>{I18n.t('license')}:</Text>
               <Text style={[storyStyle.tag, storyStyle.licenseText]}>{license}</Text>

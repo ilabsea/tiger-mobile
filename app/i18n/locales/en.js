@@ -47,4 +47,5 @@ export default {
   choose_language: 'Choose Language',
   acknowledgement: 'Acknowledgement',
   source: 'Source',
+  educational_message: 'Educational message',
 };
