@@ -45,4 +45,6 @@ export default {
   km: 'ខ្មែរ',
   en: 'English',
   choose_language: 'ជ្រើសរើសភាសា',
+  acknowledgement: 'Acknowledgement',
+  source: 'ប្រភព',
 };

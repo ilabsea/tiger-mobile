@@ -11,6 +11,7 @@ import {
   NetInfo,
   ToastAndroid,
   AsyncStorage,
+  Linking,
 } from 'react-native';
 
 import { Toolbar, Icon } from 'react-native-material-ui';
@@ -244,6 +245,33 @@ export default class StoryModal extends Component {
     )
   }
 
+  _openLink(url) {
+    Linking.openURL(url);
+  }
+
+  _renderAcknowledgementOrSourceLink(story) {
+    if (!story.source_link) {
+      return (null);
+    }
+
+    let regex = /https?:\/\//g;
+    let isLink = !!story.source_link.match(regex);
+
+    return (
+      <View style={{flexDirection: 'row', alignItems: 'center'}}>
+        <Text>{I18n.t('acknowledgement')}: </Text>
+
+        { isLink &&
+          <TouchableOpacity onPress={()=> this._openLink(story.source_link)}>
+            <Text style={{color: '#1976d2'}}>{I18n.t('source')}</Text>
+          </TouchableOpacity>
+        }
+
+        { !isLink && <Text>{story.source_link}</Text> }
+      </View>
+    )
+  }
+
   _renderShortInfo(story) {
     let tags = story.tags.map((tag, index) => {
       return (
@@ -258,6 +286,7 @@ export default class StoryModal extends Component {
         <Text>{I18n.t('published_at')} { this._getFullDate(story.published_at)}</Text>
         <Text style={{fontSize: 16}}>{story.title}</Text>
         <Text>{I18n.t('author')}: {story.author}</Text>
+        { this._renderAcknowledgementOrSourceLink(story) }
         <View style={storyStyle.tagsWrapper}>
           <Text>{I18n.t('license')}:</Text>
           <Text style={[storyStyle.tag, storyStyle.licenseText]}>{license}</Text>
