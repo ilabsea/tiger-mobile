@@ -329,7 +329,7 @@ export default class StoryModal extends Component {
 
   _renderBtnReadNow(story) {
     return (
-      <View style={{alignItems: 'center'}}>
+      <View style={{alignItems: 'center', marginBottom: 20}}>
         <TouchableOpacity
           onPress={()=> {this.props.readNow(story)}}
           style={[storyStyle.btnDownload, storyStyle.btnReadNow]}>
