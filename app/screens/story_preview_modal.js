@@ -234,6 +234,33 @@ export default class StoryPreviewModal extends Component {
     this.setState({message: question.message, isMessageVisible: true});
   }
 
+  _renderResultLabel(question, textStyle) {
+    if (this._isCorrect(question.user_choice.id, question.choices)) {
+      return (
+        <Text style={[styles.textShadow, textStyle, {color: 'green'}]}>[{this._getAnswers(question.choices)}]</Text>
+      )
+    }
+
+    return (
+      <View>
+        <Text style={[styles.textShadow, textStyle, styles.wrong]}>{question.user_choice.label}</Text>
+        <Text style={[styles.textShadow, textStyle, {color: 'green'}]}>[{this._getAnswers(question.choices)}]</Text>
+      </View>
+    )
+  }
+
+  _renderResultButton(question, textStyle) {
+    if (!!question.message) {
+      return (
+        <TouchableOpacity onPress={() => this._showMessage(question)}>
+          { this._renderResultLabel(question, textStyle) }
+        </TouchableOpacity>
+      )
+    }
+
+    return (<View>{ this._renderResultLabel(question, textStyle) }</View>)
+  }
+
   _renderQuizResult() {
     let textStyle = { fontSize: this.state.textSize || this.props.textSize };
 
@@ -242,20 +269,12 @@ export default class StoryPreviewModal extends Component {
         <View key={index} style={{marginBottom: 16}}>
           <Text style={[styles.textShadow, textStyle]}>{index+1}) {question.label}</Text>
 
-          <View style={{flexDirection: 'row', alignItems: 'center'}}>
+          <View style={{flexDirection: 'row'}}>
             <Text style={[styles.textShadow, textStyle, {fontWeight: '500'}]}>{I18n.t('answer')}: </Text>
 
-            { !this._isCorrect(question.user_choice.id, question.choices) &&
-              <Text style={[styles.textShadow, textStyle, styles.wrong]}>{question.user_choice.label} / </Text>
-            }
-
-            { !!question.message &&
-              <TouchableOpacity onPress={() => this._showMessage(question)}>
-                <Text style={[styles.textShadow, textStyle, {color: 'green'}]}>[{this._getAnswers(question.choices)}]</Text>
-              </TouchableOpacity>
-            }
-
-            { !question.message && <Text style={[styles.textShadow, textStyle, {color: 'green'}]}>[{this._getAnswers(question.choices)}]</Text> }
+            <View style={{flex: 1}}>
+              {this._renderResultButton(question, textStyle)}
+            </View>
           </View>
         </View>
       )
