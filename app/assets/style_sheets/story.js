@@ -32,6 +32,7 @@ export default StyleSheet.create({
     color: '#111',
     fontSize: 10,
     marginRight: 5,
+    marginBottom: 3,
   },
   title: {
     fontSize: 12,
@@ -76,6 +77,7 @@ export default StyleSheet.create({
   },
   licenseText: {
     marginLeft: 5,
+    marginBottom: 0,
     height: 18,
     backgroundColor: '#fafafa'
   }

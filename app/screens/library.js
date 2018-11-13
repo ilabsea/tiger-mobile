@@ -13,7 +13,7 @@ import {
   Linking,
 } from 'react-native';
 
-import { Toolbar, Icon, Card } from 'react-native-material-ui';
+import { Toolbar, Icon, Card, Divider } from 'react-native-material-ui';
 import { Menu, MenuOptions, MenuOption, MenuTrigger } from 'react-native-popup-menu';
 import { YellowBox } from 'react-native';
 import realm from '../schema';
@@ -137,10 +137,10 @@ export default class Labrary extends Component {
     }
 
     return (
-      <View style={{flexDirection: 'row'}}>
+      <Text>
         <Text>{I18n.t('acknowledgement')}: </Text>
         <Text style={{flex: 1, paddingRight: 8}}>{story.sourceLink}</Text>
-      </View>
+      </Text>
     )
   }
 
@@ -242,9 +242,9 @@ export default class Labrary extends Component {
       <ListView
         dataSource={this.state.dataSource}
         renderRow={(rowData) => this._renderItem(rowData)}
+        renderSeparator={() => <Divider style={{container: {backgroundColor: '#000'}}} />}
         enableEmptySections={ true }
-        style={{flex: 1, paddingBottom: 16}}
-        contentContainerStyle={{paddingBottom: 16}}
+        style={{flex: 1}}
         refreshControl={
           <RefreshControl
             refreshing={ false }
@@ -310,18 +310,13 @@ const styles = StyleSheet.create({
     flex: 1,
     minHeight: 232,
     flexDirection: 'row',
-    padding: 16,
   },
   menuOption: {
     padding: 10
   },
   card: {
-    backgroundColor: '#fff',
-    borderRadius: 3,
-    borderWidth: 1,
     borderRadius: 2,
     borderColor: '#ddd',
     margin: 16,
-    marginBottom: 0,
   }
 });

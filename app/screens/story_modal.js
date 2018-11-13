@@ -270,10 +270,10 @@ export default class StoryModal extends Component {
     }
 
     return (
-      <View style={{flexDirection: 'row'}}>
+      <Text>
         <Text>{I18n.t('acknowledgement')}: </Text>
         <Text style={{flex: 1, paddingRight: 8}}>{story.source_link}</Text>
-      </View>
+      </Text>
     )
   }
 
