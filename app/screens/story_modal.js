@@ -143,7 +143,7 @@ export default class StoryModal extends Component {
       realm.write(() => {
         let obj = realm.objects(image.type).filtered(`id=${image.id}`)[0];
         obj.image = downloadDest;
-        this.setState({progress: index+1/this.images.length});
+        this.setState({progress: (index+1)/this.images.length});
       })
 
       this._handleDownloadProgress(index);
