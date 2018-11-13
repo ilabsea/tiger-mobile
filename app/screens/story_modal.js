@@ -102,8 +102,8 @@ export default class StoryModal extends Component {
       realm.delete(actionList);
 
       scene.scene_actions.map((action) => {
-        if (!!action.link_scene.id) {
-          let linkScene = realm.objects('Scene').filtered(`id=${action.link_scene.id}`)[0];
+        if (!!action.link_scene_id) {
+          let linkScene = realm.objects('Scene').filtered(`id=${action.link_scene_id}`)[0];
           let objAction = realm.create('SceneAction', {
             id: action.id,
             name: action.name,
