@@ -102,8 +102,8 @@ export default class StoryModal extends Component {
       realm.delete(actionList);
 
       scene.scene_actions.map((action) => {
-        if (!!action.link_scene_id) {
-          let linkScene = realm.objects('Scene').filtered(`id=${action.link_scene_id}`)[0];
+        if (JSON.stringify(action.link_scene) != '{}') {
+          let linkScene = realm.objects('Scene').filtered(`id=${action.link_scene.id}`)[0];
           let objAction = realm.create('SceneAction', {
             id: action.id,
             name: action.name,
@@ -135,7 +135,7 @@ export default class StoryModal extends Component {
     let progressDivider = 1;
     let background = false;
     let url = `${environment.domain}${image.url}`;
-    let fileName = image.url.split('/').slice(-1)[0];
+    let fileName = decodeURIComponent(image.url.split('/').slice(-4).join('_'));
     let downloadDest = `${RNFS.DocumentDirectoryPath}/${fileName}`;
     let ret = RNFS.downloadFile({ fromUrl: url, toFile: downloadDest, begin, progress, background, progressDivider });
 
