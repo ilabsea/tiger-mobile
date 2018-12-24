@@ -14,6 +14,7 @@ import StoryRead from './schemas/story_read';
 import StoryResponse from './schemas/story_response';
 import QuizResponse from './schemas/quiz_response';
 import Tag from './schemas/tag';
+import RNFS from 'react-native-fs';
 
 const schema1 = [
   Story,
@@ -39,9 +40,34 @@ function migration1(oldRealm, newRealm) {
   }
 }
 
+function moveImages(tableName, oldRealm, newRealm) {
+  const oldObjects = oldRealm.objects(tableName);
+  const newObjects = newRealm.objects(tableName);
+
+  for (let i = 0; i < oldObjects.length; i++) {
+    let oldPath = oldObjects[i].image;
+    if (!oldPath) { continue; }
+    let fileName = decodeURIComponent(oldPath.split('/').slice(-1)[0]);
+    let newPath = `${RNFS.DocumentDirectoryPath}/${tableName.toLowerCase()}_image_${oldObjects[i].id}_${fileName}`;
+
+    newObjects[i].image = newPath;
+    RNFS.moveFile(oldPath, newPath)
+      .then(() => {})
+      .catch((err) => { console.log(err.message); });
+  }
+}
+
+function migration3(oldRealm, newRealm) {
+  if (oldRealm.schemaVersion < 3) {
+    moveImages('Story', oldRealm, newRealm);
+    moveImages('Scene', oldRealm, newRealm);
+  }
+}
+
 const schemas = [
   { schema: schema1, schemaVersion: 1, migration: migration1 },
   { schema: schema1, schemaVersion: 2 },
+  { schema: schema1, schemaVersion: 3, migration: migration3},
 ]
 
 // the first schema to update to is the current schema version
