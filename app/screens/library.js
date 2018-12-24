@@ -24,6 +24,7 @@ import storyStyle from '../assets/style_sheets/story';
 import storyService from '../services/story.service';
 import StoryPreviewModal from './story_preview_modal';
 import { TEXT_SIZE, USER_TYPE } from '../utils/variable';
+import { LICENSES } from '../utils/licenses';
 
 export default class Labrary extends Component {
   _data = [];
@@ -151,7 +152,7 @@ export default class Labrary extends Component {
       )
     })
 
-    let license = (item.license || '').split(' - ')[1];
+    let license = LICENSES.filter(license => license.value == item.license)[0];
 
     return (
       <View style={styles.card}>
@@ -175,10 +176,15 @@ export default class Labrary extends Component {
             <Text>{I18n.t('author')}: {item.author}</Text>
             { this._renderAcknowledgementOrSourceLink(item) }
 
-            <View style={storyStyle.tagsWrapper}>
-              <Text>{I18n.t('license')}:</Text>
-              <Text style={[storyStyle.tag, storyStyle.licenseText]}>{license}</Text>
-            </View>
+            { !!license &&
+              <View style={storyStyle.tagsWrapper}>
+                <Text>{I18n.t('license')}:</Text>
+                <TouchableOpacity onPress={() => this._openLink(license.link)}>
+                  <Text style={[storyStyle.tag, storyStyle.licenseText]}>{license.display}</Text>
+                </TouchableOpacity>
+
+              </View>
+            }
             <View style={storyStyle.tagsWrapper}>{tags}</View>
 
             <View style={{marginTop: 20}}>

@@ -26,6 +26,7 @@ import questionService from '../services/question.service';
 import statisticService from '../services/statistic.service';
 import { environment } from '../environments/environment';
 import { USER_TYPE } from '../utils/variable';
+import { LICENSES } from '../utils/licenses';
 
 export default class StoryModal extends Component {
   images = [];
@@ -284,7 +285,7 @@ export default class StoryModal extends Component {
       )
     })
 
-    let license = (story.license || '').split(' - ')[1];
+    let license = LICENSES.filter(license => license.value == story.license)[0];
 
     return (
       <View style={{flex: 1}}>
@@ -292,10 +293,15 @@ export default class StoryModal extends Component {
         <Text style={{fontSize: 16}}>{story.title}</Text>
         <Text>{I18n.t('author')}: {story.author}</Text>
         { this._renderAcknowledgementOrSourceLink(story) }
-        <View style={storyStyle.tagsWrapper}>
-          <Text>{I18n.t('license')}:</Text>
-          <Text style={[storyStyle.tag, storyStyle.licenseText]}>{license}</Text>
-        </View>
+
+        { !!license &&
+          <View style={storyStyle.tagsWrapper}>
+            <Text>{I18n.t('license')}:</Text>
+            <TouchableOpacity onPress={() => this._openLink(license.link)}>
+              <Text style={[storyStyle.tag, storyStyle.licenseText]}>{license.display}</Text>
+            </TouchableOpacity>
+          </View>
+        }
         <View style={storyStyle.tagsWrapper}>{tags}</View>
         { this._renderBtnDownload(story) }
       </View>
