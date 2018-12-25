@@ -14,6 +14,8 @@ import StoryRead from './schemas/story_read';
 import StoryResponse from './schemas/story_response';
 import QuizResponse from './schemas/quiz_response';
 import Tag from './schemas/tag';
+import migrateImage from './utils/migrate_image';
+import { LICENSES_FOR_MIGRATION3 } from './utils/licenses';
 
 const schema1 = [
   Story,
@@ -39,9 +41,26 @@ function migration1(oldRealm, newRealm) {
   }
 }
 
+function migration3(oldRealm, newRealm) {
+  if (oldRealm.schemaVersion < 3) {
+    const oldObjects = oldRealm.objects('Story');
+    const newObjects = newRealm.objects('Story');
+
+    for (let i = 0; i < oldObjects.length; i++) {
+      let license = LICENSES_FOR_MIGRATION3.filter(license => license.oldValue == oldObjects[i].license)[0];
+      if(!license) { continue; }
+      newObjects[i].license = license.newValue;
+    }
+
+    migrateImage('Story', oldRealm, newRealm);
+    migrateImage('Scene', oldRealm, newRealm);
+  }
+}
+
 const schemas = [
   { schema: schema1, schemaVersion: 1, migration: migration1 },
   { schema: schema1, schemaVersion: 2 },
+  { schema: schema1, schemaVersion: 3, migration: migration3},
 ]
 
 // the first schema to update to is the current schema version

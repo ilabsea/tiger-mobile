@@ -26,6 +26,7 @@ import questionService from '../services/question.service';
 import statisticService from '../services/statistic.service';
 import { environment } from '../environments/environment';
 import { USER_TYPE } from '../utils/variable';
+import { LICENSES } from '../utils/licenses';
 
 export default class StoryModal extends Component {
   images = [];
@@ -102,8 +103,8 @@ export default class StoryModal extends Component {
       realm.delete(actionList);
 
       scene.scene_actions.map((action) => {
-        if (!!action.link_scene_id) {
-          let linkScene = realm.objects('Scene').filtered(`id=${action.link_scene_id}`)[0];
+        if (JSON.stringify(action.link_scene) != '{}') {
+          let linkScene = realm.objects('Scene').filtered(`id=${action.link_scene.id}`)[0];
           let objAction = realm.create('SceneAction', {
             id: action.id,
             name: action.name,
@@ -135,7 +136,7 @@ export default class StoryModal extends Component {
     let progressDivider = 1;
     let background = false;
     let url = `${environment.domain}${image.url}`;
-    let fileName = image.url.split('/').slice(-1)[0];
+    let fileName = decodeURIComponent(image.url.split('/').slice(-4).join('_'));
     let downloadDest = `${RNFS.DocumentDirectoryPath}/${fileName}`;
     let ret = RNFS.downloadFile({ fromUrl: url, toFile: downloadDest, begin, progress, background, progressDivider });
 
@@ -284,7 +285,7 @@ export default class StoryModal extends Component {
       )
     })
 
-    let license = (story.license || '').split(' - ')[1];
+    let license = LICENSES.filter(license => license.value == story.license)[0];
 
     return (
       <View style={{flex: 1}}>
@@ -292,10 +293,15 @@ export default class StoryModal extends Component {
         <Text style={{fontSize: 16}}>{story.title}</Text>
         <Text>{I18n.t('author')}: {story.author}</Text>
         { this._renderAcknowledgementOrSourceLink(story) }
-        <View style={storyStyle.tagsWrapper}>
-          <Text>{I18n.t('license')}:</Text>
-          <Text style={[storyStyle.tag, storyStyle.licenseText]}>{license}</Text>
-        </View>
+
+        { !!license &&
+          <View style={storyStyle.tagsWrapper}>
+            <Text>{I18n.t('license')}:</Text>
+            <TouchableOpacity onPress={() => this._openLink(license.link)}>
+              <Text style={[storyStyle.tag, storyStyle.licenseText]}>{license.display}</Text>
+            </TouchableOpacity>
+          </View>
+        }
         <View style={storyStyle.tagsWrapper}>{tags}</View>
         { this._renderBtnDownload(story) }
       </View>
