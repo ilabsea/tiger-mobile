@@ -1,5 +1,8 @@
-import React, { Component } from 'react';
-import { NetInfo } from 'react-native';
+import React, { Fragment } from 'react';
+import {
+  SafeAreaView,
+  NetInfo
+} from 'react-native';
 import { setCustomText} from 'react-native-global-props';
 
 import uploadService from './app/services/upload.service';
