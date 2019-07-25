@@ -55,5 +55,11 @@ buck-out/
 # Bundle artifact
 *.jsbundle
 
+# CocoaPods
+/ios/Pods/
+
 android/app/src/main/assets/*
 android/app/src/main/res/drawable-mdpi/*
+./yarn.lock
+./package-lock.json
+./ios/Podfile.lock

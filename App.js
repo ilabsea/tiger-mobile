@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Fragment } from 'react';
 import { NetInfo } from 'react-native';
 import { setCustomText} from 'react-native-global-props';
 
@@ -14,7 +14,7 @@ const customTextProps = {
 
 setCustomText(customTextProps);
 
-export default class App extends Component {
+export default class App {
   componentDidMount() {
     this._handleInternetConnection();
   }
