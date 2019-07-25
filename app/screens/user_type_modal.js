@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, {Fragment} from 'react';
 import {
   Text,
   View,
@@ -19,7 +19,7 @@ const radio_props = [
   {label: 'other', value: 'other'}
 ]
 
-export default class UserTypeModal extends Component {
+export default class UserTypeModal extends Fragment {
   state = { userType: '' };
 
   componentDidMount() {

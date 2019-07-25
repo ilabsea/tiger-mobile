@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, {Fragment} from 'react';
 import {
   Text,
   View,
@@ -22,7 +22,7 @@ import categoryService from '../services/category.service';
 import storyService from '../services/story.service';
 import CategoryModal from './category_modal';
 
-export default class Category extends Component {
+export default class Category extends Fragment {
   _data = [];
 
   constructor(props) {

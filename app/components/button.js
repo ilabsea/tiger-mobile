@@ -1,11 +1,11 @@
-import React, {Component} from 'react';
+import React, {Fragment} from 'react';
 import {
   TouchableOpacity,
   Text,
   StyleSheet,
 } from 'react-native';
 
-export default class myButton extends Component {
+export default class myButton extends Fragment {
   render() {
     const { style, textStyle, title, onPress, ...props} = this.props;
 

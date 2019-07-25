@@ -7,12 +7,6 @@ import com.facebook.react.PackageList;
 import com.facebook.hermes.reactexecutor.HermesExecutorFactory;
 import com.facebook.react.bridge.JavaScriptExecutorFactory;
 import com.facebook.react.ReactApplication;
-import com.learnium.RNDeviceInfo.RNDeviceInfo;
-import org.devio.rn.splashscreen.SplashScreenReactPackage;
-import com.rnfs.RNFSPackage;
-import com.AlexanderZaytsev.RNI18n.RNI18nPackage;
-import io.realm.react.RealmReactPackage;
-import com.oblador.vectoricons.VectorIconsPackage;
 import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactPackage;
 import com.facebook.soloader.SoLoader;
@@ -31,12 +25,6 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       @SuppressWarnings("UnnecessaryLocalVariable")
       List<ReactPackage> packages = new PackageList(this).getPackages();
-      packages.add(new RNDeviceInfo());
-      packages.add(new SplashScreenReactPackage());
-      packages.add(new RNFSPackage());
-      packages.add(new RNI18nPackage());
-      packages.add(new RealmReactPackage());
-      packages.add(new VectorIconsPackage());
       return packages;
     }
 

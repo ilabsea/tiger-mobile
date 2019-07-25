@@ -17,7 +17,7 @@ const customTextProps = {
 
 setCustomText(customTextProps);
 
-export default class App extends Component {
+const App = () => {
   componentDidMount() {
     this._handleInternetConnection();
   }
@@ -42,6 +42,8 @@ export default class App extends Component {
   }
 
   render() {
-    return (<AppNavigator ref="app"></AppNavigator>);
+    return (<Fragment><AppNavigator ref="app"></AppNavigator></Fragment>);
   }
 }
+
+export default App;

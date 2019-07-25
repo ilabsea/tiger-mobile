@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, {Fragment} from 'react';
 import {
   Text,
   View,
@@ -26,7 +26,7 @@ import LanguageModal from './language_modal';
 import { environment } from '../environments/environment';
 import { USER_TYPE } from '../utils/variable';
 
-export default class Home extends Component {
+export default class Home extends Fragment {
   _data = [];
   _currentPage = 0;
   _totalPage = 0;

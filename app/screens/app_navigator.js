@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Fragment } from 'react';
 import { StackNavigator } from 'react-navigation';
 import { ThemeProvider } from 'react-native-material-ui';
 import { MenuProvider } from 'react-native-popup-menu';
@@ -24,7 +24,7 @@ const uiTheme = {
   },
 };
 
-export default class AppNavigator extends Component {
+export default class AppNavigator extends Fragment {
   state = {};
 
   constructor(props) {
@@ -36,9 +36,9 @@ export default class AppNavigator extends Component {
   }
 
   componentDidMount() {
-    setTimeout(function() {
-      SplashScreen.hide();
-    }, 3000);
+    // setTimeout(function() {
+    // SplashScreen.hide();
+    // }, 3000);
   }
 
   render() {

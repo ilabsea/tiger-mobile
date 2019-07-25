@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, {Fragment} from 'react';
 import {
   Text,
   View,
@@ -21,7 +21,7 @@ const radio_props = [
   {label: 'other', value: 'other'},
 ];
 
-export default class UserType extends Component {
+export default class UserType extends Fragment {
   static navigationOptions = {
     header: null,
   };

@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, {Fragment} from 'react';
 import {
   Text,
   View,
@@ -15,7 +15,7 @@ import headerStyle from '../assets/style_sheets/header';
 import DeviceInfo from 'react-native-device-info';
 import { environment } from '../environments/environment';
 
-export default class About extends Component {
+export default class About extends Fragment {
   downloadUrl = `${environment.domain}/download_mobile_guide`;
 
   constructor(props) {

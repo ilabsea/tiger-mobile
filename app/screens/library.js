@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, {Fragment} from 'react';
 import {
   Text,
   View,
@@ -26,7 +26,7 @@ import StoryPreviewModal from './story_preview_modal';
 import { TEXT_SIZE, USER_TYPE } from '../utils/variable';
 import { LICENSES } from '../utils/licenses';
 
-export default class Labrary extends Component {
+export default class Labrary extends Fragment {
   _data = [];
   _currentPage = 0;
   _totalPage = 0;

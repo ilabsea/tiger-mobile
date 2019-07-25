@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, {Fragment} from 'react';
 import {
   Text,
   View,
@@ -18,7 +18,7 @@ import storyService from '../services/story.service';
 import { environment } from '../environments/environment';
 import StoryModal from './story_modal';
 
-export default class CategoryModal extends Component {
+export default class CategoryModal extends Fragment {
   constructor(props) {
     super(props);
 

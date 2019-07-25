@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, {Fragment} from 'react';
 import {
   Text,
   View,
@@ -17,7 +17,7 @@ const radio_props = [
   {label: I18n.t('en'), value: 'en'}
 ];
 
-export default class LanguageModal extends Component {
+export default class LanguageModal extends Fragment {
 
   constructor(props) {
     super(props);

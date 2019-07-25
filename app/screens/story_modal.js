@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, {Fragment} from 'react';
 import {
   Text,
   View,
@@ -28,7 +28,7 @@ import { environment } from '../environments/environment';
 import { USER_TYPE } from '../utils/variable';
 import { LICENSES } from '../utils/licenses';
 
-export default class StoryModal extends Component {
+export default class StoryModal extends Fragment {
   images = [];
 
   constructor(props) {

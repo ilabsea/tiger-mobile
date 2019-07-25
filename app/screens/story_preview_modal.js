@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, {Fragment} from 'react';
 import {
   Text,
   View,
@@ -28,7 +28,7 @@ import uploadService from '../services/upload.service';
 
 const win = Dimensions.get('window');
 
-export default class StoryPreviewModal extends Component {
+export default class StoryPreviewModal extends Fragment {
   dataSource = [];
   questions = [];
   answers = [];

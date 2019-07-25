@@ -15,7 +15,7 @@ const uiTheme = {
   },
 };
 
-export default class Tabs extends Component {
+export default class Tabs extends Fragment {
   static navigationOptions = {
     header: null,
   };
