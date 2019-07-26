@@ -7,14 +7,13 @@ import {
   Image,
   Modal,
   Dimensions,
-  NetInfo,
   ImageBackground,
   TouchableOpacity,
-  Slider,
-  AsyncStorage,
 } from 'react-native';
-
+import AsyncStorage from '@react-native-community/async-storage';
+import NetInfo from "@react-native-community/netinfo";
 import ModalDialog from "react-native-modal";
+import Slider from '@react-native-community/slider';
 
 import { IndicatorViewPager } from 'rn-viewpager';
 import { Toolbar, Icon } from 'react-native-material-ui';
@@ -411,7 +410,7 @@ export default class StoryPreviewModal extends Component {
 
     NetInfo.isConnected.fetch().then(isConnected => {
       if (isConnected) {
-        uploadService.upload();
+        // uploadService.upload();
       }
     });
   }

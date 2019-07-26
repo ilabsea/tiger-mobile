@@ -1,10 +1,9 @@
 import React, {Component} from 'react';
 import {
   Text,
-  View,
-  AsyncStorage,
+  View
 } from 'react-native';
-
+import AsyncStorage from '@react-native-community/async-storage';
 import { RadioButton } from 'react-native-material-ui';
 import I18n from '../i18n/i18n';
 import headerStyle from '../assets/style_sheets/header';

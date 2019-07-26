@@ -7,10 +7,9 @@ import {
   FlatList,
   ActivityIndicator,
   Image,
-  NetInfo,
-  AsyncStorage,
 } from 'react-native';
-
+import NetInfo from "@react-native-community/netinfo";
+import AsyncStorage from '@react-native-community/async-storage';
 import RNFS from 'react-native-fs';
 import { Toolbar, COLOR, Button, Icon } from 'react-native-material-ui';
 import AwesomeIcon from 'react-native-vector-icons/FontAwesome';

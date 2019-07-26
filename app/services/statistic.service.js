@@ -9,7 +9,7 @@ export default {
   increaseStoryDownload(body) {
     return api.post(`/story_downloads`, body);
   },
-  uploadStoryRead(body) {
-    return api.post(`/story_reads`, body);
-  }
+  // uploadStoryRead(body) {
+  //   return api.post(`/story_reads`, body);
+  // }
 }

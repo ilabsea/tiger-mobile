@@ -3,10 +3,9 @@ import {
   Text,
   View,
   ScrollView,
-  TouchableOpacity,
-  AsyncStorage,
+  TouchableOpacity
 } from 'react-native';
-
+import AsyncStorage from '@react-native-community/async-storage';
 import { RadioButton } from 'react-native-material-ui';
 import { Toolbar } from 'react-native-material-ui';
 import I18n from '../i18n/i18n';

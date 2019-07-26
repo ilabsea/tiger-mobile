@@ -8,9 +8,9 @@ import {
   ActivityIndicator,
   ScrollView,
   StyleSheet,
-  NetInfo,
   ToastAndroid,
 } from 'react-native';
+import NetInfo from "@react-native-community/netinfo";
 
 import { Toolbar, COLOR,  } from 'react-native-material-ui';
 import Button from '../components/button';

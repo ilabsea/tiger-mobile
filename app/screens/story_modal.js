@@ -8,12 +8,11 @@ import {
   Image,
   Modal,
   ScrollView,
-  NetInfo,
   ToastAndroid,
-  AsyncStorage,
   Linking,
 } from 'react-native';
-
+import AsyncStorage from '@react-native-community/async-storage';
+import NetInfo from "@react-native-community/netinfo";
 import { Toolbar, Icon } from 'react-native-material-ui';
 import RNFS from 'react-native-fs';
 import * as Progress from 'react-native-progress';

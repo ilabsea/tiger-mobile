@@ -1,5 +1,5 @@
-import React, { Fragment } from 'react';
-import { NetInfo } from 'react-native';
+import React, { Component } from 'react';
+import NetInfo from "@react-native-community/netinfo";
 import { setCustomText} from 'react-native-global-props';
 
 import uploadService from './app/services/upload.service';
@@ -14,7 +14,7 @@ const customTextProps = {
 
 setCustomText(customTextProps);
 
-export default class App {
+export default class App extends React.Component{
   componentDidMount() {
     this._handleInternetConnection();
   }
@@ -22,7 +22,7 @@ export default class App {
   _handleInternetConnection() {
     NetInfo.isConnected.fetch().then(isConnected => {
       if (isConnected) {
-        uploadService.upload();
+        // uploadService.upload();
       }
     });
 
@@ -34,7 +34,7 @@ export default class App {
 
   _handleFirstConnectivityChange = (isConnected) => {
     if (this.refs.app && isConnected) {
-      uploadService.upload();
+      // uploadService.upload();
     }
   }
 

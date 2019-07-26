@@ -2,18 +2,20 @@ package com.tigermobile;
 
 import android.app.Application;
 
-import com.facebook.react.PackageList;
 import com.facebook.react.ReactApplication;
-import com.learnium.RNDeviceInfo.RNDeviceInfo;
-import org.devio.rn.splashscreen.SplashScreenReactPackage;
-import com.rnfs.RNFSPackage;
-import com.AlexanderZaytsev.RNI18n.RNI18nPackage;
 import io.realm.react.RealmReactPackage;
-import com.oblador.vectoricons.VectorIconsPackage;
 import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactPackage;
+import com.facebook.react.shell.MainReactPackage;
 import com.facebook.soloader.SoLoader;
+import com.rnfs.RNFSPackage;
+import com.AlexanderZaytsev.RNI18n.RNI18nPackage;
+import com.reactnativecommunity.netinfo.NetInfoPackage;
+import com.reactnativecommunity.asyncstorage.AsyncStoragePackage;
+import com.oblador.vectoricons.VectorIconsPackage;
 
+
+import java.util.Arrays;
 import java.util.List;
 
 public class MainApplication extends Application implements ReactApplication {
@@ -26,9 +28,15 @@ public class MainApplication extends Application implements ReactApplication {
 
     @Override
     protected List<ReactPackage> getPackages() {
-      @SuppressWarnings("UnnecessaryLocalVariable")
-      List<ReactPackage> packages = new PackageList(this).getPackages();
-      return packages;
+      return Arrays.<ReactPackage>asList(
+        new MainReactPackage(),
+        new RealmReactPackage(),
+        new RNFSPackage(),
+        new RNI18nPackage(),
+        new NetInfoPackage(),
+        new AsyncStoragePackage(),
+        new VectorIconsPackage()
+      );
     }
 
     @Override

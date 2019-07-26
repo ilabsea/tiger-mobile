@@ -1,8 +1,9 @@
-import React, { Component } from 'react';
+import React from 'react';
 import { StackNavigator } from 'react-navigation';
-import { ThemeProvider } from 'react-native-material-ui';
+import { ThemeContext, getTheme } from 'react-native-material-ui';
 import { MenuProvider } from 'react-native-popup-menu';
-import { StatusBar, AsyncStorage } from 'react-native';
+import { StatusBar } from 'react-native';
+import AsyncStorage from '@react-native-community/async-storage';
 import SplashScreen from 'react-native-splash-screen';
 
 // screens
@@ -24,21 +25,24 @@ const uiTheme = {
   },
 };
 
-export default class AppNavigator extends Component {
+export default class AppNavigator extends React.Component {
   state = {};
 
   constructor(props) {
     super(props);
-
-    AsyncStorage.getItem(USER_TYPE).then((userType) => {
-      this.setState({loaded: true, userSelected: !!userType})
-    });
+    this.state = {
+      loaded: false,
+      userSelected: false
+    }
   }
 
   componentDidMount() {
-    setTimeout(function() {
-      SplashScreen.hide();
-    }, 3000);
+    AsyncStorage.getItem(USER_TYPE).then((userType) => {
+      this.setState({loaded: true, userSelected: !!userType})
+    });
+    // setTimeout(function() {
+    //   SplashScreen.hide();
+    // }, 3000);
   }
 
   render() {
@@ -47,14 +51,14 @@ export default class AppNavigator extends Component {
     }
 
     return (
-      <ThemeProvider uiTheme={uiTheme}>
+      <ThemeContext.Provider value={getTheme(uiTheme)}>
         <MenuProvider style={{flex:1}}>
           <StatusBar backgroundColor={'#e2561f'} />
 
           { this.state.userSelected && <Tabs></Tabs> }
           { !this.state.userSelected && <Navigator ref="app"></Navigator> }
         </MenuProvider>
-      </ThemeProvider>
+      </ThemeContext.Provider>
     );
   }
 }
