@@ -88,7 +88,6 @@ export default class Labrary extends Component {
 
   _handleStoryRead(story) {
     let storyRead = realm.objects('StoryRead').filtered(`storyId=${story.id} AND finishedAt=NULL`).sorted('createdAt', true)[0];
-
     AsyncStorage.getItem(USER_TYPE).then((userType) => {
       realm.write(() => {
         if (!!storyRead) {
@@ -101,8 +100,6 @@ export default class Labrary extends Component {
         }
 
         realm.create('StoryRead', { uuid: uuidv4(), storyId: story.id, createdAt: new Date(), userType: userType });
-
-        let obj = realm.objects('StoryRead').filtered(`storyId=${story.id}`);
       })
     });
   }

@@ -85,9 +85,6 @@ export default class StoryPreviewModal extends Component {
 
       if (action.linkScene.isEnd || slideIndex == this.dataSource.length - 2) {
         this.storyRead.finishedAt = new Date;
-
-        // console.log('=============this.storyRead', this.storyRead);
-        // console.log('=============sceneResponse', realm.objects('StoryResponse').filtered(`storyReadUuid='${this.storyRead.uuid}'`));
       }
     })
   }
@@ -104,9 +101,6 @@ export default class StoryPreviewModal extends Component {
 
       if (slideIndex == this.questions.length - 1) {
         this.storyRead.isQuizFinished = true;
-
-        // console.log('=============obj _saveQuizResponse', this.storyRead);
-        // console.log('=============quizResponse', realm.objects('QuizResponse').filtered(`storyReadUuid='${this.storyRead.uuid}'`));
       }
     })
   }
@@ -410,7 +404,7 @@ export default class StoryPreviewModal extends Component {
 
     NetInfo.isConnected.fetch().then(isConnected => {
       if (isConnected) {
-        // uploadService.upload();
+        uploadService.upload();
       }
     });
   }
@@ -423,8 +417,7 @@ export default class StoryPreviewModal extends Component {
 
   render() {
     const { modalVisible, onRequestClose, ...props } = this.props;
-
-    let story = Object.assign({}, this.props.story);
+    let story = this.props.story;
     this.dataSource = story.scenes || [];
     this.questions = (story.questions || []).slice();
     this.totalSlides = this.dataSource.length + this.questions.length;
