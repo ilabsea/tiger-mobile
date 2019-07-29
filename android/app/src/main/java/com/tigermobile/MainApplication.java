@@ -13,6 +13,7 @@ import com.AlexanderZaytsev.RNI18n.RNI18nPackage;
 import com.reactnativecommunity.netinfo.NetInfoPackage;
 import com.reactnativecommunity.asyncstorage.AsyncStoragePackage;
 import com.oblador.vectoricons.VectorIconsPackage;
+import com.learnium.RNDeviceInfo.RNDeviceInfo;
 
 
 import java.util.Arrays;
@@ -35,6 +36,7 @@ public class MainApplication extends Application implements ReactApplication {
         new RNI18nPackage(),
         new NetInfoPackage(),
         new AsyncStoragePackage(),
+        new RNDeviceInfo(),
         new VectorIconsPackage()
       );
     }
