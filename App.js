@@ -22,7 +22,7 @@ export default class App extends React.Component{
   _handleInternetConnection() {
     NetInfo.isConnected.fetch().then(isConnected => {
       if (isConnected) {
-        // uploadService.upload();
+        uploadService.upload();
       }
     });
 
@@ -34,7 +34,7 @@ export default class App extends React.Component{
 
   _handleFirstConnectivityChange = (isConnected) => {
     if (this.refs.app && isConnected) {
-      // uploadService.upload();
+      uploadService.upload();
     }
   }
 

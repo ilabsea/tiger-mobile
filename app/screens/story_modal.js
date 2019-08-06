@@ -26,9 +26,12 @@ import statisticService from '../services/statistic.service';
 import { environment } from '../environments/environment';
 import { USER_TYPE } from '../utils/variable';
 import { LICENSES } from '../utils/licenses';
+import StringHelper from '../utils/string_helper';
 
 export default class StoryModal extends Component {
   images = [];
+  sceneAudios = [];
+  quizeAudios = [];
 
   constructor(props) {
     super(props);
@@ -52,12 +55,12 @@ export default class StoryModal extends Component {
         title: tag.title
       }
     })
-
+    let imageName = StringHelper.getFileURIName(story.image);
     return {
       id: story.id,
       title: story.title,
       description: story.description,
-      image: '',
+      image: imageName ? `${RNFS.DocumentDirectoryPath}/${imageName}` : '',
       author: story.author,
       license: story.license,
       sourceLink: story.source_link,
@@ -79,18 +82,27 @@ export default class StoryModal extends Component {
     realm.delete(sceneList);
 
     scenes.map((scene) => {
+      let audioName = StringHelper.getFileURIName(scene.audio);
+      let imageName = StringHelper.getFileURIName(scene.image);
       sceneList.push(
         {
           id: scene.id,
           name: scene.name,
-          image: '',
+          image: imageName ? `${RNFS.DocumentDirectoryPath}/${imageName}` : '',
           visibleName: scene.visible_name,
           description: scene.description,
           imageAsBackground: scene.image_as_background,
           storyId: scene.story_id,
           isEnd: !!scene.is_end,
+          audio: audioName ? `${RNFS.DocumentDirectoryPath}/${audioName}` : '',
         }
       );
+      if(scene.audio){
+        this.sceneAudios.push(scene.audio);
+      }
+      if(scene.image){
+        this.images.push(scene.image);
+      }
     })
   }
 
@@ -119,41 +131,41 @@ export default class StoryModal extends Component {
     });
   }
 
-  _downloadFiles(story, scenes) {
-    let scenesList = scenes.filter(s => !!s.image);
-    this.images = [{type: 'Story', id: story.id, url: story.image}];
-    scenesList.map((s)=>{ this.images.push({type: 'Scene', id: s.id, url: s.image}) });
+  _downloadFiles() {
     this.setState({showProgress: true, progress: 0});
     this._downloadFile(0);
   }
 
-  // https://github.com/cjdell/react-native-fs-test/blob/master/index.common.js
   _downloadFile(index) {
-    let image = this.images[index];
     let progress = data => {};
     let begin = res => {};
     let progressDivider = 1;
     let background = false;
-    let url = `${environment.domain}${image.url}`;
-    let fileName = decodeURIComponent(image.url.split('/').slice(-4).join('_'));
-    let downloadDest = `${RNFS.DocumentDirectoryPath}/${fileName}`;
-    let ret = RNFS.downloadFile({ fromUrl: url, toFile: downloadDest, begin, progress, background, progressDivider });
+
+    let imagesAudios = this.images.concat(this.sceneAudios);
+    let fileName = StringHelper.getFileURIName(imagesAudios[index]);
+
+    let options = {
+      fromUrl: `${environment.domain}${imagesAudios[index]}`,
+      toFile: `${RNFS.DocumentDirectoryPath}/${fileName}`,
+      begin,
+      progress,
+      background,
+      progressDivider
+    };
+
+    let ret = RNFS.downloadFile(options);
 
     ret.promise.then(res => {
-      realm.write(() => {
-        let obj = realm.objects(image.type).filtered(`id=${image.id}`)[0];
-        obj.image = downloadDest;
-        this.setState({progress: (index+1)/this.images.length});
-      })
-
-      this._handleDownloadProgress(index);
+      this.setState({progress: (index+1)/imagesAudios.length});
+      this._handleDownloadProgress(index, imagesAudios.length);
     }).catch(err => {
-      this._handleDownloadProgress(index);
+      this._handleDownloadProgress(index, imagesAudios.length);
     });
   }
 
-  _handleDownloadProgress(index) {
-    if (index + 1 < this.images.length) {
+  _handleDownloadProgress(index, total) {
+    if (index + 1 < total) {
       this._downloadFile(index + 1);
     } else {
       this.setState({showProgress: false, showReadNow: true});
@@ -171,9 +183,8 @@ export default class StoryModal extends Component {
           this._importStory(story);
           this._importScenes(story, responseJson.data.scenes);
           this._importSceneActions(responseJson.data.scenes);
-          this._downloadFiles(story, responseJson.data.scenes);
         });
-
+        this._downloadFiles(story, responseJson.data.scenes);
         this._getQuizzes(story);
         this._postStatistic(story);
       })

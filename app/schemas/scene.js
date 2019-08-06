@@ -17,5 +17,6 @@ Scene.schema = {
     storyId: 'int',
     sceneActions: 'SceneAction[]',
     isEnd: {type: 'bool', default: false},
+    audio: {type: 'string', default: ''}
   }
 }

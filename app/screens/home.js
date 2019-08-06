@@ -13,6 +13,7 @@ import AsyncStorage from '@react-native-community/async-storage';
 import RNFS from 'react-native-fs';
 import { Toolbar, COLOR, Button, Icon } from 'react-native-material-ui';
 import AwesomeIcon from 'react-native-vector-icons/FontAwesome';
+
 import realm from '../schema';
 import I18n from '../i18n/i18n';
 import headerStyle from '../assets/style_sheets/header';
@@ -24,6 +25,7 @@ import UserTypeModal from './user_type_modal';
 import LanguageModal from './language_modal';
 import { environment } from '../environments/environment';
 import { USER_TYPE } from '../utils/variable';
+import Sound from 'react-native-sound';
 
 export default class Home extends Component {
   _data = [];
@@ -123,7 +125,6 @@ export default class Home extends Component {
 
   _getStories() {
     this._currentPage++;
-    console.log('===================_getStoriesOut');
 
     storyService.getAll(this._currentPage)
       .then((response) => response.json())
@@ -142,8 +143,6 @@ export default class Home extends Component {
     let stories = realm.objects('StoryBackup');
 
     realm.write(() => {
-      // realm.delete(stories);
-
       this._data.map((story) => {
         realm.create('StoryBackup', this._buildStory(story), true);
         this._downloadFile(story);

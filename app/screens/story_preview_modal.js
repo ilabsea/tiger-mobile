@@ -9,11 +9,13 @@ import {
   Dimensions,
   ImageBackground,
   TouchableOpacity,
+  Slider
 } from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage';
 import NetInfo from "@react-native-community/netinfo";
 import ModalDialog from "react-native-modal";
-import Slider from '@react-native-community/slider';
+import Sound from 'react-native-sound';
+import RNFS from 'react-native-fs';
 
 import { IndicatorViewPager } from 'rn-viewpager';
 import { Toolbar, Icon } from 'react-native-material-ui';
@@ -32,15 +34,24 @@ export default class StoryPreviewModal extends Component {
   questions = [];
   answers = [];
   totalSlides = 0;
-  state = { questions: [] };
+  sound = null;
+  story=null;
+
+  constructor(props){
+    super(props);
+
+    this.state = { questions: [], isPlaying: false, currentSceneIndex: 0 };
+  }
 
   _slideTo(linkScene) {
     if (!linkScene) {
+      this.setState({ currentSceneIndex: this.dataSource.length });
       return this.refs.mySlider.setPage(this.dataSource.length);
     }
-
     let index = this.dataSource.findIndex(scene => scene.id == linkScene.id);
+    this.setState({ currentSceneIndex: index });
     this.refs.mySlider.setPage(index);
+    this._handleAudioPlay();
   }
 
   _setAnswer(index, choice) {
@@ -350,12 +361,47 @@ export default class StoryPreviewModal extends Component {
           onValueChange={(textSize) => this.setState({textSize: textSize})}
           value={this.state.textSize || this.props.textSize}
         />
-
       </View>
     )
   }
 
-  _renderModalContent = (story) => {
+  async stopPlaying() {
+    this.sound.stop();
+    this.setState({isPlaying: false});
+  }
+
+  async play() {
+    this.setState({isPlaying: true});
+    let currentScene = this.story.scenes[this.state.currentSceneIndex];
+    console.log('currentScene ', currentScene);
+
+    setTimeout(() => {
+      this.sound = new Sound(currentScene.audio, '', (error) => {
+        if (error) {
+          console.log('failed to load the sound', error);
+        }
+      });
+
+      setTimeout(() => {
+        this.sound.play((success) => {
+          if (success) {
+            this.setState({isPlaying: false});
+          } else {
+            this.sound.reset();
+          }
+        });
+      }, 100);
+    }, 100);
+  }
+
+  _handleAudioPlay() {
+    if (this.state.isPlaying) {
+      return this.stopPlaying();
+    }
+    this.play();
+  }
+
+  _renderModalContent = () => {
     return (
       <View style={{flex: 1, backgroundColor: '#fff3df'}}>
         <Toolbar
@@ -365,10 +411,26 @@ export default class StoryPreviewModal extends Component {
               ellipsizeMode='tail'
               numberOfLines={1}
               style={headerStyle.title}>
-              {story.title}
+              {this.story.title}
             </Text>
           }
-          rightElement="format-size"
+          rightElement={
+            <View style={{flexDirection: 'row'}}>
+              <TouchableOpacity onPress={() => this._handleAudioPlay()} style={{paddingHorizontal: 8}}>
+                { this.state.isPlaying &&
+                  <Icon name='volume-up' color='#fff' size={28}/>
+                }
+                {
+                  !this.state.isPlaying &&
+                  <Icon name='volume-mute' color='#fff' size={28}/>
+                }
+              </TouchableOpacity>
+
+              <TouchableOpacity onPress={()=> this.setState({ isDialogVisible: true })} style={{paddingHorizontal: 8}}>
+                <Icon name='format-size' color='#fff' size={24} />
+              </TouchableOpacity>
+            </View>
+          }
           onLeftElementPress={() => this._closeModal()}
           onRightElementPress={()=> this.setState({ isDialogVisible: true }) } />
 
@@ -417,11 +479,10 @@ export default class StoryPreviewModal extends Component {
 
   render() {
     const { modalVisible, onRequestClose, ...props } = this.props;
-    let story = this.props.story;
-    this.dataSource = story.scenes || [];
-    this.questions = (story.questions || []).slice();
+    this.story = this.props.story;
+    this.dataSource = this.story.scenes || [];
+    this.questions = (this.story.questions || []).slice();
     this.totalSlides = this.dataSource.length + this.questions.length;
-
     return (
       <Modal
         {...props}
@@ -430,7 +491,7 @@ export default class StoryPreviewModal extends Component {
         visible={modalVisible}
         onRequestClose={() => this._closeModal()}>
 
-        { this._renderModalContent(story) }
+        { this._renderModalContent() }
       </Modal>
     )
   }

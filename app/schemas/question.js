@@ -14,5 +14,6 @@ Question.schema = {
     choices: {type: 'list', objectType: 'Choice'},
     message: 'string?',
     storyId: 'int',
+    audio: {type: 'string', default: ''}
   }
 }
