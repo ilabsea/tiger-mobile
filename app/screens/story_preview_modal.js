@@ -402,6 +402,10 @@ export default class StoryPreviewModal extends Component {
   }
 
   _renderModalContent = () => {
+    if(!this.story){
+      return null;
+    }
+    
     return (
       <View style={{flex: 1, backgroundColor: '#fff3df'}}>
         <Toolbar
@@ -480,9 +484,12 @@ export default class StoryPreviewModal extends Component {
   render() {
     const { modalVisible, onRequestClose, ...props } = this.props;
     this.story = this.props.story;
-    this.dataSource = this.story.scenes || [];
-    this.questions = (this.story.questions || []).slice();
-    this.totalSlides = this.dataSource.length + this.questions.length;
+    if(this.story) {
+      this.dataSource = this.story.scenes || [];
+      this.questions = (this.story.questions || []).slice();
+      this.totalSlides = this.dataSource.length + this.questions.length;
+    }
+
     return (
       <Modal
         {...props}
