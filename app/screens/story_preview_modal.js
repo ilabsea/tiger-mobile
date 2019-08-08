@@ -402,10 +402,10 @@ export default class StoryPreviewModal extends Component {
   }
 
   _renderModalContent = () => {
-    if(!this.story){
+    if(!this.story || !this.story.title) {
       return null;
     }
-    
+
     return (
       <View style={{flex: 1, backgroundColor: '#fff3df'}}>
         <Toolbar
@@ -420,15 +420,23 @@ export default class StoryPreviewModal extends Component {
           }
           rightElement={
             <View style={{flexDirection: 'row'}}>
-              <TouchableOpacity onPress={() => this._handleAudioPlay()} style={{paddingHorizontal: 8}}>
-                { this.state.isPlaying &&
-                  <Icon name='volume-up' color='#fff' size={28}/>
-                }
-                {
-                  !this.state.isPlaying &&
-                  <Icon name='volume-mute' color='#fff' size={28}/>
-                }
-              </TouchableOpacity>
+              {!this.story.scenes[this.state.currentSceneIndex].audio &&
+                <Icon name='volume-off' color='#bbbfbc' size={28}/>
+              }
+
+              {!!this.story.scenes[this.state.currentSceneIndex].audio &&
+                <TouchableOpacity
+                  onPress={() => this._handleAudioPlay()}
+                  style={{paddingHorizontal: 8}}>
+                  { this.state.isPlaying &&
+                    <Icon name='volume-up' color='#fff' size={28}/>
+                  }
+                  {
+                    !this.state.isPlaying &&
+                    <Icon name='volume-mute' color='#fff' size={28}/>
+                  }
+                </TouchableOpacity>
+              }
 
               <TouchableOpacity onPress={()=> this.setState({ isDialogVisible: true })} style={{paddingHorizontal: 8}}>
                 <Icon name='format-size' color='#fff' size={24} />
