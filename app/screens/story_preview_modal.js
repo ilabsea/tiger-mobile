@@ -40,12 +40,13 @@ export default class StoryPreviewModal extends Component {
   constructor(props){
     super(props);
 
-    this.state = { questions: [], isPlaying: false, currentSceneIndex: 0 };
+    this.state = { questions: [], isPlaying: false, currentSceneIndex: 0, isStartingQuiz: false };
   }
 
   _slideTo(linkScene) {
     if (!linkScene) {
-      this.setState({ currentSceneIndex: this.dataSource.length });
+      this.setState({ currentSceneIndex: 0, isStartingQuiz: true });
+      this._handleAudioPlay();
       return this.refs.mySlider.setPage(this.dataSource.length);
     }
     let index = this.dataSource.findIndex(scene => scene.id == linkScene.id);
@@ -63,7 +64,7 @@ export default class StoryPreviewModal extends Component {
 
   _slideQuizTo(index, choice) {
     let next = this.dataSource.length + index;
-
+    this.setState({ currentSceneIndex: index });
     this._setAnswer(index-1, choice);
     this.refs.mySlider.setPage(next);
   }
@@ -372,26 +373,28 @@ export default class StoryPreviewModal extends Component {
 
   async play() {
     this.setState({isPlaying: true});
-    let currentScene = this.story.scenes[this.state.currentSceneIndex];
-    console.log('currentScene ', currentScene);
-
-    setTimeout(() => {
-      this.sound = new Sound(currentScene.audio, '', (error) => {
-        if (error) {
-          console.log('failed to load the sound', error);
-        }
-      });
-
+    let currentPage = this.state.isStartingQuiz ?
+                      this.story.questions[this.state.currentSceneIndex]
+                      : this.story.scenes[this.state.currentSceneIndex];
+    if(currentPage){
       setTimeout(() => {
-        this.sound.play((success) => {
-          if (success) {
-            this.setState({isPlaying: false});
-          } else {
-            this.sound.reset();
+        this.sound = new Sound(currentPage.audio , '', (error) => {
+          if (error) {
+            console.log('failed to load the sound', error);
           }
         });
+
+        setTimeout(() => {
+          this.sound.play((success) => {
+            if (success) {
+              this.setState({isPlaying: false});
+            } else {
+              this.sound.reset();
+            }
+          });
+        }, 100);
       }, 100);
-    }, 100);
+    }
   }
 
   _handleAudioPlay() {
@@ -405,7 +408,10 @@ export default class StoryPreviewModal extends Component {
     if(!this.story || !this.story.title) {
       return null;
     }
-
+    let currentPageObj = this.state.isStartingQuiz ?
+                          this.story.questions[this.state.currentSceneIndex]:
+                          this.story.scenes[this.state.currentSceneIndex];
+    let audio = currentPageObj ? currentPageObj.audio : '';
     return (
       <View style={{flex: 1, backgroundColor: '#fff3df'}}>
         <Toolbar
@@ -420,11 +426,11 @@ export default class StoryPreviewModal extends Component {
           }
           rightElement={
             <View style={{flexDirection: 'row'}}>
-              {!this.story.scenes[this.state.currentSceneIndex].audio &&
+              {!audio &&
                 <Icon name='volume-off' color='#bbbfbc' size={28}/>
               }
 
-              {!!this.story.scenes[this.state.currentSceneIndex].audio &&
+              {!!audio &&
                 <TouchableOpacity
                   onPress={() => this._handleAudioPlay()}
                   style={{paddingHorizontal: 8}}>

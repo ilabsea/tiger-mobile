@@ -31,7 +31,7 @@ import StringHelper from '../utils/string_helper';
 export default class StoryModal extends Component {
   images = [];
   sceneAudios = [];
-  quizeAudios = [];
+  quizAudios = [];
 
   constructor(props) {
     super(props);
@@ -142,7 +142,7 @@ export default class StoryModal extends Component {
     let progressDivider = 1;
     let background = false;
 
-    let imagesAudios = this.images.concat(this.sceneAudios);
+    let imagesAudios = this.images.concat(this.sceneAudios, this.quizAudios);
     let fileName = StringHelper.getFileURIName(imagesAudios[index]);
 
     let options = {
@@ -203,12 +203,14 @@ export default class StoryModal extends Component {
     realm.delete(questionList);
 
     questions.map((question) => {
+      let audioName = StringHelper.getFileURIName(question.audio);
       let questionDb = realm.create('Question', {
         id: question.id,
         label: question.label,
         displayOrder: question.display_order,
         storyId: question.story_id,
-        message: question.message
+        message: question.message,
+        audio: audioName ? `${RNFS.DocumentDirectoryPath}/${audioName}` : '',
       }, true)
 
       question.choices.map((choice) => {
@@ -224,6 +226,9 @@ export default class StoryModal extends Component {
       })
 
       questionList.push(questionDb);
+      if(question.audio){
+        this.quizAudios.push(question.audio);
+      }
     })
   }
 
