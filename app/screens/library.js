@@ -236,6 +236,12 @@ export default class Labrary extends Component {
     });
   }
 
+  _onRefresh() {
+    this._currentPage = 0;
+    this._data = [];
+    this._getStories();
+  }
+
   _renderList() {
     return (
       <FlatList
@@ -244,9 +250,10 @@ export default class Labrary extends Component {
         ItemSeparatorComponent={() => <Divider style={{container: {backgroundColor: '#000'}}} />}
         style={{flex: 1}}
         keyExtractor={this._keyExtractor}
-        // refreshing={true}
-        // onRefresh={ () => this._onRefresh() }
-        onEndReached={ () => this._onEndReached() }
+        onEndReachedThreshold={0.1}
+        onEndReached={() => this._onEndReached()}
+        refreshing={false}
+        onRefresh={() => this._onRefresh()}
       />
     )
   }

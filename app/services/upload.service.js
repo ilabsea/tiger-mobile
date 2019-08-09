@@ -9,7 +9,6 @@ export default {
     statisticService.uploadStoryRead(this._buildData(obj))
       .then((responseJson) => {
         if (responseJson.ok) {
-          console.log('==================uploadSuccess');
           this._deleteRecord(obj);
           this.upload();
         } else {

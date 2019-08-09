@@ -40,19 +40,19 @@ export default class StoryPreviewModal extends Component {
   constructor(props){
     super(props);
 
-    this.state = { questions: [], isPlaying: false, currentSceneIndex: 0, isStartingQuiz: false };
+    this.state = { questions: [], isPlaying: false, currentIndex: 0, isStartingQuiz: false };
   }
 
   _slideTo(linkScene) {
     if (!linkScene) {
-      this.setState({ currentSceneIndex: 0, isStartingQuiz: true });
-      this._handleAudioPlay();
+      this.setState({ currentIndex: 0, isStartingQuiz: true });
+      this.stopPlaying();
       return this.refs.mySlider.setPage(this.dataSource.length);
     }
     let index = this.dataSource.findIndex(scene => scene.id == linkScene.id);
-    this.setState({ currentSceneIndex: index });
+    this.setState({ currentIndex: index });
     this.refs.mySlider.setPage(index);
-    this._handleAudioPlay();
+    this.stopPlaying();
   }
 
   _setAnswer(index, choice) {
@@ -64,9 +64,10 @@ export default class StoryPreviewModal extends Component {
 
   _slideQuizTo(index, choice) {
     let next = this.dataSource.length + index;
-    this.setState({ currentSceneIndex: index });
+    this.setState({ currentIndex: index });
     this._setAnswer(index-1, choice);
     this.refs.mySlider.setPage(next);
+    this.stopPlaying();
   }
 
   _isCorrect(id, choices) {
@@ -85,7 +86,6 @@ export default class StoryPreviewModal extends Component {
 
   _saveStoryResponse(action, slideIndex) {
     this.storyRead = realm.objects('StoryRead').filtered(`storyId=${action.storyId} AND finishedAt=NULL`).sorted('createdAt', true)[0];
-
     realm.write(()=> {
       realm.create('StoryResponse', {
         uuid: uuidv4(),
@@ -367,16 +367,18 @@ export default class StoryPreviewModal extends Component {
   }
 
   async stopPlaying() {
-    this.sound.stop();
-    this.setState({isPlaying: false});
+    if(this.sound){
+      this.sound.stop();
+      this.setState({isPlaying: false});
+    }
   }
 
   async play() {
     this.setState({isPlaying: true});
     let currentPage = this.state.isStartingQuiz ?
-                      this.story.questions[this.state.currentSceneIndex]
-                      : this.story.scenes[this.state.currentSceneIndex];
-    if(currentPage){
+                      this.story.questions[this.state.currentIndex]
+                      : this.story.scenes[this.state.currentIndex];
+    if(currentPage && currentPage.audio){
       setTimeout(() => {
         this.sound = new Sound(currentPage.audio , '', (error) => {
           if (error) {
@@ -409,8 +411,8 @@ export default class StoryPreviewModal extends Component {
       return null;
     }
     let currentPageObj = this.state.isStartingQuiz ?
-                          this.story.questions[this.state.currentSceneIndex]:
-                          this.story.scenes[this.state.currentSceneIndex];
+                          this.story.questions[this.state.currentIndex]:
+                          this.story.scenes[this.state.currentIndex];
     let audio = currentPageObj ? currentPageObj.audio : '';
     return (
       <View style={{flex: 1, backgroundColor: '#fff3df'}}>
