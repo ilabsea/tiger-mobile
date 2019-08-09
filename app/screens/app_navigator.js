@@ -40,9 +40,9 @@ export default class AppNavigator extends React.Component {
     AsyncStorage.getItem(USER_TYPE).then((userType) => {
       this.setState({loaded: true, userSelected: !!userType})
     });
-    // setTimeout(function() {
-    //   SplashScreen.hide();
-    // }, 3000);
+    setTimeout(function() {
+      SplashScreen.hide();
+    }, 3000);
   }
 
   render() {

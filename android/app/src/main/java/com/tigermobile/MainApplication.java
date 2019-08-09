@@ -15,6 +15,7 @@ import com.reactnativecommunity.asyncstorage.AsyncStoragePackage;
 import com.oblador.vectoricons.VectorIconsPackage;
 import com.learnium.RNDeviceInfo.RNDeviceInfo;
 import com.zmxv.RNSound.RNSoundPackage;
+import org.devio.rn.splashscreen.SplashScreenReactPackage;
 
 import java.util.Arrays;
 import java.util.List;
@@ -38,7 +39,8 @@ public class MainApplication extends Application implements ReactApplication {
         new AsyncStoragePackage(),
         new RNDeviceInfo(),
         new VectorIconsPackage(),
-        new RNSoundPackage()
+        new RNSoundPackage(),
+        new SplashScreenReactPackage()
       );
     }
 
