@@ -48,4 +48,5 @@ export default {
   acknowledgement: 'សេចក្តីគោរពជូន',
   source_link: 'ស្រង់ចេញពីប្រភព',
   educational_message: 'សារអប់រំ',
+  audio_is_missing: 'មិនមានសំលេងក្នុងម៉ាសុីនមេ។'
 };

@@ -143,6 +143,7 @@ export default class StoryModal extends Component {
     let background = false;
 
     let imagesAudios = this.images.concat(this.sceneAudios, this.quizAudios);
+    console.log('imagesAudios : ', imagesAudios);
     let fileName = StringHelper.getFileURIName(imagesAudios[index]);
 
     let options = {
@@ -154,9 +155,7 @@ export default class StoryModal extends Component {
       progressDivider
     };
 
-    let ret = RNFS.downloadFile(options);
-
-    ret.promise.then(res => {
+    RNFS.downloadFile(options).promise.then(res => {
       this.setState({progress: (index+1)/imagesAudios.length});
       this._handleDownloadProgress(index, imagesAudios.length);
     }).catch(err => {

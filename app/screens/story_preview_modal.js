@@ -9,7 +9,8 @@ import {
   Dimensions,
   ImageBackground,
   TouchableOpacity,
-  Slider
+  Slider,
+  Alert
 } from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage';
 import NetInfo from "@react-native-community/netinfo";
@@ -378,11 +379,18 @@ export default class StoryPreviewModal extends Component {
     let currentPage = this.state.isStartingQuiz ?
                       this.story.questions[this.state.currentIndex]
                       : this.story.scenes[this.state.currentIndex];
-    if(currentPage && currentPage.audio){
+    if(currentPage){
       setTimeout(() => {
         this.sound = new Sound(currentPage.audio , '', (error) => {
           if (error) {
-            console.log('failed to load the sound', error);
+            Alert.alert(
+              this.story.title,
+              I18n.t('audio_is_missing'),
+              [
+                { text: I18n.t('yes'), style: 'cancel' }
+              ],
+              { cancelable: true }
+            )
           }
         });
 
@@ -437,11 +445,11 @@ export default class StoryPreviewModal extends Component {
                   onPress={() => this._handleAudioPlay()}
                   style={{paddingHorizontal: 8}}>
                   { this.state.isPlaying &&
-                    <Icon name='volume-up' color='#fff' size={28}/>
+                    <Icon name='pause' color='#fff' size={28}/>
                   }
                   {
                     !this.state.isPlaying &&
-                    <Icon name='volume-mute' color='#fff' size={28}/>
+                    <Icon name='play-arrow' color='#fff' size={28}/>
                   }
                 </TouchableOpacity>
               }
@@ -474,6 +482,7 @@ export default class StoryPreviewModal extends Component {
   }
 
   _closeModal() {
+    this.stopPlaying();
     this.setState({questions: []});
     this._handleUpload();
     this.props.onRequestClose();
