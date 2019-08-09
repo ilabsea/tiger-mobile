@@ -143,7 +143,6 @@ export default class StoryModal extends Component {
     let background = false;
 
     let imagesAudios = this.images.concat(this.sceneAudios, this.quizAudios);
-    console.log('imagesAudios : ', imagesAudios);
     let fileName = StringHelper.getFileURIName(imagesAudios[index]);
 
     let options = {

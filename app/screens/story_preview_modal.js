@@ -22,7 +22,7 @@ import { IndicatorViewPager } from 'rn-viewpager';
 import { Toolbar, Icon } from 'react-native-material-ui';
 import I18n from '../i18n/i18n';
 import uuidv4 from '../utils/uuidv4';
-import { TEXT_SIZE } from '../utils/variable';
+import { TEXT_SIZE, AUDIOICON } from '../utils/variable';
 import headerStyle from '../assets/style_sheets/header';
 import realm from '../schema';
 import Button from '../components/button';
@@ -44,16 +44,24 @@ export default class StoryPreviewModal extends Component {
     this.state = { questions: [], isPlaying: false, currentIndex: 0, isStartingQuiz: false };
   }
 
+  _handleAutoPlayAudio(index){
+    this.setState({ currentIndex: index }, () => {
+      if(this.state.isAudioOn){
+        this.play();
+      }
+    });
+  }
+
   _slideTo(linkScene) {
+    this.stopPlaying();
     if (!linkScene) {
-      this.setState({ currentIndex: 0, isStartingQuiz: true });
-      this.stopPlaying();
+      this.setState({ isStartingQuiz: true });
+      this._handleAutoPlayAudio(0);
       return this.refs.mySlider.setPage(this.dataSource.length);
     }
     let index = this.dataSource.findIndex(scene => scene.id == linkScene.id);
-    this.setState({ currentIndex: index });
+    this._handleAutoPlayAudio(index);
     this.refs.mySlider.setPage(index);
-    this.stopPlaying();
   }
 
   _setAnswer(index, choice) {
@@ -65,10 +73,10 @@ export default class StoryPreviewModal extends Component {
 
   _slideQuizTo(index, choice) {
     let next = this.dataSource.length + index;
-    this.setState({ currentIndex: index });
-    this._setAnswer(index-1, choice);
-    this.refs.mySlider.setPage(next);
     this.stopPlaying();
+    this._setAnswer(index-1, choice);
+    this._handleAutoPlayAudio(index);
+    this.refs.mySlider.setPage(next);
   }
 
   _isCorrect(id, choices) {
@@ -374,12 +382,12 @@ export default class StoryPreviewModal extends Component {
     }
   }
 
-  async play() {
+  async play(index) {
     this.setState({isPlaying: true});
     let currentPage = this.state.isStartingQuiz ?
                       this.story.questions[this.state.currentIndex]
                       : this.story.scenes[this.state.currentIndex];
-    if(currentPage){
+    if(currentPage && currentPage.audio){
       setTimeout(() => {
         this.sound = new Sound(currentPage.audio , '', (error) => {
           if (error) {
@@ -407,7 +415,7 @@ export default class StoryPreviewModal extends Component {
     }
   }
 
-  _handleAudioPlay() {
+  _toggleAudioPlay() {
     if (this.state.isPlaying) {
       return this.stopPlaying();
     }
@@ -442,7 +450,7 @@ export default class StoryPreviewModal extends Component {
 
               {!!audio &&
                 <TouchableOpacity
-                  onPress={() => this._handleAudioPlay()}
+                  onPress={() => this._toggleAudioPlay()}
                   style={{paddingHorizontal: 8}}>
                   { this.state.isPlaying &&
                     <Icon name='pause' color='#fff' size={28}/>
@@ -488,6 +496,16 @@ export default class StoryPreviewModal extends Component {
     this.props.onRequestClose();
   }
 
+  _onShowModal(){
+    AsyncStorage.getItem(AUDIOICON, (err, icon) => {
+      let isAudioOn = icon == 'volume-up' ? true : false;
+      this.setState({isAudioOn: isAudioOn});
+      if(isAudioOn){
+        this.play();
+      }
+    })
+  }
+
   _handleUpload() {
     if (!this.storyRead || !this.storyRead.isValid() || !this.storyRead.finishedAt) {
       return;
@@ -521,6 +539,7 @@ export default class StoryPreviewModal extends Component {
         animationType="slide"
         transparent={false}
         visible={modalVisible}
+        onShow={() => this._onShowModal()}
         onRequestClose={() => this._closeModal()}>
 
         { this._renderModalContent() }

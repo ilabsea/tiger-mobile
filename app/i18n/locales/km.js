@@ -48,5 +48,8 @@ export default {
   acknowledgement: 'សេចក្តីគោរពជូន',
   source_link: 'ស្រង់ចេញពីប្រភព',
   educational_message: 'សារអប់រំ',
-  audio_is_missing: 'មិនមានសំលេងក្នុងម៉ាសុីនមេ។'
+  audio_is_missing: 'មិនមានសំលេងក្នុងម៉ាសុីនមេ។',
+  auto_play_setting: 'ការកំណត់សម្លេង',
+  autoplay: "បេីកសម្លេងដោយស្វ័យប្រវត្តិ",
+  disable_autoplay: "បិទសម្លេងដោយស្វ័យប្រវត្តិ"
 };

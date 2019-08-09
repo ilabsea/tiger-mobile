@@ -48,5 +48,8 @@ export default {
   acknowledgement: 'Acknowledgement',
   source_link: 'Source',
   educational_message: 'Educational message',
-  audio_is_missing: 'Audio is missing.'
+  audio_is_missing: 'Audio is missing.',
+  auto_play_setting: 'Audio setting',
+  autoplay: "Open auto play audio",
+  disable_autoplay: "Close auto play audio"
 };

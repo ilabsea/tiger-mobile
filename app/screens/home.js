@@ -23,6 +23,7 @@ import layoutSerive from '../services/layout.service';
 import StoryModal from './story_modal';
 import UserTypeModal from './user_type_modal';
 import LanguageModal from './language_modal';
+import AudioModal from './audio_modal';
 import { environment } from '../environments/environment';
 import { USER_TYPE } from '../utils/variable';
 import Sound from 'react-native-sound';
@@ -40,6 +41,7 @@ export default class Home extends Component {
       refreshing: false,
       modalVisible: false,
       visibleLanguageModal: false,
+      visibleAudioModal: false,
       dataSource: [],
       story: {tags: []},
       visibleUserType: false,
@@ -53,6 +55,7 @@ export default class Home extends Component {
       let viewIcon = view == 'grid' ? 'th-list' : 'th-large';
       this.setState({view: view, viewIcon: viewIcon});
     })
+
     this._setDownloadedStories();
   }
 
@@ -323,12 +326,29 @@ export default class Home extends Component {
     )
   }
 
+  _renderAudioModal() {
+    return (
+      <AudioModal
+        modalVisible={this.state.visibleAudioModal}
+        onRequestClose={() => {
+          this.setState({visibleAudioModal: false});
+          this.props.onSetActive('home');
+        }}
+        onBackdropPress={() => this.setState({visibleAudioModal: false})}
+      ></AudioModal>
+    )
+  }
+
   _openUserTypeModal = () => {
     this.setState({visibleUserType: true});
   }
 
   _openLanguageModal = () => {
     this.setState({visibleLanguageModal: true});
+  }
+
+  _openAudioModal = () => {
+    this.setState({visibleAudioModal: true});
   }
 
   render() {
@@ -340,6 +360,10 @@ export default class Home extends Component {
             <View style={{flexDirection: 'row'}}>
               <TouchableOpacity onPress={() => this._toggleLayout()} style={{paddingHorizontal: 8}}>
                 <AwesomeIcon name={this.state.viewIcon} color='#fff' size={24} />
+              </TouchableOpacity>
+
+              <TouchableOpacity onPress={() => this._openAudioModal()} style={{paddingHorizontal: 8}}>
+                <Icon name={'volume-up'} color='#fff' size={24} />
               </TouchableOpacity>
 
               <TouchableOpacity onPress={this._openUserTypeModal} style={{paddingHorizontal: 8}}>
@@ -363,6 +387,7 @@ export default class Home extends Component {
         { this._renderModal() }
         { this._renderUserTypeModal() }
         { this._renderLanguageModal() }
+        { this._renderAudioModal() }
       </View>
     )
   }
