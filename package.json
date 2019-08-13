@@ -25,7 +25,7 @@
     "react-native-simple-radio-button": "^2.7.3",
     "react-native-sound": "^0.11.0",
     "react-native-splash-screen": "^3.2.0",
-    "react-native-vector-icons": "^4.6.0",
+    "react-native-vector-icons": "^6.6.0",
     "react-navigation": "^2.16.0",
     "realm": "^2.6.0",
     "rn-viewpager": "^1.2.9"
