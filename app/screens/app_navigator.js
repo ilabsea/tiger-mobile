@@ -40,9 +40,7 @@ export default class AppNavigator extends React.Component {
   }
 
   componentDidMount() {
-    setTimeout(function() {
-      SplashScreen.hide();
-    }, 2000);
+    SplashScreen.hide();
   }
 
   render() {
