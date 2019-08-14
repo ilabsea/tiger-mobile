@@ -9,23 +9,22 @@ import {
   Dimensions,
   ImageBackground,
   TouchableOpacity,
-  Slider,
-  Alert
+  Slider
 } from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage';
 import NetInfo from "@react-native-community/netinfo";
 import ModalDialog from "react-native-modal";
-import Sound from 'react-native-sound';
-import RNFS from 'react-native-fs';
 
 import { IndicatorViewPager } from 'rn-viewpager';
 import { Toolbar, Icon } from 'react-native-material-ui';
 import I18n from '../i18n/i18n';
 import uuidv4 from '../utils/uuidv4';
 import { TEXT_SIZE, AUDIOICON } from '../utils/variable';
+import AudioHelper from '../utils/audio_helper';
 import headerStyle from '../assets/style_sheets/header';
 import realm from '../schema';
 import Button from '../components/button';
+import AudioPlayer from '../components/audio_player';
 import uploadService from '../services/upload.service';
 
 const win = Dimensions.get('window');
@@ -35,32 +34,27 @@ export default class StoryPreviewModal extends Component {
   questions = [];
   answers = [];
   totalSlides = 0;
-  sound = null;
   story=null;
 
   constructor(props){
     super(props);
 
-    this.state = { questions: [], isPlaying: false, currentIndex: 0, isStartingQuiz: false };
-  }
-
-  _handleAutoPlayAudio(index){
-    this.setState({ currentIndex: index }, () => {
-      if(this.state.isAudioOn){
-        this.handleAudioPlay();
-      }
-    });
+    this.state = { questions: [], isPlaying: false, isStartingQuiz: false, currentIndex: 0 , isAudioOn: false};
   }
 
   _slideTo(linkScene) {
-    this.stopPlaying();
+    AudioHelper.stopPlaying();
+    this.setState({isPlaying: false});
     if (!linkScene) {
-      this.setState({ isStartingQuiz: true });
-      this._handleAutoPlayAudio(0);
+      this.setState({ isStartingQuiz: true, currentIndex: 0 }, () => {
+        this._handleAutoPlayAudio();
+      });
       return this.refs.mySlider.setPage(this.dataSource.length);
     }
     let index = this.dataSource.findIndex(scene => scene.id == linkScene.id);
-    this._handleAutoPlayAudio(index);
+    this.setState({ currentIndex: index }, () => {
+      this._handleAutoPlayAudio();
+    });
     this.refs.mySlider.setPage(index);
   }
 
@@ -73,9 +67,12 @@ export default class StoryPreviewModal extends Component {
 
   _slideQuizTo(index, choice) {
     let next = this.dataSource.length + index;
-    this.stopPlaying();
+    AudioHelper.stopPlaying();
+    this.setState({isPlaying: false});
     this._setAnswer(index-1, choice);
-    this._handleAutoPlayAudio(index);
+    this.setState({ currentIndex: index }, () => {
+      this._handleAutoPlayAudio();
+    });
     this.refs.mySlider.setPage(next);
   }
 
@@ -375,63 +372,31 @@ export default class StoryPreviewModal extends Component {
     )
   }
 
-  async stopPlaying() {
-    if(this.sound){
-      this.sound.stop();
-      this.sound = null;
+  getCurrentAudio(){
+    let currentPageObj = this.state.isStartingQuiz ?
+                          this.story.questions[this.state.currentIndex]:
+                          this.story.scenes[this.state.currentIndex];
+    return currentPageObj ? currentPageObj.audio : '';
+  }
+
+  _toggleAudioPlay(audio) {
+    let sound = AudioHelper.getSound();
+
+    if (this.state.isPlaying && sound) {
       this.setState({isPlaying: false});
+      sound.pause();
+      return null;
     }
-  }
-
-  async handleAudioPlay() {
-    this.setState({isPlaying: true});
-    let currentPage = this.state.isStartingQuiz ?
-                      this.story.questions[this.state.currentIndex]
-                      : this.story.scenes[this.state.currentIndex];
-    if(currentPage && currentPage.audio){
-      setTimeout(() => {
-        this.sound = new Sound(currentPage.audio , '', (error) => {
-          if (error) {
-            Alert.alert(
-              this.story.title,
-              I18n.t('audio_is_missing'),
-              [
-                { text: I18n.t('yes'), style: 'cancel' }
-              ],
-              { cancelable: true }
-            )
-          }
-        });
-
-        setTimeout(() => {
-          this._onPlay();
-        }, 100);
-      }, 100);
-    }
-  }
-
-  _onPlay(){
-    this.sound.play((success) => {
-      console.log('success : ', success)
-      if (success) {
-        this.setState({isPlaying: false});
-      } else {
-        this.sound.reset();
-      }
-    });
-  }
-
-  _toggleAudioPlay() {
-    if (this.state.isPlaying) {
-      this.setState({isPlaying: false});
-      this.sound.pause()
-      return;
-    }
-    if(this.sound){
+    if(sound){
       this.setState({isPlaying: true});
-      this._onPlay();
+      AudioHelper._onPlay((isPlaying) => {
+        this.setState({isPlaying: isPlaying})
+      });
     }else{
-      this.handleAudioPlay();
+      this.setState({isPlaying: true});
+      AudioHelper.handleAudioPlay(audio, (isPlaying) => {
+        this.setState({isPlaying: isPlaying})
+      });
     }
   }
 
@@ -439,10 +404,7 @@ export default class StoryPreviewModal extends Component {
     if(!this.story || !this.story.title) {
       return null;
     }
-    let currentPageObj = this.state.isStartingQuiz ?
-                          this.story.questions[this.state.currentIndex]:
-                          this.story.scenes[this.state.currentIndex];
-    let audio = currentPageObj ? currentPageObj.audio : '';
+    let audio = this.getCurrentAudio();
     return (
       <View style={{flex: 1, backgroundColor: '#fff3df'}}>
         <Toolbar
@@ -457,24 +419,7 @@ export default class StoryPreviewModal extends Component {
           }
           rightElement={
             <View style={{flexDirection: 'row'}}>
-              {!audio &&
-                <Icon name='volume-off' color='#bbbfbc' size={28}/>
-              }
-
-              {!!audio &&
-                <TouchableOpacity
-                  onPress={() => this._toggleAudioPlay()}
-                  style={{paddingHorizontal: 8}}>
-                  { this.state.isPlaying &&
-                    <Icon name='pause' color='#fff' size={28}/>
-                  }
-                  {
-                    !this.state.isPlaying &&
-                    <Icon name='play-arrow' color='#fff' size={28}/>
-                  }
-                </TouchableOpacity>
-              }
-
+              <AudioPlayer audio={audio} isPlaying={this.state.isPlaying} onClick={() => this._toggleAudioPlay(audio)}/>
               <TouchableOpacity onPress={()=> this.setState({ isDialogVisible: true })} style={{paddingHorizontal: 8}}>
                 <Icon name='format-size' color='#fff' size={24} />
               </TouchableOpacity>
@@ -503,19 +448,28 @@ export default class StoryPreviewModal extends Component {
   }
 
   _closeModal() {
-    this.stopPlaying();
-    this.setState({questions: [], currentIndex: 0});
+    AudioHelper.stopPlaying();
+    this.setState({questions: [], currentIndex: 0, isPlaying: false});
     this._handleUpload();
     this.props.onRequestClose();
   }
 
+  _handleAutoPlayAudio(){
+    if(this.state.isAudioOn){
+      this.setState({isPlaying: true});
+      AudioHelper.handleAudioPlay(this.getCurrentAudio(), (isPlaying) => {
+        this.setState({isPlaying: isPlaying});
+      });
+    }
+  }
+
   _onShowModal(){
+    this.setState({isStartingQuiz : false})
     AsyncStorage.getItem(AUDIOICON, (err, icon) => {
       let isAudioOn = icon == 'volume-up' ? true : false;
-      this.setState({isAudioOn: isAudioOn});
-      if(isAudioOn){
-        this.handleAudioPlay();
-      }
+      this.setState({isAudioOn: isAudioOn}, () => {
+        this._handleAutoPlayAudio();
+      });
     })
   }
 
