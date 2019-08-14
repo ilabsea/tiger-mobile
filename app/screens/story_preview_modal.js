@@ -47,7 +47,7 @@ export default class StoryPreviewModal extends Component {
   _handleAutoPlayAudio(index){
     this.setState({ currentIndex: index }, () => {
       if(this.state.isAudioOn){
-        this.play();
+        this.handleAudioPlay();
       }
     });
   }
@@ -378,11 +378,12 @@ export default class StoryPreviewModal extends Component {
   async stopPlaying() {
     if(this.sound){
       this.sound.stop();
+      this.sound = null;
       this.setState({isPlaying: false});
     }
   }
 
-  async play(index) {
+  async handleAudioPlay() {
     this.setState({isPlaying: true});
     let currentPage = this.state.isStartingQuiz ?
                       this.story.questions[this.state.currentIndex]
@@ -403,23 +404,35 @@ export default class StoryPreviewModal extends Component {
         });
 
         setTimeout(() => {
-          this.sound.play((success) => {
-            if (success) {
-              this.setState({isPlaying: false});
-            } else {
-              this.sound.reset();
-            }
-          });
+          this._onPlay();
         }, 100);
       }, 100);
     }
   }
 
+  _onPlay(){
+    this.sound.play((success) => {
+      console.log('success : ', success)
+      if (success) {
+        this.setState({isPlaying: false});
+      } else {
+        this.sound.reset();
+      }
+    });
+  }
+
   _toggleAudioPlay() {
     if (this.state.isPlaying) {
-      return this.stopPlaying();
+      this.setState({isPlaying: false});
+      this.sound.pause()
+      return;
     }
-    this.play();
+    if(this.sound){
+      this.setState({isPlaying: true});
+      this._onPlay();
+    }else{
+      this.handleAudioPlay();
+    }
   }
 
   _renderModalContent = () => {
@@ -501,7 +514,7 @@ export default class StoryPreviewModal extends Component {
       let isAudioOn = icon == 'volume-up' ? true : false;
       this.setState({isAudioOn: isAudioOn});
       if(isAudioOn){
-        this.play();
+        this.handleAudioPlay();
       }
     })
   }
