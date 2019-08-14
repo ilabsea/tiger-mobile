@@ -21,13 +21,13 @@ export default class AudioModal extends Component {
   constructor(props) {
     super(props);
 
-    this.state = { audioIcon: 'volume-off'};
+    this.state = { audioIcon: ''};
   }
 
   componentDidMount(){
     AsyncStorage.getItem(AUDIOICON, (err, icon) => {
-      icon = icon == null ? 'volume-off': 'volume-on';
-      this.setState({audioIcon: icon });
+      icon = icon == null ? 'volume-off': icon;
+      this.setState({ audioIcon: icon });
     })
   }
 
