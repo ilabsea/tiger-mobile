@@ -25,7 +25,8 @@ import UserTypeModal from './user_type_modal';
 import LanguageModal from './language_modal';
 import AudioModal from './audio_modal';
 import { environment } from '../environments/environment';
-import { USER_TYPE } from '../utils/variable';
+import { USER_TYPE,AUDIOICON } from '../utils/variable';
+
 import Sound from 'react-native-sound';
 
 export default class Home extends Component {
@@ -45,6 +46,7 @@ export default class Home extends Component {
       dataSource: [],
       story: {tags: []},
       visibleUserType: false,
+      audioIcon: 'volume-off'
     };
   }
 
@@ -54,6 +56,11 @@ export default class Home extends Component {
     layoutSerive.get((view) => {
       let viewIcon = view == 'grid' ? 'th-list' : 'th-large';
       this.setState({view: view, viewIcon: viewIcon});
+    })
+
+    AsyncStorage.getItem(AUDIOICON, (err, icon) => {
+      icon = icon == null ? 'volume-off' : icon;
+      this.setState({audioIcon: icon});
     })
 
     this._setDownloadedStories();
@@ -330,8 +337,8 @@ export default class Home extends Component {
     return (
       <AudioModal
         modalVisible={this.state.visibleAudioModal}
-        onRequestClose={() => {
-          this.setState({visibleAudioModal: false});
+        onRequestClose={(audioIcon) => {
+          this.setState({visibleAudioModal: false, audioIcon: audioIcon});
           this.props.onSetActive('home');
         }}
         onBackdropPress={() => this.setState({visibleAudioModal: false})}
@@ -363,7 +370,7 @@ export default class Home extends Component {
               </TouchableOpacity>
 
               <TouchableOpacity onPress={() => this._openAudioModal()} style={{paddingHorizontal: 8}}>
-                <Icon name={'volume-up'} color='#fff' size={24} />
+                <Icon name={this.state.audioIcon} color='#fff' size={24} />
               </TouchableOpacity>
 
               <TouchableOpacity onPress={this._openUserTypeModal} style={{paddingHorizontal: 8}}>

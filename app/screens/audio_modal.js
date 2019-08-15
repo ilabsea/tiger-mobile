@@ -34,7 +34,7 @@ export default class AudioModal extends Component {
   _onSelect = (audioIcon) => {
     AsyncStorage.setItem(AUDIOICON, audioIcon, () => {
       this.setState({ audioIcon: audioIcon });
-      this.props.onRequestClose();
+      this.props.onRequestClose(audioIcon);
     });
   }
 
