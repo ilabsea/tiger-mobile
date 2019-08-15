@@ -13,6 +13,7 @@ Story.schema = {
     description: 'string',
     image: 'string',
     author: 'string',
+    hasAudio: { type: 'bool', default: false },
     sourceLink: 'string?',
     license: 'string',
     publishedAt: 'string',

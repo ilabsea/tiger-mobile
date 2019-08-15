@@ -51,5 +51,7 @@ export default {
   audio_is_missing: 'មិនមានសំលេងក្នុងម៉ាសុីនមេ។',
   auto_play_setting: 'ការកំណត់សម្លេង',
   autoplay: "បេីកសម្លេងដោយស្វ័យប្រវត្តិ",
-  disable_autoplay: "បិទសម្លេងដោយស្វ័យប្រវត្តិ"
+  disable_autoplay: "បិទសម្លេងដោយស្វ័យប្រវត្តិ",
+  the_story_contain_audio_are_you_sure_you_want_to_download: "រឿងនេះមានសំលេង។ តើអ្នកប្រាកដជាចង់ទាញយកមែនឬទេ?"
+
 };

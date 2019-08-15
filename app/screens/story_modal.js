@@ -10,6 +10,7 @@ import {
   ScrollView,
   ToastAndroid,
   Linking,
+  Alert
 } from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage';
 import NetInfo from "@react-native-community/netinfo";
@@ -174,7 +175,26 @@ export default class StoryModal extends Component {
     if (!this.props.isOnline) {
       return ToastAndroid.show(I18n.t('no_connection'), ToastAndroid.LONG);
     }
+    if(story.has_audio){
+      this._confirmDownload(story);
+    }else{
+      this._startDownload(story);
+    }
+  }
 
+  _confirmDownload(story){
+    Alert.alert(
+      story.title,
+      I18n.t('the_story_contain_audio_are_you_sure_you_want_to_download'),
+      [
+        { text: I18n.t('cancel'), style: 'cancel' },
+        { text: I18n.t('yes'), onPress: () => this.startDownload(story) },
+      ],
+      { cancelable: true }
+    )
+  }
+
+  _startDownload(story){
     sceneService.getAll(story.id)
       .then((responseJson) => {
         realm.write(() => {
@@ -302,7 +322,7 @@ export default class StoryModal extends Component {
 
     return (
       <View style={{flex: 1}}>
-        <Text>{I18n.t('published_at')} { this._getFullDate(story.published_at)}</Text>
+        <Text>{I18n.t('published_at')} { this._getFullDate(story.published_at || story.publishedAt)}</Text>
         <Text style={{fontSize: 16}}>{story.title}</Text>
         <Text>{I18n.t('author')}: {story.author}</Text>
         { this._renderAcknowledgementOrSourceLink(story) }

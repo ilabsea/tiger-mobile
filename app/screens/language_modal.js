@@ -6,7 +6,6 @@ import {
 import AsyncStorage from '@react-native-community/async-storage';
 import { RadioButton } from 'react-native-material-ui';
 import I18n from '../i18n/i18n';
-import headerStyle from '../assets/style_sheets/header';
 import { LANGUAGE } from '../utils/variable';
 import styles from '../assets/style_sheets/user_type';
 import ModalDialog from 'react-native-modal';
