@@ -62,6 +62,7 @@ const schemas = [
   { schema: schema1, schemaVersion: 2 },
   { schema: schema1, schemaVersion: 3, migration: migration3},
   { schema: schema1, schemaVersion: 4},
+  { schema: schema1, schemaVersion: 5}
 ]
 
 // the first schema to update to is the current schema version

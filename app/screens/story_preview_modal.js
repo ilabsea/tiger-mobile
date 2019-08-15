@@ -39,7 +39,14 @@ export default class StoryPreviewModal extends Component {
   constructor(props){
     super(props);
 
-    this.state = { questions: [], isPlaying: false, isStartingQuiz: false, currentIndex: 0 , isAudioOn: false};
+    this.state = {
+      questions: [],
+      isPlaying: false,
+      isStartingQuiz: false,
+      currentIndex: 0 ,
+      isAudioOn: false,
+      question: null
+    };
   }
 
   _slideTo(linkScene) {
@@ -47,13 +54,13 @@ export default class StoryPreviewModal extends Component {
     this.setState({isPlaying: false});
     if (!linkScene) {
       this.setState({ isStartingQuiz: true, currentIndex: 0 }, () => {
-        this._handleAutoPlayAudio();
+        this._handleAutoPlayAudio(this.getCurrentAudio());
       });
       return this.refs.mySlider.setPage(this.dataSource.length);
     }
     let index = this.dataSource.findIndex(scene => scene.id == linkScene.id);
     this.setState({ currentIndex: index }, () => {
-      this._handleAutoPlayAudio();
+      this._handleAutoPlayAudio(this.getCurrentAudio());
     });
     this.refs.mySlider.setPage(index);
   }
@@ -71,7 +78,7 @@ export default class StoryPreviewModal extends Component {
     this.setState({isPlaying: false});
     this._setAnswer(index-1, choice);
     this.setState({ currentIndex: index }, () => {
-      this._handleAutoPlayAudio();
+      this._handleAutoPlayAudio(this.getCurrentAudio());
     });
     this.refs.mySlider.setPage(next);
   }
@@ -242,20 +249,32 @@ export default class StoryPreviewModal extends Component {
   }
 
   _showMessage(question) {
-    this.setState({message: question.message, isMessageVisible: true});
+    this.setState({question: question, isMessageVisible: true});
+    this._handleAutoPlayAudio(question.educationalMessageAudio);
+  }
+
+  _renderCorrectResult(question, textStyle){
+    return (
+      <View style={{flex:1 , flexDirection: 'row'}}>
+        <Text style={[styles.textShadow, textStyle, {color: 'green'}]}>
+          [{this._getAnswers(question.choices)}]
+        </Text>
+        { !!question.educationalMessageAudio &&
+          <Icon name='volume-up' color='green' size={28}/>
+        }
+      </View>
+    )
   }
 
   _renderResultLabel(question, textStyle) {
     if (this._isCorrect(question.user_choice.id, question.choices)) {
-      return (
-        <Text style={[styles.textShadow, textStyle, {color: 'green'}]}>[{this._getAnswers(question.choices)}]</Text>
-      )
+      this._renderCorrectResult(question, textStyle);
     }
 
     return (
       <View>
         <Text style={[styles.textShadow, textStyle, styles.wrong]}>{question.user_choice.label}</Text>
-        <Text style={[styles.textShadow, textStyle, {color: 'green'}]}>[{this._getAnswers(question.choices)}]</Text>
+        {this._renderCorrectResult(question, textStyle)}
       </View>
     )
   }
@@ -328,15 +347,31 @@ export default class StoryPreviewModal extends Component {
   }
 
   _renderMessageDialog() {
+    let question = this.state.question;
+    console.log('question : ', question);
+    if(!question){
+      return null;
+    }
+
     return (
       <ModalDialog
         isVisible={this.state.isMessageVisible}
-        onBackdropPress={() => this.setState({isMessageVisible: false})}
+        onBackdropPress={() => {
+          this.setState({isMessageVisible: false, isPlaying: false});
+          AudioHelper.stopPlaying();
+        }}
       >
         <View style={{ padding: 20, backgroundColor: '#fff'}}>
-          <Text style={{fontSize: 16}}>{I18n.t('educational_message')}</Text>
+          <View style={{flexDirection: 'row'}}>
+            <Text style={{fontSize: 20}}>{I18n.t('educational_message')}</Text>
+            <AudioPlayer audio={question.educationalMessageAudio}
+              isPlaying={this.state.isPlaying}
+              color='black'
+              size={34}
+              onClick={() => this._toggleAudioPlay(question.educationalMessageAudio)}/>
+          </View>
           <ScrollView>
-            <Text>{this.state.message}</Text>
+            <Text>{question.message}</Text>
           </ScrollView>
         </View>
       </ModalDialog>
@@ -454,10 +489,10 @@ export default class StoryPreviewModal extends Component {
     this.props.onRequestClose();
   }
 
-  _handleAutoPlayAudio(){
+  _handleAutoPlayAudio(audio){
     if(this.state.isAudioOn){
       this.setState({isPlaying: true});
-      AudioHelper.handleAudioPlay(this.getCurrentAudio(), (isPlaying) => {
+      AudioHelper.handleAudioPlay(audio, (isPlaying) => {
         this.setState({isPlaying: isPlaying});
       });
     }
@@ -468,7 +503,7 @@ export default class StoryPreviewModal extends Component {
     AsyncStorage.getItem(AUDIOICON, (err, icon) => {
       let isAudioOn = icon == 'volume-up' ? true : false;
       this.setState({isAudioOn: isAudioOn}, () => {
-        this._handleAutoPlayAudio();
+        this._handleAutoPlayAudio(this.getCurrentAudio());
       });
     })
   }

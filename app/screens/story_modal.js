@@ -188,7 +188,7 @@ export default class StoryModal extends Component {
       I18n.t('the_story_contain_audio_are_you_sure_you_want_to_download'),
       [
         { text: I18n.t('cancel'), style: 'cancel' },
-        { text: I18n.t('yes'), onPress: () => this.startDownload(story) },
+        { text: I18n.t('yes'), onPress: () => this._startDownload(story) },
       ],
       { cancelable: true }
     )
@@ -222,12 +222,14 @@ export default class StoryModal extends Component {
 
     questions.map((question) => {
       let audioName = StringHelper.getFileURIName(question.audio);
+      let eduMsgAudioName = StringHelper.getFileURIName(question.educational_message_audio);
       let questionDb = realm.create('Question', {
         id: question.id,
         label: question.label,
         displayOrder: question.display_order,
         storyId: question.story_id,
         message: question.message,
+        educationalMessageAudio: eduMsgAudioName? `${RNFS.DocumentDirectoryPath}/${eduMsgAudioName}` : '',
         audio: audioName ? `${RNFS.DocumentDirectoryPath}/${audioName}` : '',
       }, true)
 
@@ -246,6 +248,9 @@ export default class StoryModal extends Component {
       questionList.push(questionDb);
       if(question.audio){
         this.quizAudios.push(question.audio);
+      }
+      if(question.educational_message_audio){
+        this.quizAudios.push(question.educational_message_audio);
       }
     })
   }

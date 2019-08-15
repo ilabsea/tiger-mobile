@@ -13,6 +13,8 @@ export default class AudioPlayer extends Component {
 
   render() {
     let audio = this.props.audio;
+    let iconColor = this.props.color ? this.props.color : '#fff';
+    let size = this.props.size ? this.props.size : 28;
     return (
       <View>
         {!audio &&
@@ -24,11 +26,11 @@ export default class AudioPlayer extends Component {
             onPress={this.props.onClick}
             style={{paddingHorizontal: 8}}>
             { this.props.isPlaying &&
-              <Icon name='pause' color='#fff' size={28}/>
+              <Icon name='pause' color={iconColor} size={size}/>
             }
             {
               !this.props.isPlaying &&
-              <Icon name='play-arrow' color='#fff' size={28}/>
+              <Icon name='play-arrow' color={iconColor} size={size}/>
             }
           </TouchableOpacity>
         }
