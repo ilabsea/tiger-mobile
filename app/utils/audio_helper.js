@@ -46,6 +46,26 @@ const AudioHelper = {
         this.sound.reset();
       }
     });
+  },
+  _toggleAudioPlay: function(audio, isPlaying, callback){
+    let sound = this.getSound();
+
+    if (isPlaying && sound) {
+      callback(false);
+      sound.pause();
+      return null;
+    }
+    if(sound){
+      callback(true);
+      AudioHelper._onPlay((isPlayingParam) => {
+        callback(isPlayingParam);
+      });
+    }else{
+      callback(true);
+      AudioHelper.handleAudioPlay(audio, (isPlayingParam) => {
+        callback(isPlayingParam);
+      });
+    }
   }
 }
 

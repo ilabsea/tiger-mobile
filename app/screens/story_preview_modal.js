@@ -348,7 +348,6 @@ export default class StoryPreviewModal extends Component {
 
   _renderMessageDialog() {
     let question = this.state.question;
-    console.log('question : ', question);
     if(!question){
       return null;
     }
@@ -414,25 +413,10 @@ export default class StoryPreviewModal extends Component {
     return currentPageObj ? currentPageObj.audio : '';
   }
 
-  _toggleAudioPlay(audio) {
-    let sound = AudioHelper.getSound();
-
-    if (this.state.isPlaying && sound) {
-      this.setState({isPlaying: false});
-      sound.pause();
-      return null;
-    }
-    if(sound){
-      this.setState({isPlaying: true});
-      AudioHelper._onPlay((isPlaying) => {
-        this.setState({isPlaying: isPlaying})
-      });
-    }else{
-      this.setState({isPlaying: true});
-      AudioHelper.handleAudioPlay(audio, (isPlaying) => {
-        this.setState({isPlaying: isPlaying})
-      });
-    }
+  _toggleAudioPlay(audio){
+    AudioHelper._toggleAudioPlay(audio, this.state.isPlaying, (isPlaying) => {
+      this.setState({isPlaying: isPlaying});
+    })
   }
 
   _renderModalContent = () => {

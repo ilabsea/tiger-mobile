@@ -10,11 +10,13 @@ import {
   ScrollView,
   ToastAndroid,
   Linking,
-  Alert
+  Alert,
+  Button
 } from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage';
 import NetInfo from "@react-native-community/netinfo";
 import { Toolbar, Icon } from 'react-native-material-ui';
+import ModalDialog from 'react-native-modal';
 import RNFS from 'react-native-fs';
 import * as Progress from 'react-native-progress';
 import I18n from '../i18n/i18n';
@@ -25,9 +27,11 @@ import sceneService from '../services/scene.service';
 import questionService from '../services/question.service';
 import statisticService from '../services/statistic.service';
 import { environment } from '../environments/environment';
-import { USER_TYPE } from '../utils/variable';
+import { USER_TYPE , AUDIOICON } from '../utils/variable';
 import { LICENSES } from '../utils/licenses';
 import StringHelper from '../utils/string_helper';
+import AudioPlayer from '../components/audio_player';
+import AudioHelper from '../utils/audio_helper';
 
 export default class StoryModal extends Component {
   images = [];
@@ -40,6 +44,8 @@ export default class StoryModal extends Component {
     this.state = {
       showReadNow: false,
       showProgress: false,
+      downloadDialogVisible: false,
+      isPlaying: false
     }
   }
 
@@ -171,41 +177,48 @@ export default class StoryModal extends Component {
     }
   }
 
+  _handleAutoPlayAudio(){
+    let audio = 'download_audio.mp3';
+    AsyncStorage.getItem(AUDIOICON, (err, icon) => {
+      let isAudioOn = icon == 'volume-up' ? true : false;
+      this.setState({isPlaying: isAudioOn});
+      if(isAudioOn){
+        AudioHelper.handleAudioPlay(audio, (isPlaying) => {
+          this.setState({isPlaying: isPlaying});
+        });
+      }
+    })
+
+  }
+
   _downloadStory(story) {
     if (!this.props.isOnline) {
       return ToastAndroid.show(I18n.t('no_connection'), ToastAndroid.LONG);
     }
     if(story.has_audio){
-      this._confirmDownload(story);
+      this.setState({downloadDialogVisible: true}, () => {
+        this._handleAutoPlayAudio()
+      });
     }else{
       this._startDownload(story);
     }
   }
 
-  _confirmDownload(story){
-    Alert.alert(
-      story.title,
-      I18n.t('the_story_contain_audio_are_you_sure_you_want_to_download'),
-      [
-        { text: I18n.t('cancel'), style: 'cancel' },
-        { text: I18n.t('yes'), onPress: () => this._startDownload(story) },
-      ],
-      { cancelable: true }
-    )
-  }
-
   _startDownload(story){
-    sceneService.getAll(story.id)
-      .then((responseJson) => {
-        realm.write(() => {
-          this._importStory(story);
-          this._importScenes(story, responseJson.data.scenes);
-          this._importSceneActions(responseJson.data.scenes);
-        });
-        this._downloadFiles(story, responseJson.data.scenes);
-        this._getQuizzes(story);
-        this._postStatistic(story);
-      })
+    this.setState({downloadDialogVisible: false}, () => {
+      AudioHelper.stopPlaying();
+      sceneService.getAll(story.id)
+        .then((responseJson) => {
+          realm.write(() => {
+            this._importStory(story);
+            this._importScenes(story, responseJson.data.scenes);
+            this._importSceneActions(responseJson.data.scenes);
+          });
+          this._downloadFiles(story, responseJson.data.scenes);
+          this._getQuizzes(story);
+          this._postStatistic(story);
+        })
+    });
   }
 
   _postStatistic(story) {
@@ -265,17 +278,59 @@ export default class StoryModal extends Component {
       })
   }
 
+  _onCloseModal(){
+    this.setState({downloadDialogVisible: false});
+    AudioHelper.stopPlaying();
+  }
+
+  _toggleAudioPlay(audio){
+    AudioHelper._toggleAudioPlay(audio, this.state.isPlaying, (isPlaying) => {
+      this.setState({isPlaying: isPlaying});
+    })
+  }
+
+  _renderDownloadDialog(story){
+    let audio = 'download_audio.mp3';
+    return(
+      <ModalDialog
+        isVisible={this.state.downloadDialogVisible}
+        onBackdropPress={ () => this._onCloseModal() }
+      >
+        <View style={{padding: 20, backgroundColor: '#fff'}}>
+          <View style={{flexDirection: 'row', marginBottom: 20}}>
+            <Text style={{fontSize: 20}}>{I18n.t('the_story_contain_audio')}</Text>
+            <AudioPlayer audio={audio}
+              isPlaying={this.state.isPlaying}
+              color='black'
+              size={34}
+              onClick={() => this._toggleAudioPlay(audio)}/>
+          </View>
+            <Text style={{fontSize: 16}}> {I18n.t('the_story_contain_audio_are_you_sure_you_want_to_download')} </Text>
+          <View style={{flexDirection: 'row', marginTop: 10, alignItems: 'flex-end', justifyContent: 'flex-end'}}>
+            <View style={{marginRight: 10}}>
+              <Button color='#CCD1D1' title={I18n.t('cancel')} onPress={ () => this._onCloseModal() }/>
+            </View>
+            <Button title={I18n.t('yes')} onPress={ () => this._startDownload(story) } />
+          </View>
+        </View>
+      </ModalDialog>
+    )
+  }
+
   _renderBtnDownload(story) {
     return (
       <View style={{marginTop: 24}}>
         { ( !this.props.storyDownloaded && !this.state.showReadNow ) &&
-          <TouchableOpacity
-            onPress={()=> this._downloadStory(story)}
-            style={storyStyle.btnDownload}>
+          <View>
+            <TouchableOpacity
+              onPress={()=> this._downloadStory(story)}
+              style={storyStyle.btnDownload}>
 
-            <Icon name="cloud-download" color='#fff' size={24} />
-            <Text style={storyStyle.btnLabel}>{I18n.t('download')}</Text>
-          </TouchableOpacity>
+              <Icon name="cloud-download" color='#fff' size={24} />
+              <Text style={storyStyle.btnLabel}>{I18n.t('download')}</Text>
+            </TouchableOpacity>
+            {this._renderDownloadDialog(story)}
+          </View>
         }
 
         { this.state.showProgress &&
