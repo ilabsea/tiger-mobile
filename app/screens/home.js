@@ -59,9 +59,14 @@ export default class Home extends Component {
     })
 
     AsyncStorage.getItem(AUDIOICON, (err, icon) => {
-      icon = icon == null ? 'volume-off' : icon;
+
+      if (icon == null) {
+        icon = 'volume-up';
+        AsyncStorage.setItem(AUDIOICON, icon);
+      }
+
       this.setState({audioIcon: icon});
-    })
+    });
 
     this._setDownloadedStories();
   }

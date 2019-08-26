@@ -52,6 +52,6 @@ export default {
   auto_play_setting: 'ការកំណត់សម្លេង',
   autoplay: "បេីកសម្លេងដោយស្វ័យប្រវត្តិ",
   disable_autoplay: "បិទសម្លេងដោយស្វ័យប្រវត្តិ",
-  the_story_contain_audio_are_you_sure_you_want_to_download: "រឿងនេះមានសម្លេង។ តើអ្នកប្រាកដជាចង់ទាញយកមែនឬទេ?",
+  the_story_contain_audio_are_you_sure_you_want_to_download: "ប្រសិនបើអ្នកទាយយកដោយមិនប្រើអ៊ីនធឺណិតតាមប្រព័ន្ធ WIFI អ្នកនឹងចំណាយថវិកានៃប្រព័ន្ធទូរសព្ទច្រើន។ តើអ្នកពិតជាចង់ទាញយកសៀវភៅនេះដែរឬទេ?",
   the_story_contain_audio: 'រឿងនេះមានសម្លេង'
 };
