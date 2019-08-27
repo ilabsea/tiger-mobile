@@ -50,8 +50,9 @@ export default {
   educational_message: 'Educational message',
   audio_is_missing: 'Audio is missing.',
   auto_play_setting: 'Audio setting',
-  autoplay: "Open auto play audio",
-  disable_autoplay: "Close auto play audio",
-  the_story_contain_audio_are_you_sure_you_want_to_download: "The story contains audio. Are you sure you want to download?",
-  the_story_contain_audio: "The story contains audio"
+  autoplay: 'Open auto play audio',
+  disable_autoplay: 'Close auto play audio',
+  the_story_contain_audio_are_you_sure_you_want_to_download: 'The story contains audio. Are you sure you want to download?',
+  the_story_contain_audio: 'The story contains audio',
+  the_story_has_audio: 'The story contains audio'
 };

@@ -4,7 +4,7 @@ import {
   View
 } from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage';
-import { RadioButton } from 'react-native-material-ui';
+import { RadioButton, Icon } from 'react-native-material-ui';
 import I18n from '../i18n/i18n';
 import { AUDIOICON } from '../utils/variable';
 import styles from '../assets/style_sheets/user_type';
@@ -40,13 +40,18 @@ export default class AudioModal extends Component {
   _renderContent() {
     let buttons = radio_props.map((obj, i) => {
       return(
-       <RadioButton
-          key={i}
-          label={I18n.t(obj.label)}
-          checked={this.state.audioIcon == obj.value}
-          value={obj.value}
-          onSelect={this._onSelect}
-       />
+       <View style={{flexDirection: 'row'}}>
+         <RadioButton
+            key={i}
+            label={I18n.t(obj.label)}
+            checked={this.state.audioIcon == obj.value}
+            value={obj.value}
+            onSelect={this._onSelect}
+         />
+         <View style={{position: 'absolute', left: 43, top: 10}}>
+           <Icon name={obj.value}/>
+         </View>
+       </View>
       )
     })
 

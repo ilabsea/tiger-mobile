@@ -11,11 +11,10 @@ import {
   ToastAndroid,
   Linking,
   Alert,
-  Button
 } from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage';
 import NetInfo from "@react-native-community/netinfo";
-import { Toolbar, Icon } from 'react-native-material-ui';
+import { Toolbar, Icon, Button } from 'react-native-material-ui';
 import ModalDialog from 'react-native-modal';
 import RNFS from 'react-native-fs';
 import * as Progress from 'react-native-progress';
@@ -70,8 +69,10 @@ export default class StoryModal extends Component {
       image: imageName ? `${RNFS.DocumentDirectoryPath}/${imageName}` : '',
       author: story.author,
       license: story.license,
+      hasAudio: story.has_audio,
       sourceLink: story.source_link,
       publishedAt: story.published_at,
+
       tags: tags,
       createdAt: new Date()
     };
@@ -305,12 +306,10 @@ export default class StoryModal extends Component {
               size={34}
               onClick={() => this._toggleAudioPlay(audio)}/>
           </View>
-            <Text style={{fontSize: 16}}> {I18n.t('the_story_contain_audio_are_you_sure_you_want_to_download')} </Text>
+          <Text style={{fontSize: 16}}>{I18n.t('the_story_contain_audio_are_you_sure_you_want_to_download')}</Text>
           <View style={{flexDirection: 'row', marginTop: 10, alignItems: 'flex-end', justifyContent: 'flex-end'}}>
-            <View style={{marginRight: 10}}>
-              <Button color='#CCD1D1' title={I18n.t('cancel')} onPress={ () => this._onCloseModal() }/>
-            </View>
-            <Button title={I18n.t('yes')} onPress={ () => this._startDownload(story) } />
+            <Button text={I18n.t('cancel')} icon='close' raised  onPress={ () => this._onCloseModal() } style={{container: {marginRight: 10}}}/>
+            <Button text={I18n.t('yes')} icon='check' primary raised onPress={ () => this._startDownload(story) } />
           </View>
         </View>
       </ModalDialog>
@@ -386,6 +385,13 @@ export default class StoryModal extends Component {
         <Text style={{fontSize: 16}}>{story.title}</Text>
         <Text>{I18n.t('author')}: {story.author}</Text>
         { this._renderAcknowledgementOrSourceLink(story) }
+
+        { (!!story.hasAudio || !!story.has_audio) &&
+          <View style={{flexDirection: 'row'}}>
+            <Text>{I18n.t('the_story_has_audio')}</Text>
+            <Icon name={'volume-up'}/>
+          </View>
+        }
 
         { !!license &&
           <View style={storyStyle.tagsWrapper}>
