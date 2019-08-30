@@ -25,7 +25,7 @@ export default class AudioModal extends Component {
 
   componentDidMount(){
     AsyncStorage.getItem(AUDIOICON, (err, icon) => {
-      icon = icon == null ? 'volume-off': icon;
+      icon = icon == null ? 'volume-up': icon;
       this.setState({ audioIcon: icon });
     })
   }
