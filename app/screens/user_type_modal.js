@@ -14,10 +14,10 @@ import styles from '../assets/style_sheets/user_type';
 import Images from '../utils/images';
 
 const radio_props = [
-  {label: 'teacher', value: 'teacher', image: 'teacher' },
-  {label: 'guardian', value: 'guardian', image: 'guardian' },
-  {label: 'student', value: 'student', image: 'student' },
-  {label: 'other', value: 'other', image: 'other' }
+  {label: 'teacher', value: 'teacher', image: 'teacher'},
+  {label: 'guardian', value: 'guardian', image: 'guardian'},
+  {label: 'student', value: 'student', image: 'student'},
+  {label: 'other', value: 'other', image: 'other'}
 ]
 
 export default class UserTypeModal extends Component {
