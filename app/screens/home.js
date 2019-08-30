@@ -46,7 +46,7 @@ export default class Home extends Component {
       dataSource: [],
       story: {tags: []},
       visibleUserType: false,
-      audioIcon: 'volume-off'
+      audioIcon: ''
     };
   }
 
@@ -375,7 +375,7 @@ export default class Home extends Component {
               </TouchableOpacity>
 
               <TouchableOpacity onPress={() => this._openAudioModal()} style={{paddingHorizontal: 8}}>
-                <Icon name={this.state.audioIcon} color='#fff' size={24} />
+                { !!this.state.audioIcon && <Icon name={this.state.audioIcon} color='#fff' size={24} /> }
               </TouchableOpacity>
 
               <TouchableOpacity onPress={this._openUserTypeModal} style={{paddingHorizontal: 8}}>

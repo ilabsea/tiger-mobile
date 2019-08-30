@@ -163,18 +163,11 @@ export default class Labrary extends Component {
               ellipsizeMode='tail'
               numberOfLines={1}
             >
-              {item.title}
+              { item.title }
             </Text>
 
             <Text>{I18n.t('author')}: {item.author}</Text>
             { this._renderAcknowledgementOrSourceLink(item) }
-
-            { !!item.hasAudio &&
-              <View style={{flexDirection: 'row'}}>
-                <Text>{I18n.t('the_story_has_audio')}</Text>
-                <Icon name={'volume-up'}/>
-              </View>
-            }
 
             { !!license &&
               <View style={storyStyle.tagsWrapper}>

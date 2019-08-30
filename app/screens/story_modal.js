@@ -382,16 +382,13 @@ export default class StoryModal extends Component {
     return (
       <View style={{flex: 1}}>
         <Text>{I18n.t('published_at')} { this._getFullDate(story.published_at || story.publishedAt)}</Text>
-        <Text style={{fontSize: 16}}>{story.title}</Text>
+        <Text style={{fontSize: 16}}>
+          { story.title }
+          { (!!story.hasAudio || !!story.has_audio) && <Icon name={'volume-up'}/> }
+        </Text>
         <Text>{I18n.t('author')}: {story.author}</Text>
-        { this._renderAcknowledgementOrSourceLink(story) }
 
-        { (!!story.hasAudio || !!story.has_audio) &&
-          <View style={{flexDirection: 'row'}}>
-            <Text>{I18n.t('the_story_has_audio')}</Text>
-            <Icon name={'volume-up'}/>
-          </View>
-        }
+        { this._renderAcknowledgementOrSourceLink(story) }
 
         { !!license &&
           <View style={storyStyle.tagsWrapper}>
