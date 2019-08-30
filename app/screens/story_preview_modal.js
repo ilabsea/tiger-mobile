@@ -268,7 +268,7 @@ export default class StoryPreviewModal extends Component {
 
   _renderResultLabel(question, textStyle) {
     if (this._isCorrect(question.user_choice.id, question.choices)) {
-      this._renderCorrectResult(question, textStyle);
+      return this._renderCorrectResult(question, textStyle);
     }
 
     return (
