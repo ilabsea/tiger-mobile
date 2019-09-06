@@ -98,7 +98,12 @@ export default class StoryPreviewModal extends Component {
   }
 
   _saveStoryResponse(action, slideIndex) {
-    this.storyRead = realm.objects('StoryRead').filtered(`storyId=${action.storyId} AND finishedAt=NULL`).sorted('createdAt', true)[0];
+    if (slideIndex == 0) {
+      this.storyRead = realm.objects('StoryRead').filtered(`storyId=${action.storyId} AND finishedAt=NULL`).sorted('createdAt', true)[0];
+    }
+
+    if (!this.storyRead) { return }
+
     realm.write(()=> {
       realm.create('StoryResponse', {
         uuid: uuidv4(),
