@@ -186,6 +186,8 @@ dependencies {
     implementation project(':react-native-splash-screen')
     implementation fileTree(dir: "libs", include: ["*.jar"])
     implementation "com.facebook.react:react-native:+"  // From node_modules
+    implementation project(path: ":@react-native-firebase_app")
+    implementation project(path: ":@react-native-firebase_messaging")
 
     // JSC from node_modules
     if (useIntlJsc) {
@@ -201,3 +203,5 @@ task copyDownloadableDepsToLibs(type: Copy) {
     from configurations.compile
     into 'libs'
 }
+
+apply plugin: 'com.google.gms.google-services'

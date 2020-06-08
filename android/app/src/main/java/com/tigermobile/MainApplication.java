@@ -16,6 +16,8 @@ import com.oblador.vectoricons.VectorIconsPackage;
 import com.learnium.RNDeviceInfo.RNDeviceInfo;
 import com.zmxv.RNSound.RNSoundPackage;
 import org.devio.rn.splashscreen.SplashScreenReactPackage;
+import io.invertase.firebase.app.ReactNativeFirebaseAppPackage;
+import io.invertase.firebase.messaging.ReactNativeFirebaseMessagingPackage;
 
 import java.util.Arrays;
 import java.util.List;
@@ -40,7 +42,9 @@ public class MainApplication extends Application implements ReactApplication {
         new RNDeviceInfo(),
         new VectorIconsPackage(),
         new RNSoundPackage(),
-        new SplashScreenReactPackage()
+        new SplashScreenReactPackage(),
+        new ReactNativeFirebaseAppPackage(),
+        new ReactNativeFirebaseMessagingPackage()
       );
     }
 
