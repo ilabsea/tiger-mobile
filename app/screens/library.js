@@ -5,14 +5,13 @@ import {
   StyleSheet,
   ActivityIndicator,
   Image,
-  ListView,
+  FlatList,
   RefreshControl,
   Alert,
   TouchableOpacity,
-  AsyncStorage,
   Linking,
 } from 'react-native';
-
+import AsyncStorage from '@react-native-community/async-storage';
 import { Toolbar, Icon, Card, Divider } from 'react-native-material-ui';
 import { Menu, MenuOptions, MenuOption, MenuTrigger } from 'react-native-popup-menu';
 import { YellowBox } from 'react-native';
@@ -30,20 +29,21 @@ export default class Labrary extends Component {
   _data = [];
   _currentPage = 0;
   _totalPage = 0;
+  _keyExtractor = (item, index) => index.toString();
 
   constructor(props) {
     super(props);
 
     this.state = {
       isLoading: true,
-      dataSource: new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 }),
+      stories: [],
       modalVisible: false,
       story: {tags: []},
     };
   }
 
   componentDidMount() {
-    this._onRefresh();
+    this._getStories();
     this._handleClickReadNowFromHome();
     YellowBox.ignoreWarnings(['Warning: isMounted(...) is deprecated', 'Module RCTImageLoader']);
   }
@@ -53,12 +53,6 @@ export default class Labrary extends Component {
       let item = realm.objects('Story').filtered(`id=${this.props.story.id}`)[0];
       this._showModal(item);
     }
-  }
-
-  _onRefresh() {
-    this._currentPage = 0;
-    this._data = [];
-    this._getStories();
   }
 
   _onEndReached() {
@@ -81,7 +75,7 @@ export default class Labrary extends Component {
     this._totalPage = Math.round(allStories.length / storyService.perPage);
     this.setState({
       isLoading: false,
-      dataSource: this.state.dataSource.cloneWithRows(this._data)
+      stories: this._data
     });
   }
 
@@ -94,7 +88,6 @@ export default class Labrary extends Component {
 
   _handleStoryRead(story) {
     let storyRead = realm.objects('StoryRead').filtered(`storyId=${story.id} AND finishedAt=NULL`).sorted('createdAt', true)[0];
-
     AsyncStorage.getItem(USER_TYPE).then((userType) => {
       realm.write(() => {
         if (!!storyRead) {
@@ -107,9 +100,6 @@ export default class Labrary extends Component {
         }
 
         realm.create('StoryRead', { uuid: uuidv4(), storyId: story.id, createdAt: new Date(), userType: userType });
-
-        let obj = realm.objects('StoryRead').filtered(`storyId=${story.id}`);
-        console.log('==========StoryRead', obj);
       })
     });
   }
@@ -146,11 +136,14 @@ export default class Labrary extends Component {
   }
 
   _renderItem(item) {
-    let tags = item.tags.map((tag, index) => {
-      return (
-        <Text key={index} style={storyStyle.tag}>{tag.title}</Text>
-      )
-    })
+    let tags;
+    if(item.tags){
+      tags = item.tags.map((tag, index) => {
+        return (
+          <Text key={index} style={storyStyle.tag}>{tag.title}</Text>
+        )
+      })
+    }
 
     let license = LICENSES.filter(license => license.value == item.license)[0];
 
@@ -170,7 +163,7 @@ export default class Labrary extends Component {
               ellipsizeMode='tail'
               numberOfLines={1}
             >
-              {item.title}
+              { item.title }
             </Text>
 
             <Text>{I18n.t('author')}: {item.author}</Text>
@@ -243,21 +236,24 @@ export default class Labrary extends Component {
     });
   }
 
+  _onRefresh() {
+    this._currentPage = 0;
+    this._data = [];
+    this._getStories();
+  }
+
   _renderList() {
     return (
-      <ListView
-        dataSource={this.state.dataSource}
-        renderRow={(rowData) => this._renderItem(rowData)}
-        renderSeparator={() => <Divider style={{container: {backgroundColor: '#000'}}} />}
-        enableEmptySections={ true }
+      <FlatList
+        data={this.state.stories}
+        renderItem={(rowData) => this._renderItem(rowData.item)}
+        ItemSeparatorComponent={() => <Divider style={{container: {backgroundColor: '#000'}}} />}
         style={{flex: 1}}
-        refreshControl={
-          <RefreshControl
-            refreshing={ false }
-            onRefresh={ () => this._onRefresh() }
-          />
-        }
-        onEndReached={ () => this._onEndReached() }
+        keyExtractor={this._keyExtractor}
+        onEndReachedThreshold={0.1}
+        onEndReached={() => this._onEndReached()}
+        refreshing={false}
+        onRefresh={() => this._onRefresh()}
       />
     )
   }
@@ -294,7 +290,6 @@ export default class Labrary extends Component {
         </View>
       )
     }
-
     let allStories = realm.objects('Story').sorted('createdAt', true);
 
     return (

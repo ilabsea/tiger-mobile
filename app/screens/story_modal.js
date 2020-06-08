@@ -8,13 +8,14 @@ import {
   Image,
   Modal,
   ScrollView,
-  NetInfo,
   ToastAndroid,
-  AsyncStorage,
   Linking,
+  Alert,
 } from 'react-native';
-
-import { Toolbar, Icon } from 'react-native-material-ui';
+import AsyncStorage from '@react-native-community/async-storage';
+import NetInfo from "@react-native-community/netinfo";
+import { Toolbar, Icon, Button } from 'react-native-material-ui';
+import ModalDialog from 'react-native-modal';
 import RNFS from 'react-native-fs';
 import * as Progress from 'react-native-progress';
 import I18n from '../i18n/i18n';
@@ -25,11 +26,16 @@ import sceneService from '../services/scene.service';
 import questionService from '../services/question.service';
 import statisticService from '../services/statistic.service';
 import { environment } from '../environments/environment';
-import { USER_TYPE } from '../utils/variable';
+import { USER_TYPE , AUDIOICON } from '../utils/variable';
 import { LICENSES } from '../utils/licenses';
+import StringHelper from '../utils/string_helper';
+import AudioPlayer from '../components/audio_player';
+import AudioHelper from '../utils/audio_helper';
 
 export default class StoryModal extends Component {
   images = [];
+  sceneAudios = [];
+  quizAudios = [];
 
   constructor(props) {
     super(props);
@@ -37,6 +43,8 @@ export default class StoryModal extends Component {
     this.state = {
       showReadNow: false,
       showProgress: false,
+      downloadDialogVisible: false,
+      isPlaying: false
     }
   }
 
@@ -53,16 +61,18 @@ export default class StoryModal extends Component {
         title: tag.title
       }
     })
-
+    let imageName = StringHelper.getFileURIName(story.image);
     return {
       id: story.id,
       title: story.title,
       description: story.description,
-      image: '',
+      image: imageName ? `${RNFS.DocumentDirectoryPath}/${imageName}` : '',
       author: story.author,
       license: story.license,
+      hasAudio: story.has_audio,
       sourceLink: story.source_link,
       publishedAt: story.published_at,
+
       tags: tags,
       createdAt: new Date()
     };
@@ -80,18 +90,27 @@ export default class StoryModal extends Component {
     realm.delete(sceneList);
 
     scenes.map((scene) => {
+      let audioName = StringHelper.getFileURIName(scene.audio);
+      let imageName = StringHelper.getFileURIName(scene.image);
       sceneList.push(
         {
           id: scene.id,
           name: scene.name,
-          image: '',
+          image: imageName ? `${RNFS.DocumentDirectoryPath}/${imageName}` : '',
           visibleName: scene.visible_name,
           description: scene.description,
           imageAsBackground: scene.image_as_background,
           storyId: scene.story_id,
           isEnd: !!scene.is_end,
+          audio: audioName ? `${RNFS.DocumentDirectoryPath}/${audioName}` : '',
         }
       );
+      if(scene.audio){
+        this.sceneAudios.push(scene.audio);
+      }
+      if(scene.image){
+        this.images.push(scene.image);
+      }
     })
   }
 
@@ -120,64 +139,87 @@ export default class StoryModal extends Component {
     });
   }
 
-  _downloadFiles(story, scenes) {
-    let scenesList = scenes.filter(s => !!s.image);
-    this.images = [{type: 'Story', id: story.id, url: story.image}];
-    scenesList.map((s)=>{ this.images.push({type: 'Scene', id: s.id, url: s.image}) });
+  _downloadFiles() {
     this.setState({showProgress: true, progress: 0});
     this._downloadFile(0);
   }
 
-  // https://github.com/cjdell/react-native-fs-test/blob/master/index.common.js
   _downloadFile(index) {
-    let image = this.images[index];
     let progress = data => {};
     let begin = res => {};
     let progressDivider = 1;
     let background = false;
-    let url = `${environment.domain}${image.url}`;
-    let fileName = decodeURIComponent(image.url.split('/').slice(-4).join('_'));
-    let downloadDest = `${RNFS.DocumentDirectoryPath}/${fileName}`;
-    let ret = RNFS.downloadFile({ fromUrl: url, toFile: downloadDest, begin, progress, background, progressDivider });
 
-    ret.promise.then(res => {
-      realm.write(() => {
-        let obj = realm.objects(image.type).filtered(`id=${image.id}`)[0];
-        obj.image = downloadDest;
-        this.setState({progress: (index+1)/this.images.length});
-      })
+    let imagesAudios = this.images.concat(this.sceneAudios, this.quizAudios);
+    let fileName = StringHelper.getFileURIName(imagesAudios[index]);
 
-      this._handleDownloadProgress(index);
+    let options = {
+      fromUrl: `${environment.domain}${imagesAudios[index]}`,
+      toFile: `${RNFS.DocumentDirectoryPath}/${fileName}`,
+      begin,
+      progress,
+      background,
+      progressDivider
+    };
+
+    RNFS.downloadFile(options).promise.then(res => {
+      this.setState({progress: (index+1)/imagesAudios.length});
+      this._handleDownloadProgress(index, imagesAudios.length);
     }).catch(err => {
-      this._handleDownloadProgress(index);
+      this._handleDownloadProgress(index, imagesAudios.length);
     });
   }
 
-  _handleDownloadProgress(index) {
-    if (index + 1 < this.images.length) {
+  _handleDownloadProgress(index, total) {
+    if (index + 1 < total) {
       this._downloadFile(index + 1);
     } else {
       this.setState({showProgress: false, showReadNow: true});
     }
   }
 
+  _handleAutoPlayAudio(){
+    let audio = 'download_audio.mp3';
+    AsyncStorage.getItem(AUDIOICON, (err, icon) => {
+      let isAudioOn = icon == 'volume-up' ? true : false;
+      this.setState({isPlaying: isAudioOn});
+      if(isAudioOn){
+        AudioHelper.handleAudioPlay(audio, (isPlaying) => {
+          this.setState({isPlaying: isPlaying});
+        });
+      }
+    })
+
+  }
+
   _downloadStory(story) {
     if (!this.props.isOnline) {
       return ToastAndroid.show(I18n.t('no_connection'), ToastAndroid.LONG);
     }
+    if(story.has_audio){
+      this.setState({downloadDialogVisible: true}, () => {
+        this._handleAutoPlayAudio()
+      });
+    }else{
+      this._startDownload(story);
+    }
+  }
 
-    sceneService.getAll(story.id)
-      .then((responseJson) => {
-        realm.write(() => {
-          this._importStory(story);
-          this._importScenes(story, responseJson.data.scenes);
-          this._importSceneActions(responseJson.data.scenes);
+  _startDownload(story){
+    this.setState({downloadDialogVisible: false}, () => {
+      AudioHelper.stopPlaying();
+      sceneService.getAll(story.id)
+        .then((responseJson) => {
+          realm.write(() => {
+            this._importStory(story);
+            this._importScenes(story, responseJson.data.scenes);
+            this._importSceneActions(responseJson.data.scenes);
+          });
           this._downloadFiles(story, responseJson.data.scenes);
-        });
-
-        this._getQuizzes(story);
-        this._postStatistic(story);
-      })
+          this._getQuizzes(story);
+          this._postStatistic(story);
+        })
+    });
   }
 
   _postStatistic(story) {
@@ -193,12 +235,16 @@ export default class StoryModal extends Component {
     realm.delete(questionList);
 
     questions.map((question) => {
+      let audioName = StringHelper.getFileURIName(question.audio);
+      let eduMsgAudioName = StringHelper.getFileURIName(question.educational_message_audio);
       let questionDb = realm.create('Question', {
         id: question.id,
         label: question.label,
         displayOrder: question.display_order,
         storyId: question.story_id,
-        message: question.message
+        message: question.message,
+        educationalMessageAudio: eduMsgAudioName? `${RNFS.DocumentDirectoryPath}/${eduMsgAudioName}` : '',
+        audio: audioName ? `${RNFS.DocumentDirectoryPath}/${audioName}` : '',
       }, true)
 
       question.choices.map((choice) => {
@@ -214,6 +260,12 @@ export default class StoryModal extends Component {
       })
 
       questionList.push(questionDb);
+      if(question.audio){
+        this.quizAudios.push(question.audio);
+      }
+      if(question.educational_message_audio){
+        this.quizAudios.push(question.educational_message_audio);
+      }
     })
   }
 
@@ -227,17 +279,57 @@ export default class StoryModal extends Component {
       })
   }
 
+  _onCloseModal(){
+    this.setState({downloadDialogVisible: false});
+    AudioHelper.stopPlaying();
+  }
+
+  _toggleAudioPlay(audio){
+    AudioHelper._toggleAudioPlay(audio, this.state.isPlaying, (isPlaying) => {
+      this.setState({isPlaying: isPlaying});
+    })
+  }
+
+  _renderDownloadDialog(story){
+    let audio = 'download_audio.mp3';
+    return(
+      <ModalDialog
+        isVisible={this.state.downloadDialogVisible}
+        onBackdropPress={ () => this._onCloseModal() }
+      >
+        <View style={{padding: 20, backgroundColor: '#fff'}}>
+          <View style={{flexDirection: 'row', marginBottom: 20}}>
+            <Text style={{fontSize: 20}}>{I18n.t('the_story_contain_audio')}</Text>
+            <AudioPlayer audio={audio}
+              isPlaying={this.state.isPlaying}
+              color='black'
+              size={34}
+              onClick={() => this._toggleAudioPlay(audio)}/>
+          </View>
+          <Text style={{fontSize: 16}}>{I18n.t('the_story_contain_audio_are_you_sure_you_want_to_download')}</Text>
+          <View style={{flexDirection: 'row', marginTop: 10, alignItems: 'flex-end', justifyContent: 'flex-end'}}>
+            <Button text={I18n.t('cancel')} icon='close' raised  onPress={ () => this._onCloseModal() } style={{container: {marginRight: 10}}}/>
+            <Button text={I18n.t('yes')} icon='check' primary raised onPress={ () => this._startDownload(story) } />
+          </View>
+        </View>
+      </ModalDialog>
+    )
+  }
+
   _renderBtnDownload(story) {
     return (
       <View style={{marginTop: 24}}>
         { ( !this.props.storyDownloaded && !this.state.showReadNow ) &&
-          <TouchableOpacity
-            onPress={()=> this._downloadStory(story)}
-            style={storyStyle.btnDownload}>
+          <View>
+            <TouchableOpacity
+              onPress={()=> this._downloadStory(story)}
+              style={storyStyle.btnDownload}>
 
-            <Icon name="cloud-download" color='#fff' size={24} />
-            <Text style={storyStyle.btnLabel}>{I18n.t('download')}</Text>
-          </TouchableOpacity>
+              <Icon name="cloud-download" color='#fff' size={24} />
+              <Text style={storyStyle.btnLabel}>{I18n.t('download')}</Text>
+            </TouchableOpacity>
+            {this._renderDownloadDialog(story)}
+          </View>
         }
 
         { this.state.showProgress &&
@@ -289,9 +381,13 @@ export default class StoryModal extends Component {
 
     return (
       <View style={{flex: 1}}>
-        <Text>{I18n.t('published_at')} { this._getFullDate(story.published_at)}</Text>
-        <Text style={{fontSize: 16}}>{story.title}</Text>
+        <Text>{I18n.t('published_at')} { this._getFullDate(story.published_at || story.publishedAt)}</Text>
+        <Text style={{fontSize: 16}}>
+          { story.title }
+          { (!!story.hasAudio || !!story.has_audio) && <Icon name={'volume-up'}/> }
+        </Text>
         <Text>{I18n.t('author')}: {story.author}</Text>
+
         { this._renderAcknowledgementOrSourceLink(story) }
 
         { !!license &&

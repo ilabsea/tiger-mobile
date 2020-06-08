@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { NetInfo } from 'react-native';
+import NetInfo from "@react-native-community/netinfo";
 import { setCustomText} from 'react-native-global-props';
 
 import uploadService from './app/services/upload.service';
@@ -14,7 +14,7 @@ const customTextProps = {
 
 setCustomText(customTextProps);
 
-export default class App extends Component {
+export default class App extends React.Component{
   componentDidMount() {
     this._handleInternetConnection();
   }

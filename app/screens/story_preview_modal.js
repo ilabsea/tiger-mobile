@@ -7,23 +7,24 @@ import {
   Image,
   Modal,
   Dimensions,
-  NetInfo,
   ImageBackground,
   TouchableOpacity,
-  Slider,
-  AsyncStorage,
+  Slider
 } from 'react-native';
-
+import AsyncStorage from '@react-native-community/async-storage';
+import NetInfo from "@react-native-community/netinfo";
 import ModalDialog from "react-native-modal";
 
 import { IndicatorViewPager } from 'rn-viewpager';
 import { Toolbar, Icon } from 'react-native-material-ui';
 import I18n from '../i18n/i18n';
 import uuidv4 from '../utils/uuidv4';
-import { TEXT_SIZE } from '../utils/variable';
+import { TEXT_SIZE, AUDIOICON } from '../utils/variable';
+import AudioHelper from '../utils/audio_helper';
 import headerStyle from '../assets/style_sheets/header';
 import realm from '../schema';
 import Button from '../components/button';
+import AudioPlayer from '../components/audio_player';
 import uploadService from '../services/upload.service';
 
 const win = Dimensions.get('window');
@@ -33,14 +34,34 @@ export default class StoryPreviewModal extends Component {
   questions = [];
   answers = [];
   totalSlides = 0;
-  state = { questions: [] };
+  story=null;
+
+  constructor(props){
+    super(props);
+
+    this.state = {
+      questions: [],
+      isPlaying: false,
+      isStartingQuiz: false,
+      currentIndex: 0 ,
+      isAudioOn: false,
+      question: null
+    };
+  }
 
   _slideTo(linkScene) {
+    AudioHelper.stopPlaying();
+    this.setState({isPlaying: false});
     if (!linkScene) {
+      this.setState({ isStartingQuiz: true, currentIndex: 0 }, () => {
+        this._handleAutoPlayAudio(this.getCurrentAudio());
+      });
       return this.refs.mySlider.setPage(this.dataSource.length);
     }
-
     let index = this.dataSource.findIndex(scene => scene.id == linkScene.id);
+    this.setState({ currentIndex: index }, () => {
+      this._handleAutoPlayAudio(this.getCurrentAudio());
+    });
     this.refs.mySlider.setPage(index);
   }
 
@@ -53,8 +74,12 @@ export default class StoryPreviewModal extends Component {
 
   _slideQuizTo(index, choice) {
     let next = this.dataSource.length + index;
-
+    AudioHelper.stopPlaying();
+    this.setState({isPlaying: false});
     this._setAnswer(index-1, choice);
+    this.setState({ currentIndex: index }, () => {
+      this._handleAutoPlayAudio(this.getCurrentAudio());
+    });
     this.refs.mySlider.setPage(next);
   }
 
@@ -73,7 +98,11 @@ export default class StoryPreviewModal extends Component {
   }
 
   _saveStoryResponse(action, slideIndex) {
-    this.storyRead = realm.objects('StoryRead').filtered(`storyId=${action.storyId} AND finishedAt=NULL`).sorted('createdAt', true)[0];
+    if (slideIndex == 0) {
+      this.storyRead = realm.objects('StoryRead').filtered(`storyId=${action.storyId} AND finishedAt=NULL`).sorted('createdAt', true)[0];
+    }
+
+    if (!this.storyRead) { return }
 
     realm.write(()=> {
       realm.create('StoryResponse', {
@@ -86,9 +115,6 @@ export default class StoryPreviewModal extends Component {
 
       if (action.linkScene.isEnd || slideIndex == this.dataSource.length - 2) {
         this.storyRead.finishedAt = new Date;
-
-        // console.log('=============this.storyRead', this.storyRead);
-        // console.log('=============sceneResponse', realm.objects('StoryResponse').filtered(`storyReadUuid='${this.storyRead.uuid}'`));
       }
     })
   }
@@ -105,9 +131,6 @@ export default class StoryPreviewModal extends Component {
 
       if (slideIndex == this.questions.length - 1) {
         this.storyRead.isQuizFinished = true;
-
-        // console.log('=============obj _saveQuizResponse', this.storyRead);
-        // console.log('=============quizResponse', realm.objects('QuizResponse').filtered(`storyReadUuid='${this.storyRead.uuid}'`));
       }
     })
   }
@@ -231,20 +254,32 @@ export default class StoryPreviewModal extends Component {
   }
 
   _showMessage(question) {
-    this.setState({message: question.message, isMessageVisible: true});
+    this.setState({question: question, isMessageVisible: true});
+    this._handleAutoPlayAudio(question.educationalMessageAudio);
+  }
+
+  _renderCorrectResult(question, textStyle){
+    return (
+      <View style={{flex:1 , flexDirection: 'row'}}>
+        <Text style={[styles.textShadow, textStyle, {color: 'green'}]}>
+          [{this._getAnswers(question.choices)}]
+        </Text>
+        { !!question.educationalMessageAudio &&
+          <Icon name='volume-up' color='green' size={28}/>
+        }
+      </View>
+    )
   }
 
   _renderResultLabel(question, textStyle) {
     if (this._isCorrect(question.user_choice.id, question.choices)) {
-      return (
-        <Text style={[styles.textShadow, textStyle, {color: 'green'}]}>[{this._getAnswers(question.choices)}]</Text>
-      )
+      return this._renderCorrectResult(question, textStyle);
     }
 
     return (
       <View>
         <Text style={[styles.textShadow, textStyle, styles.wrong]}>{question.user_choice.label}</Text>
-        <Text style={[styles.textShadow, textStyle, {color: 'green'}]}>[{this._getAnswers(question.choices)}]</Text>
+        {this._renderCorrectResult(question, textStyle)}
       </View>
     )
   }
@@ -317,15 +352,30 @@ export default class StoryPreviewModal extends Component {
   }
 
   _renderMessageDialog() {
+    let question = this.state.question;
+    if(!question){
+      return null;
+    }
+
     return (
       <ModalDialog
         isVisible={this.state.isMessageVisible}
-        onBackdropPress={() => this.setState({isMessageVisible: false})}
+        onBackdropPress={() => {
+          this.setState({isMessageVisible: false, isPlaying: false});
+          AudioHelper.stopPlaying();
+        }}
       >
         <View style={{ padding: 20, backgroundColor: '#fff'}}>
-          <Text style={{fontSize: 16}}>{I18n.t('educational_message')}</Text>
+          <View style={{flexDirection: 'row'}}>
+            <Text style={{fontSize: 20}}>{I18n.t('educational_message')}</Text>
+            <AudioPlayer audio={question.educationalMessageAudio}
+              isPlaying={this.state.isPlaying}
+              color='black'
+              size={34}
+              onClick={() => this._toggleAudioPlay(question.educationalMessageAudio)}/>
+          </View>
           <ScrollView>
-            <Text>{this.state.message}</Text>
+            <Text>{question.message}</Text>
           </ScrollView>
         </View>
       </ModalDialog>
@@ -357,12 +407,28 @@ export default class StoryPreviewModal extends Component {
           onValueChange={(textSize) => this.setState({textSize: textSize})}
           value={this.state.textSize || this.props.textSize}
         />
-
       </View>
     )
   }
 
-  _renderModalContent = (story) => {
+  getCurrentAudio(){
+    let currentPageObj = this.state.isStartingQuiz ?
+                          this.story.questions[this.state.currentIndex]:
+                          this.story.scenes[this.state.currentIndex];
+    return currentPageObj ? currentPageObj.audio : '';
+  }
+
+  _toggleAudioPlay(audio){
+    AudioHelper._toggleAudioPlay(audio, this.state.isPlaying, (isPlaying) => {
+      this.setState({isPlaying: isPlaying});
+    })
+  }
+
+  _renderModalContent = () => {
+    if(!this.story || !this.story.title) {
+      return null;
+    }
+    let audio = this.getCurrentAudio();
     return (
       <View style={{flex: 1, backgroundColor: '#fff3df'}}>
         <Toolbar
@@ -372,10 +438,17 @@ export default class StoryPreviewModal extends Component {
               ellipsizeMode='tail'
               numberOfLines={1}
               style={headerStyle.title}>
-              {story.title}
+              {this.story.title}
             </Text>
           }
-          rightElement="format-size"
+          rightElement={
+            <View style={{flexDirection: 'row'}}>
+              <AudioPlayer audio={audio} isPlaying={this.state.isPlaying} onClick={() => this._toggleAudioPlay(audio)}/>
+              <TouchableOpacity onPress={()=> this.setState({ isDialogVisible: true })} style={{paddingHorizontal: 8}}>
+                <Icon name='format-size' color='#fff' size={24} />
+              </TouchableOpacity>
+            </View>
+          }
           onLeftElementPress={() => this._closeModal()}
           onRightElementPress={()=> this.setState({ isDialogVisible: true }) } />
 
@@ -399,9 +472,29 @@ export default class StoryPreviewModal extends Component {
   }
 
   _closeModal() {
-    this.setState({questions: []});
+    AudioHelper.stopPlaying();
+    this.setState({questions: [], currentIndex: 0, isPlaying: false});
     this._handleUpload();
     this.props.onRequestClose();
+  }
+
+  _handleAutoPlayAudio(audio){
+    if(this.state.isAudioOn){
+      this.setState({isPlaying: true});
+      AudioHelper.handleAudioPlay(audio, (isPlaying) => {
+        this.setState({isPlaying: isPlaying});
+      });
+    }
+  }
+
+  _onShowModal(){
+    this.setState({isStartingQuiz : false})
+    AsyncStorage.getItem(AUDIOICON, (err, icon) => {
+      let isAudioOn = icon == 'volume-up' ? true : false;
+      this.setState({isAudioOn: isAudioOn}, () => {
+        this._handleAutoPlayAudio(this.getCurrentAudio());
+      });
+    })
   }
 
   _handleUpload() {
@@ -424,11 +517,12 @@ export default class StoryPreviewModal extends Component {
 
   render() {
     const { modalVisible, onRequestClose, ...props } = this.props;
-
-    let story = Object.assign({}, this.props.story);
-    this.dataSource = story.scenes || [];
-    this.questions = (story.questions || []).slice();
-    this.totalSlides = this.dataSource.length + this.questions.length;
+    this.story = this.props.story;
+    if(this.story) {
+      this.dataSource = this.story.scenes || [];
+      this.questions = (this.story.questions || []).slice();
+      this.totalSlides = this.dataSource.length + this.questions.length;
+    }
 
     return (
       <Modal
@@ -436,9 +530,10 @@ export default class StoryPreviewModal extends Component {
         animationType="slide"
         transparent={false}
         visible={modalVisible}
+        onShow={() => this._onShowModal()}
         onRequestClose={() => this._closeModal()}>
 
-        { this._renderModalContent(story) }
+        { this._renderModalContent() }
       </Modal>
     )
   }

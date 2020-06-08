@@ -13,6 +13,6 @@ SceneAction.schema = {
     display_order: 'int?',
     sceneId: 'int',
     linkScene: 'Scene',
-    storyId: 'int'
+    storyId: 'int',
   }
 }

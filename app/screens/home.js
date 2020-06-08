@@ -7,13 +7,13 @@ import {
   FlatList,
   ActivityIndicator,
   Image,
-  NetInfo,
-  AsyncStorage,
 } from 'react-native';
-
+import NetInfo from "@react-native-community/netinfo";
+import AsyncStorage from '@react-native-community/async-storage';
 import RNFS from 'react-native-fs';
 import { Toolbar, COLOR, Button, Icon } from 'react-native-material-ui';
 import AwesomeIcon from 'react-native-vector-icons/FontAwesome';
+
 import realm from '../schema';
 import I18n from '../i18n/i18n';
 import headerStyle from '../assets/style_sheets/header';
@@ -23,8 +23,11 @@ import layoutSerive from '../services/layout.service';
 import StoryModal from './story_modal';
 import UserTypeModal from './user_type_modal';
 import LanguageModal from './language_modal';
+import AudioModal from './audio_modal';
 import { environment } from '../environments/environment';
-import { USER_TYPE } from '../utils/variable';
+import { USER_TYPE,AUDIOICON } from '../utils/variable';
+
+import Sound from 'react-native-sound';
 
 export default class Home extends Component {
   _data = [];
@@ -39,9 +42,11 @@ export default class Home extends Component {
       refreshing: false,
       modalVisible: false,
       visibleLanguageModal: false,
+      visibleAudioModal: false,
       dataSource: [],
       story: {tags: []},
       visibleUserType: false,
+      audioIcon: ''
     };
   }
 
@@ -52,6 +57,17 @@ export default class Home extends Component {
       let viewIcon = view == 'grid' ? 'th-list' : 'th-large';
       this.setState({view: view, viewIcon: viewIcon});
     })
+
+    AsyncStorage.getItem(AUDIOICON, (err, icon) => {
+
+      if (icon == null) {
+        icon = 'volume-up';
+        AsyncStorage.setItem(AUDIOICON, icon);
+      }
+
+      this.setState({audioIcon: icon});
+    });
+
     this._setDownloadedStories();
   }
 
@@ -124,7 +140,6 @@ export default class Home extends Component {
 
   _getStories() {
     this._currentPage++;
-    console.log('===================_getStoriesOut');
 
     storyService.getAll(this._currentPage)
       .then((response) => response.json())
@@ -143,8 +158,6 @@ export default class Home extends Component {
     let stories = realm.objects('StoryBackup');
 
     realm.write(() => {
-      // realm.delete(stories);
-
       this._data.map((story) => {
         realm.create('StoryBackup', this._buildStory(story), true);
         this._downloadFile(story);
@@ -325,12 +338,29 @@ export default class Home extends Component {
     )
   }
 
+  _renderAudioModal() {
+    return (
+      <AudioModal
+        modalVisible={this.state.visibleAudioModal}
+        onRequestClose={(audioIcon) => {
+          this.setState({visibleAudioModal: false, audioIcon: audioIcon});
+          this.props.onSetActive('home');
+        }}
+        onBackdropPress={() => this.setState({visibleAudioModal: false})}
+      ></AudioModal>
+    )
+  }
+
   _openUserTypeModal = () => {
     this.setState({visibleUserType: true});
   }
 
   _openLanguageModal = () => {
     this.setState({visibleLanguageModal: true});
+  }
+
+  _openAudioModal = () => {
+    this.setState({visibleAudioModal: true});
   }
 
   render() {
@@ -342,6 +372,10 @@ export default class Home extends Component {
             <View style={{flexDirection: 'row'}}>
               <TouchableOpacity onPress={() => this._toggleLayout()} style={{paddingHorizontal: 8}}>
                 <AwesomeIcon name={this.state.viewIcon} color='#fff' size={24} />
+              </TouchableOpacity>
+
+              <TouchableOpacity onPress={() => this._openAudioModal()} style={{paddingHorizontal: 8}}>
+                { !!this.state.audioIcon && <Icon name={this.state.audioIcon} color='#fff' size={24} /> }
               </TouchableOpacity>
 
               <TouchableOpacity onPress={this._openUserTypeModal} style={{paddingHorizontal: 8}}>
@@ -365,6 +399,7 @@ export default class Home extends Component {
         { this._renderModal() }
         { this._renderUserTypeModal() }
         { this._renderLanguageModal() }
+        { this._renderAudioModal() }
       </View>
     )
   }

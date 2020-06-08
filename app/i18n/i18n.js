@@ -1,15 +1,4 @@
-/* to add more local
-import en from './locales/en';
-
-I18n.translations = {
-  km,
-  en,
-  ...
-};
-
-*/
-
-import { AsyncStorage } from 'react-native';
+import AsyncStorage from '@react-native-community/async-storage';
 import I18n from 'react-native-i18n';
 import km from './locales/km';
 import en from './locales/en';
