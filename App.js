@@ -5,8 +5,7 @@ import { setCustomText} from 'react-native-global-props';
 import uploadService from './app/services/upload.service';
 import AppNavigator from './app/screens/app_navigator';
 
-import messaging from '@react-native-firebase/messaging';
-
+import RegisteredTokenService from './app/services/registered_token.service';
 
 const customTextProps = {
   style: {
@@ -20,21 +19,7 @@ setCustomText(customTextProps);
 export default class App extends React.Component{
   componentDidMount() {
     this._handleInternetConnection();
-    messaging()
-      .getToken()
-      .then(token => {
-        return this.saveTokenToDatabase(token);
-      });
-
-    // Listen to whether the token changes
-    return messaging().onTokenRefresh(token => {
-      this.saveTokenToDatabase(token);
-    });
-  }
-
-  saveTokenToDatabase(token) {
-    // alert(token);
-    console.log(token)
+    RegisteredTokenService.handleSyncingToken();
   }
 
   _handleInternetConnection() {

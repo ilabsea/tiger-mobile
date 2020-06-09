@@ -40,7 +40,7 @@ export default class UserTypeModal extends Component {
   _renderContent() {
     let buttons = radio_props.map((obj, i) => {
       return(
-        <View style={{flexDirection: 'row'}}>
+        <View style={{flexDirection: 'row'}} key={i}>
           <RadioButton
               key={i}
               label={I18n.t(obj.label)}
