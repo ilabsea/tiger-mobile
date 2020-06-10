@@ -27,6 +27,7 @@ import AudioModal from './audio_modal';
 import { environment } from '../environments/environment';
 import { USER_TYPE,AUDIOICON } from '../utils/variable';
 
+import messaging from '@react-native-firebase/messaging';
 import Sound from 'react-native-sound';
 
 export default class Home extends Component {
@@ -69,6 +70,26 @@ export default class Home extends Component {
     });
 
     this._setDownloadedStories();
+    this.onNotificationOpen();
+  }
+
+  onNotificationOpen() {
+    messaging().onNotificationOpenedApp(remoteMessage => {
+      this.openStory(remoteMessage);
+    });
+
+    messaging()
+      .getInitialNotification()
+      .then(remoteMessage => {
+        this.openStory(remoteMessage);
+      });
+  }
+
+  openStory(remoteMessage) {
+    if (!!remoteMessage.data && !!remoteMessage.data.story) {
+      let story = JSON.parse(remoteMessage.data.story).story;
+      this._showModal(story);
+    }
   }
 
   readNow(story) {
@@ -203,7 +224,7 @@ export default class Home extends Component {
     });
   }
 
-  _showModel(story) {
+  _showModal(story) {
     let objStory = realm.objects('Story').filtered(`id=${story.id}`)[0];
     this.setState({modalVisible: true, story: story, storyDownloaded: !!objStory});
   }
@@ -226,7 +247,7 @@ export default class Home extends Component {
     return (
       <TouchableOpacity
         style={{padding: 8, width: itemWidth}}
-        onPress={()=> this._showModel(item)}>
+        onPress={()=> this._showModal(item)}>
         <View style={[storyStyle.item, {flexDirection: flexDirection}]}>
           {
             !this.state.downloadedStories.includes(item.id) &&
