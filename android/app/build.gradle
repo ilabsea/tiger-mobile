@@ -188,6 +188,7 @@ dependencies {
     implementation "com.facebook.react:react-native:+"  // From node_modules
     implementation project(path: ":@react-native-firebase_app")
     implementation project(path: ":@react-native-firebase_messaging")
+    implementation project(':@react-native-community_viewpager')
 
     // JSC from node_modules
     if (useIntlJsc) {

@@ -86,7 +86,7 @@ export default class Home extends Component {
   }
 
   openStory(remoteMessage) {
-    if (!!remoteMessage.data && !!remoteMessage.data.story) {
+    if (!!remoteMessage && !!remoteMessage.data && !!remoteMessage.data.story) {
       let story = JSON.parse(remoteMessage.data.story).story;
       this._showModal(story);
     }

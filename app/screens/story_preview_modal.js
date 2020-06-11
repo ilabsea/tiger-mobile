@@ -26,6 +26,7 @@ import realm from '../schema';
 import Button from '../components/button';
 import AudioPlayer from '../components/audio_player';
 import uploadService from '../services/upload.service';
+import ViewPager from '@react-native-community/viewpager';
 
 const win = Dimensions.get('window');
 
@@ -452,23 +453,41 @@ export default class StoryPreviewModal extends Component {
           onLeftElementPress={() => this._closeModal()}
           onRightElementPress={()=> this.setState({ isDialogVisible: true }) } />
 
-        <View style={{flex: 1}}>
-          <IndicatorViewPager
-            style={{flex: 1}}
-            ref="mySlider"
-            horizontalScroll={false}>
-
-            { this._renderScenes() }
-            { this._renderQuizzes() }
-            { this._renderQuizResult() }
-          </IndicatorViewPager>
-
-          { this._renderFormatSizeDialog() }
-          { this._renderMessageDialog() }
-        </View>
-
+        { this._renderViewPager() }
       </View>
     )
+  }
+
+  _renderViewPager() {
+    return (
+      <View style={{flex: 1}}>
+        <ViewPager style={{flex: 1}} initialPage={0} ref="mySlider">
+          { this._renderScenes() }
+          { this._renderQuizzes() }
+          { this._renderQuizResult() }
+        </ViewPager>
+
+        { this._renderFormatSizeDialog() }
+        { this._renderMessageDialog() }
+      </View>
+     )
+
+    // return (
+    //   <View style={{flex: 1}}>
+    //     <IndicatorViewPager
+    //       style={{flex: 1}}
+    //       ref="mySlider"
+    //       horizontalScroll={false}>
+
+    //       { this._renderScenes() }
+    //       { this._renderQuizzes() }
+    //       { this._renderQuizResult() }
+    //     </IndicatorViewPager>
+
+    //     { this._renderFormatSizeDialog() }
+    //     { this._renderMessageDialog() }
+    //   </View>
+    // )
   }
 
   _closeModal() {

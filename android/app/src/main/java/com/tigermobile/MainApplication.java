@@ -18,6 +18,7 @@ import com.zmxv.RNSound.RNSoundPackage;
 import org.devio.rn.splashscreen.SplashScreenReactPackage;
 import io.invertase.firebase.app.ReactNativeFirebaseAppPackage;
 import io.invertase.firebase.messaging.ReactNativeFirebaseMessagingPackage;
+import com.reactnativecommunity.viewpager.RNCViewPagerPackage;
 
 import java.util.Arrays;
 import java.util.List;
@@ -43,6 +44,7 @@ public class MainApplication extends Application implements ReactApplication {
         new VectorIconsPackage(),
         new RNSoundPackage(),
         new SplashScreenReactPackage(),
+        new RNCViewPagerPackage(),
         new ReactNativeFirebaseAppPackage(),
         new ReactNativeFirebaseMessagingPackage()
       );
