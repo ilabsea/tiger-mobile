@@ -14,59 +14,55 @@ const notificationService = {
   }
 };
 
-const TOKEN_KEY = 'registered_token';
+const TOKEN_KEY = 'registeredToken';
 
 export default (function() {
   handleSyncingToken = () => {
-    try {
-      this.onTokenRefresh();
-
-      let token = this.getStorage();
-      if(!token) {
-        this.saveTokenToDatabase();
-      }
-    } catch(e) {
-      this.saveTokenToDatabase();
-    }
-  }
-
-  saveTokenToDatabase = () => {
     messaging()
       .getToken()
       .then(token => {
-        this.saveToken(token);
+        return this.saveTokenToDatabase(token);
       });
+
+    // Listen to whether the token changes
+    return messaging().onTokenRefresh(token => {
+      this.saveTokenToDatabase(token);
+    });
   }
 
-  saveToken = async(token) => {
+  saveTokenToDatabase = (token) => {
+    AsyncStorage.getItem(TOKEN_KEY, (error, storageToken) => {
+      if(!storageToken) {
+        return this.saveToken(token);
+      }
+
+      let jsonValue = JSON.parse(storageToken);
+      // if(jsonValue.token == token) { return }
+
+      this.saveToken(token, jsonValue.id);
+    })
+  }
+
+  saveToken = async(token, id) => {
     let self = this;
-    notificationService.create({registered_token: {token: token}})
+    let data = {registered_token: {token: token, id: id}};
+    notificationService.create(data)
       .then(res => {
         if(res.ok == true) {
-          self.setStorage(token);
+          self.storeData(res.data);
         }
       });
   }
 
-  setStorage = async(token) => {
-    await AsyncStorage.setItem(TOKEN_KEY, token);
-  }
-
-  getStorage = async() => {
-    await AsyncStorage.getItem(TOKEN_KEY);
-  }
-
-  onTokenRefresh = () => {
-    messaging().onTokenRefresh(token => {
-      let storageToken = this.getStorage();
-      if (storageToken == token) { return; }
-
-      this.saveToken(token);
-    });
+  storeData = async (value) => {
+    try {
+      const jsonValue = JSON.stringify(value)
+      await AsyncStorage.setItem(TOKEN_KEY, jsonValue);
+    } catch (e) {
+    }
   }
 
   return {
     handleSyncingToken: handleSyncingToken
   }
-
 })();
