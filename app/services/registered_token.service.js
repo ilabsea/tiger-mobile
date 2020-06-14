@@ -10,7 +10,7 @@ const api = create({
 
 const notificationService = {
   create(body) {
-    return api.post(`/registered_tokens`, body);
+    return api.put(`/registered_tokens`, body);
   }
 };
 
