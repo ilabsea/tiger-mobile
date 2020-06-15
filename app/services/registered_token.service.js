@@ -24,10 +24,10 @@ export default (function() {
         return this.saveTokenToDatabase(token);
       });
 
-    // Listen to whether the token changes
-    return messaging().onTokenRefresh(token => {
-      this.saveTokenToDatabase(token);
-    });
+    // // Listen to whether the token changes
+    // return messaging().onTokenRefresh(token => {
+    //   this.saveTokenToDatabase(token);
+    // });
   }
 
   saveTokenToDatabase = (token) => {
@@ -37,7 +37,7 @@ export default (function() {
       }
 
       let jsonValue = JSON.parse(storageToken);
-      // if(jsonValue.token == token) { return }
+      if(jsonValue.token == token) { return }
 
       this.saveToken(token, jsonValue.id);
     })
